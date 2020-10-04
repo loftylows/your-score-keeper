@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useSession } from "blitz"
+import { useSession, Link } from "blitz"
 import { FaUserCircle } from "react-icons/fa"
 import {
   Box,
@@ -23,7 +23,7 @@ const Header = () => {
   const session = useSession()
   const { openAuthModal } = React.useContext(authModalContext)
 
-  const AuthBtns = () => (
+  const UnauthenticatedUserContent = () => (
     <ButtonGroup color="white">
       <Button colorScheme="blue" size="md" mr={3} onClick={() => openAuthModal({ type: "signup" })}>
         Sign Up
@@ -93,8 +93,13 @@ const Header = () => {
       backgroundColor="#B9A061"
       zIndex={1}
     >
-      <Box color="rgba(255, 255, 255, .9)">Stuff</Box>
+      <Link passHref href="/">
+        <Box color="rgba(255, 255, 255, .9)" as="a" marginLeft="25px" fontSize="xl">
+          YourScoreKeeper
+        </Box>
+      </Link>
 
+      {/* Header auth items */}
       <Box
         display="flex"
         flexDirection="column"
@@ -104,14 +109,21 @@ const Header = () => {
         paddingX="30px"
       >
         {session.userId ? (
-          <React.Suspense fallback={() => <Spinner />}>
+          <React.Suspense
+            fallback={() => (
+              <Box display="flex" justifyContent="center" alignItems="center">
+                <Spinner />
+              </Box>
+            )}
+          >
             <AuthenticatedUserContent />
           </React.Suspense>
         ) : (
-          <AuthBtns />
+          <UnauthenticatedUserContent />
         )}
       </Box>
 
+      {/* Header accent colors */}
       <Box
         position="absolute"
         display="flex"
