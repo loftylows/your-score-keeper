@@ -1,25 +1,32 @@
 import theme from "@chakra-ui/theme"
 
 export const brandColors = {
-  50: "#fffddb",
-  100: "#fef1af",
-  200: "#fbe281",
-  300: "#f8d151",
-  400: "#f6bd22",
-  500: "#dd9c09",
-  600: "#ac8503",
-  700: "#7c6700",
-  800: "#4b4300",
-  900: "#1d1800",
+  50: "#fbf4e2",
+  100: "#eadfc5",
+  200: "#d9caa4",
+  300: "#c8b582",
+  400: "#b99f60",
+  500: "#9f8646",
+  600: "#7c6836",
+  700: "#594a25",
+  800: "#362d12",
+  900: "#160f00",
+}
+
+const primaryBtnColors = {
+  50: "#e0f6ff",
+  100: "#b6e0fa",
+  200: "#8bcbf4",
+  300: "#60b6ee",
+  400: "#37a1e7",
+  500: "#2287ce",
+  600: "#1669a1",
+  700: "#0b4b74",
+  800: "#002d48",
+  900: "#00101c",
 }
 
 const fontFamily = "Roboto, sans-serif"
-
-export const custom = {
-  colors: {
-    brand: brandColors,
-  },
-}
 
 const fonts = {
   body: "Roboto, sans-serif",
@@ -39,11 +46,15 @@ const defaultThemeExtension = {
     ...theme.fonts,
     ...fonts,
   },
+  colors: {
+    ...theme.colors,
+    brand: brandColors,
+    primaryBtn: primaryBtnColors,
+  },
   styles: {
     ...theme.styles,
     global: getGlobalStyles,
   },
-  custom: custom,
 }
 
 export default defaultThemeExtension

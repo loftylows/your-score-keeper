@@ -56,7 +56,7 @@ const HeroSection = () => {
         <Box display="flex" justifyContent="center" flexWrap="wrap" marginTop="25px">
           <Link href="/my-leaderboards" passHref>
             <Box as="a" marginX="25px" marginBottom={{ base: "20px", md: "0" }}>
-              <Button colorScheme="blue" size="lg">
+              <Button colorScheme="primaryBtn" size="lg">
                 Create Leaderboard
               </Button>
             </Box>

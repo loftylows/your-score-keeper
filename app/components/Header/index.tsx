@@ -90,7 +90,7 @@ const Header = () => {
       alignItems="center"
       height="64px"
       minHeight="64px"
-      backgroundColor="#B9A061"
+      bgColor="brand.400"
       zIndex={1}
     >
       <Link passHref href="/">
@@ -132,9 +132,14 @@ const Header = () => {
         width={["62px", "92px"]}
         height="100%"
         backgroundColor="#A99156"
+        bgColor="brand.500"
         zIndex={-1}
       >
-        <Box width={["20px", "30px"]} backgroundColor={darken(0.15, "#A99156")} />
+        <Box
+          width={["20px", "30px"]}
+          backgroundColor={darken(0.15, "#A99156")}
+          bgColor="brand.600"
+        />
       </Box>
     </Box>
   )
