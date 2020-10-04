@@ -6,6 +6,7 @@ import NProgress from "nprogress"
 import { ChakraProvider, extendTheme } from "@chakra-ui/core"
 import LoginForm from "app/auth/components/LoginForm"
 import myCustomThemeObj from "app/theme"
+import AuthModalProvider from "app/auth/AuthModalProvider"
 import "nprogress/nprogress.css"
 
 //Binding events.
@@ -31,7 +32,7 @@ export default function App({ Component, pageProps }: AppProps) {
     >
       {
         <ChakraProvider theme={customTheme}>
-          {getLayout(<Component {...pageProps} />)}
+          <AuthModalProvider>{getLayout(<Component {...pageProps} />)}</AuthModalProvider>
         </ChakraProvider>
       }
     </ErrorBoundary>

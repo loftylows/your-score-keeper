@@ -1,22 +1,86 @@
 import * as React from "react"
+import { useSession } from "blitz"
+import { FaUserCircle } from "react-icons/fa"
 import {
   Box,
   ButtonGroup,
   Button,
-  Modal,
-  ModalContent,
-  ModalBody,
-  ModalOverlay,
-  ModalHeader,
-  ModalCloseButton,
-  ModalFooter,
+  Menu,
+  MenuItem,
+  MenuList,
+  MenuButton,
+  MenuGroup,
+  MenuDivider,
+  Spinner,
 } from "@chakra-ui/core"
 import { darken } from "polished"
 import { useCurrentUser } from "app/hooks/useCurrentUser"
+import { authModalContext } from "app/auth/AuthModalProvider"
+import logout from "app/auth/mutations/logout"
+import { capitalize } from "utils/string"
 
 const Header = () => {
-  const currentUser = useCurrentUser()
-  const [modalOpen, setModalOpen] = React.useState(false)
+  const session = useSession()
+  const { openAuthModal } = React.useContext(authModalContext)
+
+  const AuthBtns = () => (
+    <ButtonGroup color="white">
+      <Button colorScheme="blue" size="md" mr={3} onClick={() => openAuthModal({ type: "signup" })}>
+        Sign Up
+      </Button>
+
+      <Button
+        backgroundColor="gray.600"
+        _hover={{ backgroundColor: "gray.700" }}
+        size="md"
+        onClick={() => openAuthModal({ type: "login" })}
+      >
+        Log In
+      </Button>
+    </ButtonGroup>
+  )
+
+  const AuthenticatedUserContent = () => {
+    const currentUser = useCurrentUser()
+
+    return (
+      <Menu>
+        <MenuButton
+          display="flex"
+          fontSize="28px"
+          backgroundColor="rgba(0,0,0,.4)"
+          borderRadius="50%"
+          color="white.300"
+          zIndex={1}
+          padding="0px"
+          height="40px"
+          minHeight="40px"
+          minWidth="40px"
+          width="40px"
+          transition="all 250ms ease-out"
+          _hover={{
+            backgroundColor: "rgba(0,0,0,.6)",
+            color: "white",
+          }}
+          _active={{
+            backgroundColor: "rgba(0,0,0,.6)",
+            color: "white",
+          }}
+        >
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <FaUserCircle color="white" />
+          </Box>
+        </MenuButton>
+
+        <MenuList>
+          <MenuGroup title={currentUser ? capitalize(currentUser.name) : undefined}>
+            <MenuDivider />
+            <MenuItem onClick={async () => logout()}>Log Out</MenuItem>
+          </MenuGroup>
+        </MenuList>
+      </Menu>
+    )
+  }
 
   return (
     <Box
@@ -26,33 +90,26 @@ const Header = () => {
       alignItems="center"
       height="64px"
       minHeight="64px"
-      color="rgba(255, 255, 255, .9)"
       backgroundColor="#B9A061"
       zIndex={1}
     >
-      <Box>Stuff</Box>
+      <Box color="rgba(255, 255, 255, .9)">Stuff</Box>
 
       <Box
         display="flex"
+        flexDirection="column"
         justifyContent="center"
         alignItems="center"
         marginLeft="auto"
         paddingX="30px"
       >
-        <ButtonGroup>
-          <Button colorScheme="blue" size="md" mr={3} onClick={() => setModalOpen(true)}>
-            Sign Up
-          </Button>
-
-          <Button
-            backgroundColor="gray.600"
-            _hover={{ backgroundColor: "gray.700" }}
-            size="md"
-            onClick={() => setModalOpen(true)}
-          >
-            Log In
-          </Button>
-        </ButtonGroup>
+        {session.userId ? (
+          <React.Suspense fallback={() => <Spinner />}>
+            <AuthenticatedUserContent />
+          </React.Suspense>
+        ) : (
+          <AuthBtns />
+        )}
       </Box>
 
       <Box
@@ -67,27 +124,6 @@ const Header = () => {
       >
         <Box width={["20px", "30px"]} backgroundColor={darken(0.15, "#A99156")} />
       </Box>
-
-      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
-        <ModalOverlay>
-          <ModalContent>
-            <ModalHeader>Modal Title</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repudiandae itaque quod iure
-              sed dolorum voluptas laborum esse. Repudiandae, in quam totam architecto omnis iusto
-              odio optio sequi obcaecati molestias dolorem.
-            </ModalBody>
-
-            <ModalFooter>
-              <Button colorScheme="blue" mr={3} onClick={() => setModalOpen(false)}>
-                Close
-              </Button>
-              <Button variant="ghost">Secondary Action</Button>
-            </ModalFooter>
-          </ModalContent>
-        </ModalOverlay>
-      </Modal>
     </Box>
   )
 }

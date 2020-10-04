@@ -15,6 +15,6 @@ export type SignupInputType = z.infer<typeof SignupInput>
 
 export const LoginInput = z.object({
   email: z.string().email(),
-  password: z.string(),
+  password: z.string().nonempty("Password Required"),
 })
 export type LoginInputType = z.infer<typeof LoginInput>
