@@ -93,7 +93,10 @@ class AuthProvider extends React.Component<any, IState> {
                 {!isOpen ? null : authModalType === "login" ? (
                   <LoginForm onSuccess={this.closeAuthModal} onFormFinished={this.closeAuthModal} />
                 ) : (
-                  <SignupForm />
+                  <SignupForm
+                    onSuccess={this.closeAuthModal}
+                    onFormFinished={this.closeAuthModal}
+                  />
                 )}
               </ModalBody>
             </ModalContent>
