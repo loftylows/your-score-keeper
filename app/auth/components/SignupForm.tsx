@@ -18,8 +18,8 @@ import {
 import { EmailIcon, LockIcon, UnlockIcon } from "@chakra-ui/icons"
 import { Form as FinalForm, Field } from "react-final-form"
 import { FORM_ERROR } from "final-form"
-import signup from "app/auth/mutations/signup"
 import { SignupInputType, SignupInput } from "app/auth/validations"
+import { signupWithEmailAndPassword } from "../signup"
 
 type SignupFormProps = {
   onSuccess?: () => void
@@ -45,12 +45,13 @@ export const SignupForm = (props: SignupFormProps) => {
       onSubmit={async (values) => {
         props.onSubmitStart && props.onSubmitStart()
         try {
-          await signup({
+          await signupWithEmailAndPassword({
             name: values.name,
             email: values.email,
             password: values.password,
             passwordConfirmation: values.passwordConfirmation,
           })
+
           props.onSuccess && props.onSuccess()
         } catch (error) {
           if (error.code === "P2002" && error.meta?.target?.includes("email")) {

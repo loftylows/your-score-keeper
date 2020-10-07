@@ -16,8 +16,9 @@ import {
 import { darken } from "polished"
 import { useCurrentUser } from "app/hooks/useCurrentUser"
 import { authModalContext } from "app/auth/AuthModalProvider"
-import logout from "app/auth/mutations/logout"
+import logout from "app/auth/logout"
 import { capitalize } from "utils/string"
+import { fireLogoutEvent } from "app/browserEvents"
 
 const Header = () => {
   const session = useSession()
@@ -75,7 +76,14 @@ const Header = () => {
         <MenuList>
           <MenuGroup title={currentUser ? capitalize(currentUser.name) : undefined}>
             <MenuDivider />
-            <MenuItem onClick={async () => logout()}>Log Out</MenuItem>
+            <MenuItem
+              onClick={async () => {
+                await logout()
+                fireLogoutEvent()
+              }}
+            >
+              Log Out
+            </MenuItem>
           </MenuGroup>
         </MenuList>
       </Menu>

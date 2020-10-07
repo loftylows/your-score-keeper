@@ -16,8 +16,8 @@ import {
 import { EmailIcon, LockIcon, UnlockIcon } from "@chakra-ui/icons"
 import { Form as FinalForm, Field } from "react-final-form"
 import { FORM_ERROR } from "final-form"
-import login from "app/auth/mutations/login"
 import { LoginInputType, LoginInput } from "app/auth/validations"
+import { loginWithEmailAndPassword } from "../login"
 
 type LoginFormProps = {
   onSuccess?: () => void
@@ -43,7 +43,7 @@ export const LoginForm = (props: LoginFormProps) => {
       onSubmit={async (values) => {
         props.onSubmitStart && props.onSubmitStart()
         try {
-          await login({ email: values.email, password: values.password })
+          await loginWithEmailAndPassword({ email: values.email, password: values.password })
           props.onSuccess && props.onSuccess()
         } catch (error) {
           if (error.name === "AuthenticationError") {
