@@ -1,5 +1,5 @@
 import * as React from "react"
-import { UUID } from "common-types"
+import { Maybe, UUID } from "common-types"
 import { v4 as uuid } from "uuid"
 import {
   InMemoryLeaderboard,
@@ -12,6 +12,9 @@ import {
   InMemoryDeletePlayer,
   FlushInMemoryLeaderboards,
 } from "./types"
+import { LOGIN_COMPLETED_EVENT_NAME, SIGNUP_COMPLETED_EVENT_NAME } from "app/browserEvents"
+import { dbCacheLeaderboardsContext } from "../DbCacheLeaderboardsProvider"
+import { SaveLeaderboardsFromMemoryToDb } from "../DbCacheLeaderboardsProvider/types"
 
 interface IState {
   leaderboards: InMemoryLeaderboard[]
@@ -37,7 +40,10 @@ const inMemoryLeaderboardsContext = React.createContext<IState>({
   flushInMemoryLeaderboards: () => {},
 })
 
-interface IProps {}
+interface IProps {
+  saveLeaderboardsFromMemoryToDb: SaveLeaderboardsFromMemoryToDb
+  children: React.ReactChild
+}
 class InMemoryLeaderboardsProvider extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props)
@@ -63,6 +69,14 @@ class InMemoryLeaderboardsProvider extends React.Component<IProps, IState> {
         return confirmText
       }
     })
+
+    window.addEventListener(LOGIN_COMPLETED_EVENT_NAME, this.onAuthCompleted)
+    window.addEventListener(SIGNUP_COMPLETED_EVENT_NAME, this.onAuthCompleted)
+  }
+
+  componentWillUnmount = () => {
+    window.removeEventListener(LOGIN_COMPLETED_EVENT_NAME, this.onAuthCompleted)
+    window.removeEventListener(SIGNUP_COMPLETED_EVENT_NAME, this.onAuthCompleted)
   }
 
   public inMemoryCreateLeaderboard: InMemoryCreateLeaderboard = (leaderboardInput) => {
@@ -126,6 +140,15 @@ class InMemoryLeaderboardsProvider extends React.Component<IProps, IState> {
     })
   }
 
+  public onAuthCompleted = async (e: Event) => {
+    const { saveLeaderboardsFromMemoryToDb } = this.props
+    const { leaderboards } = this.state
+    const userId: Maybe<UUID> = (e as CustomEvent).detail?.userId
+    if (!userId || !leaderboards.length) return
+    await saveLeaderboardsFromMemoryToDb(userId, leaderboards)
+    this.flushInMemoryLeaderboards()
+  }
+
   render() {
     return (
       <inMemoryLeaderboardsContext.Provider value={this.state}>
@@ -135,5 +158,15 @@ class InMemoryLeaderboardsProvider extends React.Component<IProps, IState> {
   }
 }
 
+const Provider = ({ children }: { children: React.ReactChild }) => (
+  <dbCacheLeaderboardsContext.Consumer>
+    {({ saveLeaderboardsFromMemoryToDb }) => (
+      <InMemoryLeaderboardsProvider saveLeaderboardsFromMemoryToDb={saveLeaderboardsFromMemoryToDb}>
+        {children}
+      </InMemoryLeaderboardsProvider>
+    )}
+  </dbCacheLeaderboardsContext.Consumer>
+)
+
 export { inMemoryLeaderboardsContext }
-export default InMemoryLeaderboardsProvider
+export default Provider

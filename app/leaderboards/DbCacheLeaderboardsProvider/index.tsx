@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Maybe, UUID } from "common-types"
+import { Maybe, ThenArgRecursive, UUID } from "common-types"
 import {
   DbCacheCreateLeaderboard,
   DbCacheEditLeaderboard,
@@ -10,6 +10,7 @@ import {
   FlushDbCacheLeaderboards,
   LoadDbCacheLeaderboards,
   SetDbCacheLeaderboards,
+  SaveLeaderboardsFromMemoryToDb,
 } from "./types"
 import { Leaderboard, Player } from "@prisma/client"
 import createLeaderboard from "../mutations/createLeaderboard"
@@ -18,6 +19,11 @@ import updateLeaderboard from "../mutations/updateLeaderboard"
 import deleteLeaderboard from "../mutations/deleteLeaderboard"
 import createPlayer from "app/players/mutations/createPlayer"
 import updatePlayer from "app/players/mutations/updatePlayer"
+import {
+  LOGIN_COMPLETED_EVENT_NAME,
+  LOGOUT_EVENT_NAME,
+  SIGNUP_COMPLETED_EVENT_NAME,
+} from "app/browserEvents"
 
 interface IState {
   leaderboards: Leaderboard[]
@@ -32,6 +38,8 @@ interface IState {
   dbCacheDeletePlayer: DbCacheDeletePlayer
   flushDbCacheLeaderboards: FlushDbCacheLeaderboards
   loadDbCacheLeaderboards: LoadDbCacheLeaderboards
+  setDbCacheLeaderboards: SetDbCacheLeaderboards
+  saveLeaderboardsFromMemoryToDb: SaveLeaderboardsFromMemoryToDb
 }
 
 const dbCacheLeaderboardsContext = React.createContext<IState>({
@@ -47,12 +55,11 @@ const dbCacheLeaderboardsContext = React.createContext<IState>({
   dbCacheDeletePlayer: async () => {},
   flushDbCacheLeaderboards: () => {},
   loadDbCacheLeaderboards: async () => {},
+  setDbCacheLeaderboards: () => {},
+  saveLeaderboardsFromMemoryToDb: async () => {},
 })
 
-interface IProps {
-  userId: Maybe<UUID>
-  sessionIsLoading: boolean
-}
+interface IProps {}
 class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props)
@@ -60,7 +67,7 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
       leaderboards: [],
       players: [],
       isLoadingData: false,
-      userId: this.props.userId,
+      userId: null,
       dbCacheCreateLeaderboard: this.dbCacheCreateLeaderboard,
       dbCacheEditLeaderboard: this.dbCacheEditLeaderboard,
       dbCacheDeleteLeaderboard: this.dbCacheDeleteLeaderboard,
@@ -69,6 +76,8 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
       dbCacheDeletePlayer: this.dbCacheDeletePlayer,
       flushDbCacheLeaderboards: this.flushDbCacheLeaderboards,
       loadDbCacheLeaderboards: this.loadDbCacheLeaderboards,
+      setDbCacheLeaderboards: this.setDbCacheLeaderboards,
+      saveLeaderboardsFromMemoryToDb: this.saveLeaderboardsFromMemoryToDb,
     }
   }
 
@@ -81,6 +90,16 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
         return confirmText
       }
     })
+
+    window.addEventListener(LOGIN_COMPLETED_EVENT_NAME, this.onAuthCompleted)
+    window.addEventListener(SIGNUP_COMPLETED_EVENT_NAME, this.onAuthCompleted)
+    window.addEventListener(LOGOUT_EVENT_NAME, this.onLogout)
+  }
+
+  componentWillUnmount = () => {
+    window.removeEventListener(LOGIN_COMPLETED_EVENT_NAME, this.onAuthCompleted)
+    window.removeEventListener(SIGNUP_COMPLETED_EVENT_NAME, this.onAuthCompleted)
+    window.removeEventListener(LOGOUT_EVENT_NAME, this.onLogout)
   }
 
   public dbCacheCreateLeaderboard: DbCacheCreateLeaderboard = async (input) => {
@@ -202,18 +221,65 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
   }
 
   public loadDbCacheLeaderboards: LoadDbCacheLeaderboards = async (userId: UUID) => {
-    this.setState({ userId })
+    this.setState({ userId, isLoadingData: true })
 
-    const { leaderboards } = await getLeaderboards({ where: { ownerId: userId } })
-    this.setState({
-      leaderboards: leaderboards,
-    })
+    try {
+      const { leaderboards } = await getLeaderboards({ where: { ownerId: userId } })
+      this.setState({
+        leaderboards: leaderboards,
+        isLoadingData: false,
+      })
+    } catch (e) {
+      // TODO: Notify user of error
+      this.setState({
+        isLoadingData: false,
+      })
+
+      throw e
+    }
   }
 
   public setDbCacheLeaderboards: SetDbCacheLeaderboards = (userId, leaderboards) => {
     this.setState({
       leaderboards: leaderboards,
       userId,
+    })
+  }
+
+  public onAuthCompleted = (e: Event) => {
+    const userId: Maybe<UUID> = (e as CustomEvent).detail?.userId
+    if (!userId) return
+    this.loadDbCacheLeaderboards(userId)
+  }
+  public onLogout = () => {
+    this.setState({
+      leaderboards: [],
+      userId: null,
+    })
+  }
+
+  public saveLeaderboardsFromMemoryToDb: SaveLeaderboardsFromMemoryToDb = async (
+    userId,
+    leaderboards
+  ) => {
+    const promises = leaderboards.map(async (leaderboard) =>
+      createLeaderboard({
+        data: { ...leaderboard, id: undefined, owner: { connect: { id: userId } } },
+        ownerId: userId,
+      })
+    )
+    const res = await Promise.allSettled(promises)
+    const newLeaderboards = res
+      .filter((item) => item.status === "fulfilled")
+      .map(
+        (item) =>
+          (item as PromiseFulfilledResult<ThenArgRecursive<ReturnType<typeof createLeaderboard>>>)
+            .value
+      )
+
+    this.setState({
+      leaderboards: [...this.state.leaderboards, ...newLeaderboards],
+      userId: userId,
     })
   }
 
