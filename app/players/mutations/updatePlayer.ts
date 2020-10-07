@@ -4,7 +4,7 @@ import db, { PlayerUpdateArgs } from "db"
 type UpdatePlayerInput = {
   where: PlayerUpdateArgs["where"]
   data: Omit<PlayerUpdateArgs["data"], "leaderboard">
-  leaderboardId: number
+  leaderboardId: string
 }
 
 export default async function updatePlayer(
