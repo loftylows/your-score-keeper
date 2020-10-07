@@ -25,9 +25,10 @@ const Layout = ({ children, title }: IProps) => {
   return (
     <Box display="flex" flexDirection="column">
       <Head>
-        <title>{title || "yourscorekeeper.com"}</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title key="title">{title || "yourscorekeeper.com"}</title>
+        <link key="favicon" rel="icon" href="/favicon.ico" />
         <link
+          key="google-fonts-roboto"
           href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap"
           rel="stylesheet"
         />

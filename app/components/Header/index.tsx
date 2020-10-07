@@ -110,11 +110,11 @@ const Header = () => {
       >
         {session.userId ? (
           <React.Suspense
-            fallback={() => (
+            fallback={
               <Box display="flex" justifyContent="center" alignItems="center">
                 <Spinner />
               </Box>
-            )}
+            }
           >
             <AuthenticatedUserContent />
           </React.Suspense>
