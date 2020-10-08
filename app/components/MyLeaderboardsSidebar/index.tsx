@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Box, Button, ButtonGroup, IconButton, Text } from "@chakra-ui/core"
-import { EditIcon } from "@chakra-ui/icons"
+import { EditIcon, HamburgerIcon } from "@chakra-ui/icons"
 import { inMemoryLeaderboardsContext } from "app/leaderboards/InMemoryLeaderboardsProvider"
 import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboardsProvider"
 import { uiContext } from "app/leaderboards/UiProvider"
@@ -16,6 +16,7 @@ const MyLeaderboardsSidebar = () => {
   } = React.useContext(uiContext)
   return (
     <Box
+      position="relative"
       display="flex"
       flexDirection="column"
       height="calc(100vh - 64px)"
@@ -37,18 +38,29 @@ const MyLeaderboardsSidebar = () => {
               display="flex"
               justifyContent="flex-start"
               alignItems="center"
+              _focus={{
+                outline: "none",
+              }}
               onClick={() => setCurrentlySelectedLeaderboardId(leaderboard.id)}
             >
-              <Text isTruncated>{leaderboard.title}</Text>
+              <HamburgerIcon marginRight="5px" />
+              <Text title={leaderboard.title} isTruncated>
+                {leaderboard.title}
+              </Text>
             </Button>
             <IconButton
               onClick={() => openEditLeaderboardDialog(leaderboard.id)}
               icon={<EditIcon />}
+              title="Edit leaderboard"
               aria-label="Edit leaderboard"
+              _focus={{
+                outline: "none",
+              }}
             />
           </ButtonGroup>
         )
       })}
+
       <Button
         marginTop="auto"
         width="100%"
@@ -58,6 +70,10 @@ const MyLeaderboardsSidebar = () => {
         border="none"
         borderRadius="0"
         boxShadow="lg"
+        position="absolute"
+        bottom="0"
+        zIndex="1"
+        borderTop="1px solid rgba(0,0,0,.03)"
         onClick={openCreateLeaderboardDialog}
       >
         Add Leaderboard
