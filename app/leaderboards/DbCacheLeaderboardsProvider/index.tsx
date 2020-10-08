@@ -182,7 +182,7 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
     const { players, userId } = this.state
     if (!userId) return
 
-    const oldPlayersState = { ...players }
+    const oldPlayersState = [...players]
 
     try {
       this.setState({

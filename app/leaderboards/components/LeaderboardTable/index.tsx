@@ -18,12 +18,19 @@ const LeaderboardTable = ({ players }: IProps) => {
   const rankedPlayers = players
     .sort((p) => p.score - p.score)
     .map((p, i) => {
-      const icon = <Icon as={FaEllipsisV} onClick={() => openEditPlayerDialog(p.id)} />
+      const icon = <Icon as={FaEllipsisV} />
       return {
         rank: i + 1,
         name: p.name,
         score: p.score,
-        extra: <IconButton variant="ghost" aria-label="More options" icon={icon} />,
+        extra: (
+          <IconButton
+            variant="ghost"
+            aria-label="More options"
+            icon={icon}
+            onClick={() => openEditPlayerDialog(p.id)}
+          />
+        ),
       }
     })
   const memoizedRankedPlayers = React.useMemo(() => rankedPlayers, [players])
