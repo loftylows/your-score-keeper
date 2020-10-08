@@ -16,7 +16,7 @@ interface IProps {
 const LeaderboardTable = ({ players }: IProps) => {
   const { openEditPlayerDialog } = React.useContext(uiContext)
   const rankedPlayers = players
-    .sort((p) => p.score - p.score)
+    .sort((a, b) => a.score - b.score)
     .map((p, i) => {
       const icon = <Icon as={FaEllipsisV} />
       return {
@@ -115,11 +115,19 @@ const LeaderboardTable = ({ players }: IProps) => {
           {rows.map((row, i) => {
             prepareRow(row)
             return (
-              <tr {...row.getRowProps()}>
+              <Box
+                as="tr"
+                {...row.getRowProps()}
+                backgroundColor={(i + 1) % 2 === 0 ? "gray.50" : "transparent"}
+              >
                 {row.cells.map((cell) => {
-                  return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                  return (
+                    <Box as="td" {...cell.getCellProps()} paddingX="10px">
+                      {cell.render("Cell")}
+                    </Box>
+                  )
                 })}
-              </tr>
+              </Box>
             )
           })}
         </tbody>

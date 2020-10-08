@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Box, VStack } from "@chakra-ui/core"
+import { Box, VStack, Heading } from "@chakra-ui/core"
 import useCurrentlySelectedLeaderboard from "app/leaderboards/hooks/useCurrentlySelectedLeaderboard"
 import CreatePlayerForm from "../forms/CreatePlayerForm"
 import useCurrentlySelectedLeaderboardPlayers from "app/leaderboards/hooks/useCurrentPlayers"
@@ -21,6 +21,7 @@ const LeaderboardsSpace = () => {
       height="calc(100vh - 64px)"
       overflow="scroll"
     >
+      <Heading marginBottom="10px">{leaderboard.title}</Heading>
       <CreatePlayerForm leaderboardId={leaderboard.id} />
 
       <VStack spacing={4}>

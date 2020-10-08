@@ -40,8 +40,60 @@ const getGlobalStyles = (_) => ({
   },
 })
 
+const size = {
+  lg: {
+    fontSize: "lg",
+    pl: 4,
+    pr: 4,
+    h: 12,
+    borderRadius: "8px",
+  },
+
+  md: {
+    fontSize: "md",
+    pl: 4,
+    pr: 4,
+    h: 10,
+    borderRadius: "8px",
+  },
+
+  sm: {
+    fontSize: "sm",
+    pl: 3,
+    pr: 3,
+    h: 8,
+    borderRadius: "8px",
+  },
+}
+
+const sizes = {
+  lg: {
+    field: size.lg,
+    addon: size.lg,
+  },
+  md: {
+    field: size.md,
+    addon: size.md,
+  },
+  sm: {
+    field: size.sm,
+    addon: size.sm,
+  },
+}
+
 const defaultThemeExtension = {
   ...theme,
+  components: {
+    ...theme.components,
+    Input: {
+      sizes,
+    },
+    Button: {
+      baseStyle: {
+        borderRadius: "8px",
+      },
+    },
+  },
   fonts: {
     ...theme.fonts,
     ...fonts,

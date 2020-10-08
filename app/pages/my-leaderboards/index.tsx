@@ -3,12 +3,7 @@ import { BlitzPage, ssrQuery, GetServerSideProps } from "blitz"
 import { getSessionContext } from "@blitzjs/server"
 import Layout from "app/layouts/MyLeaderboardsSpace"
 import { Leaderboard, Player } from "@prisma/client"
-import DbCacheLeaderboardsProvider, {
-  dbCacheLeaderboardsContext,
-} from "app/leaderboards/DbCacheLeaderboardsProvider"
-import { inMemoryLeaderboardsContext } from "app/leaderboards/InMemoryLeaderboardsProvider"
-import { InMemoryLeaderboard } from "app/leaderboards/InMemoryLeaderboardsProvider/types"
-import { uiContext } from "app/leaderboards/UiProvider"
+import DbCacheLeaderboardsProvider from "app/leaderboards/DbCacheLeaderboardsProvider"
 import { Maybe, UUID } from "common-types"
 import getLeaderboards from "app/leaderboards/queries/getLeaderboards"
 import getPlayers from "app/players/queries/getPlayers"

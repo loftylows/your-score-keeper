@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Input, Select } from "@chakra-ui/core"
+import { Input, Select, Box } from "@chakra-ui/core"
 import { useAsyncDebounce } from "react-table"
 
 export const GlobalFilter = ({ preGlobalFilteredRows, globalFilter, setGlobalFilter }) => {
@@ -13,6 +13,8 @@ export const GlobalFilter = ({ preGlobalFilteredRows, globalFilter, setGlobalFil
     <span>
       Search:{" "}
       <Input
+        size="sm"
+        variant="filled"
         value={value || ""}
         onChange={(e) => {
           setValue(e.target.value)
@@ -34,6 +36,8 @@ export const DefaultColumnFilter = ({ column: { filterValue, preFilteredRows, se
 
   return (
     <Input
+      size="sm"
+      variant="filled"
       value={filterValue || ""}
       onChange={(e) => {
         setFilter(e.target.value || undefined) // Set undefined to remove the filter entirely
@@ -88,26 +92,26 @@ export const NumberRangeColumnFilter = ({
   }, [id, preFilteredRows])
 
   return (
-    <div
-      style={{
-        display: "flex",
-      }}
-    >
+    <Box display="flex">
       <Input
+        size="sm"
         value={filterValue[0] || ""}
         type="number"
+        variant="filled"
         onChange={(e) => {
           const val = e.target.value
           setFilter((old = []) => [val ? parseInt(val, 10) : undefined, old[1]])
         }}
         placeholder={`Min (${min})`}
         width="90px"
-        marginRight="0.5rem"
+        marginRight="10px"
       />
-      to
+      <Box marginRight="10px">-</Box>
       <Input
+        size="sm"
         value={filterValue[1] || ""}
         type="number"
+        variant="filled"
         onChange={(e) => {
           const val = e.target.value
           setFilter((old = []) => [old[0], val ? parseInt(val, 10) : undefined])
@@ -116,6 +120,6 @@ export const NumberRangeColumnFilter = ({
         width="90px"
         marginRight="0.5rem"
       />
-    </div>
+    </Box>
   )
 }
