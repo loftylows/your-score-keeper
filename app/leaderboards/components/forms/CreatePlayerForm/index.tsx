@@ -1,5 +1,13 @@
 import * as React from "react"
-import { HStack, FormControl, Input, InputGroup, InputLeftElement, Button } from "@chakra-ui/core"
+import {
+  HStack,
+  FormControl,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Button,
+  Box,
+} from "@chakra-ui/core"
 import { InfoIcon } from "@chakra-ui/icons"
 import { Form as FinalForm, Field } from "react-final-form"
 import { FORM_ERROR } from "final-form"
@@ -23,7 +31,7 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
 
   return (
     <FinalForm<CreatePlayerInputType>
-      initialValues={{ name: "" }}
+      initialValues={{ name: "", score: "0" }}
       validate={(values) => {
         try {
           CreatePlayerInput.parse(values)
@@ -37,13 +45,13 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
           if (userId) {
             dbCacheCreatePlayer(leaderboardId, {
               name: values.name,
-              score: values.score,
+              score: Number(values.score),
               leaderboard: { connect: { id: leaderboardId } },
             })
           } else {
             inMemoryCreatePlayer(leaderboardId, {
               name: values.name,
-              score: values.score,
+              score: Number(values.score),
               leaderboardId,
             })
           }
@@ -58,7 +66,7 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
       }}
     >
       {(props) => (
-        <form onSubmit={props.handleSubmit}>
+        <Box as="form" onSubmit={props.handleSubmit} marginBottom="30px">
           <HStack spacing={4} width="100%">
             <Field name="name">
               {(props) => (
@@ -73,6 +81,7 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
                       errorBorderColor="crimson"
                       type="text"
                       placeholder="Name..."
+                      isInvalid={props.meta.touched && props.meta.invalid}
                     />
                   </InputGroup>
                 </FormControl>
@@ -92,6 +101,7 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
                       errorBorderColor="crimson"
                       type="number"
                       placeholder="Score..."
+                      isInvalid={props.meta.invalid}
                     />
                   </InputGroup>
                 </FormControl>
@@ -99,6 +109,8 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
             </Field>
 
             <Button
+              size="lg"
+              variant="outline"
               colorScheme="blue"
               isLoading={props.submitting}
               disabled={props.submitting || !props.values.name || !props.values.score}
@@ -110,7 +122,7 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
               Add Player
             </Button>
           </HStack>
-        </form>
+        </Box>
       )}
     </FinalForm>
   )

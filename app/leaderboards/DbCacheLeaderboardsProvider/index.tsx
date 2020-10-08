@@ -162,7 +162,7 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
     const { players, userId } = this.state
     if (!userId) return
 
-    const oldPlayersState = { ...players }
+    const oldPlayersState = [...players]
 
     try {
       const player = await createPlayer({ data: input, leaderboardId })
@@ -171,6 +171,7 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
       })
     } catch (e) {
       // TODO: Notify user of error
+      console.log(e)
       this.setState({
         players: oldPlayersState,
       })

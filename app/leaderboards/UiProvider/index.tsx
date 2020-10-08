@@ -23,6 +23,7 @@ import {
 } from "./types"
 import CreateLeaderboardForm from "../components/forms/CreateLeaderboardForm"
 import EditLeaderboardForm from "../components/forms/EditLeaderboardForm"
+import EditPlayerForm from "../components/forms/EditPlayerForm"
 
 interface IProps {
   children: React.ReactChild
@@ -140,6 +141,23 @@ class DialogsProvider extends React.Component<IProps, IState> {
                   <EditLeaderboardForm
                     onFormFinished={state.closeEditLeaderboardDialog}
                     onSuccess={state.closeEditLeaderboardDialog}
+                  />
+                )}
+              </ModalBody>
+            </ModalContent>
+          </ModalOverlay>
+        </Modal>
+
+        <Modal isOpen={!!state.editPlayerDialogIsOpenWithId} onClose={state.closeEditPlayerDialog}>
+          <ModalOverlay>
+            <ModalContent>
+              <ModalHeader>Edit Player</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                {state.editPlayerDialogIsOpenWithId && (
+                  <EditPlayerForm
+                    onFormFinished={state.closeEditPlayerDialog}
+                    onSuccess={state.closeEditPlayerDialog}
                   />
                 )}
               </ModalBody>
