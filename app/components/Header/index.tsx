@@ -79,7 +79,6 @@ const Header = () => {
             <MenuItem
               onClick={async () => {
                 await logout()
-                fireLogoutEvent()
               }}
             >
               Log Out
@@ -99,6 +98,7 @@ const Header = () => {
       height="64px"
       minHeight="64px"
       bgColor="brand.400"
+      boxShadow="sm"
       zIndex={1}
     >
       <Link passHref href="/">

@@ -2,16 +2,10 @@ import * as React from "react"
 import { BlitzPage, GetServerSideProps, PromiseReturnType, ssrQuery } from "blitz"
 import Layout from "app/layouts/MyLeaderboardsSpace"
 import getLeaderboards from "app/leaderboards/queries/getLeaderboards"
-import { Maybe, ThenArgRecursive, UUID } from "common-types"
+import { Maybe, UUID } from "common-types"
 import { getSessionContext } from "@blitzjs/server"
-import { Leaderboard, User } from "@prisma/client"
-import getCurrentUser from "app/users/queries/getCurrentUser"
+import { Leaderboard } from "@prisma/client"
 import { Box, Heading } from "@chakra-ui/core"
-import {
-  LOGIN_COMPLETED_EVENT_NAME,
-  LOGOUT_EVENT_NAME,
-  SIGNUP_COMPLETED_EVENT_NAME,
-} from "app/browserEvents"
 import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboardsProvider"
 import { inMemoryLeaderboardsContext } from "app/leaderboards/InMemoryLeaderboardsProvider"
 import { InMemoryLeaderboard } from "app/leaderboards/InMemoryLeaderboardsProvider/types"
@@ -22,16 +16,16 @@ type IPageProps = {
 }
 
 export const getServerSideProps: GetServerSideProps<IPageProps> = async ({ req, res }) => {
-  const user = (await getCurrentUser()) as Maybe<User>
   const session = await getSessionContext(req, res)
-  console.log("User ID:", session.userId)
+  const { userId } = session
+
   let leaderboards: Maybe<PromiseReturnType<typeof getLeaderboards>> = null
-  if (user) {
-    leaderboards = await ssrQuery(getLeaderboards, { where: { ownerId: user.id } }, { req, res })
+  if (userId) {
+    leaderboards = await ssrQuery(getLeaderboards, { where: { ownerId: userId } }, { req, res })
   }
 
   return {
-    props: { initialLeaderboardsFromServer: leaderboards, userId: "" },
+    props: { initialLeaderboardsFromServer: leaderboards, userId: userId || null },
   }
 }
 
@@ -41,14 +35,10 @@ const MyLeaderboardsHome: BlitzPage<IPageProps> = ({ userId, initialLeaderboards
   )
   const { leaderboards: inMemoryLeaderboards } = React.useContext(inMemoryLeaderboardsContext)
   React.useEffect(() => {
-    if (
-      userId &&
-      initialLeaderboardsFromServer &&
-      initialLeaderboardsFromServer.leaderboards.length
-    ) {
-      setDbCacheLeaderboards(userId, initialLeaderboardsFromServer.leaderboards)
+    if (userId) {
+      setDbCacheLeaderboards(userId, initialLeaderboardsFromServer?.leaderboards || [])
     }
-  }, [userId])
+  }, [userId, setDbCacheLeaderboards, initialLeaderboardsFromServer?.leaderboards])
 
   const leaderboards: Leaderboard[] | InMemoryLeaderboard[] = userId
     ? dbLeaderboards

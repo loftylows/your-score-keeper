@@ -63,6 +63,7 @@ class InMemoryLeaderboardsProvider extends React.Component<IProps, IState> {
   componentDidMount = () => {
     window.addEventListener("beforeunload", (e) => {
       if (this.state.leaderboards.length > 0) {
+        console.log("wjhwjevwubik")
         const confirmText =
           "You are about to leave without saving your leaderboards. Please log in to to keep your leaderboards."
         e.returnValue = confirmText

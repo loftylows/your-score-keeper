@@ -50,6 +50,7 @@ const defaultThemeExtension = {
     ...theme.colors,
     brand: brandColors,
     primaryBtn: primaryBtnColors,
+    sidebar: "rgba(226,232,240,1)",
   },
   styles: {
     ...theme.styles,

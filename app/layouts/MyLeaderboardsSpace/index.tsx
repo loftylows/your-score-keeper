@@ -4,6 +4,7 @@ import { Box } from "@chakra-ui/core"
 // import AuthModal, {AuthModalType} from "@shared/components/AuthModal";
 // import { logIn, signUp } from "@auth";
 import Header from "app/components/Header"
+import MyLeaderboardsSidebar from "app/components/MyLeaderboardsSidebar"
 // import { firebaseAuthContext } from "../../../providers/Auth";
 // import { appContext } from "../../../providers/App";
 
@@ -24,8 +25,10 @@ const MyLeaderboardsSpaceLayout = ({ children, title }: IProps) => {
         />
       </Head>
       <Header />
-
-      {children}
+      <Box display="flex">
+        <MyLeaderboardsSidebar />
+        {children}
+      </Box>
     </Box>
   )
 }

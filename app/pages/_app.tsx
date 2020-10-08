@@ -9,6 +9,7 @@ import myCustomThemeObj from "app/theme"
 import AuthModalProvider from "app/auth/AuthModalProvider"
 import DbCacheLeaderboardsProvider from "app/leaderboards/DbCacheLeaderboardsProvider"
 import InMemoryLeaderboardsProvider from "../leaderboards/InMemoryLeaderboardsProvider"
+import LeaderboardsDialogProvider from "../leaderboards/DialogsProvider"
 import "nprogress/nprogress.css"
 
 //Binding events.
@@ -37,7 +38,9 @@ export default function App({ Component, pageProps }: AppProps) {
           <AuthModalProvider>
             <DbCacheLeaderboardsProvider>
               <InMemoryLeaderboardsProvider>
-                {getLayout(<Component {...pageProps} />)}
+                <LeaderboardsDialogProvider>
+                  {getLayout(<Component {...pageProps} />)}
+                </LeaderboardsDialogProvider>
               </InMemoryLeaderboardsProvider>
             </DbCacheLeaderboardsProvider>
           </AuthModalProvider>

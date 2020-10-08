@@ -82,15 +82,6 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
   }
 
   componentDidMount = () => {
-    window.addEventListener("beforeunload", (e) => {
-      if (this.state.leaderboards.length > 0) {
-        const confirmText =
-          "You are about to leave without saving your leaderboards. Please log in to to keep your leaderboards."
-        e.returnValue = confirmText
-        return confirmText
-      }
-    })
-
     window.addEventListener(LOGIN_COMPLETED_EVENT_NAME, this.onAuthCompleted)
     window.addEventListener(SIGNUP_COMPLETED_EVENT_NAME, this.onAuthCompleted)
     window.addEventListener(LOGOUT_EVENT_NAME, this.onLogout)
@@ -105,11 +96,6 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
   public dbCacheCreateLeaderboard: DbCacheCreateLeaderboard = async (input) => {
     const { userId } = this.state
     if (!userId) return
-
-    const leaderboard = await createLeaderboard({ data: input, ownerId: userId })
-    this.setState({
-      leaderboards: [...this.state.leaderboards, leaderboard],
-    })
 
     try {
       const leaderboard = await createLeaderboard({ data: input, ownerId: userId })
@@ -252,6 +238,7 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
     this.loadDbCacheLeaderboards(userId)
   }
   public onLogout = () => {
+    console.log("on logout just ran from this func")
     this.setState({
       leaderboards: [],
       userId: null,

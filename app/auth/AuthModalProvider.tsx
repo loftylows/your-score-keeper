@@ -1,14 +1,12 @@
 import * as React from "react"
 import { Maybe } from "common-types"
 import {
-  Button,
   Modal,
   ModalContent,
   ModalBody,
   ModalOverlay,
   ModalHeader,
   ModalCloseButton,
-  ModalFooter,
 } from "@chakra-ui/core"
 import LoginForm from "./components/LoginForm"
 import SignupForm from "./components/SignupForm"
