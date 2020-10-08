@@ -37,17 +37,29 @@ const LeaderboardTable = ({ players }: IProps) => {
   const columns = React.useMemo(
     () => [
       {
-        Header: "Rank",
+        Header: (
+          <Box display="flex" justifyContent="flex-start" paddingX="10px" marginBottom="3px">
+            Rank
+          </Box>
+        ),
         accessor: "rank", // accessor is the "key" in the data
         Filter: NumberRangeColumnFilter,
         filter: "between",
       },
       {
-        Header: "Name",
+        Header: (
+          <Box display="flex" justifyContent="flex-start" paddingX="10px" marginBottom="3px">
+            Name
+          </Box>
+        ),
         accessor: "name",
       },
       {
-        Header: "Score",
+        Header: (
+          <Box display="flex" justifyContent="flex-start" paddingX="10px" marginBottom="3px">
+            Score
+          </Box>
+        ),
         accessor: "score",
         Filter: NumberRangeColumnFilter,
         filter: "between",

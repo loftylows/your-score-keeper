@@ -38,6 +38,8 @@ export const DefaultColumnFilter = ({ column: { filterValue, preFilteredRows, se
     <Input
       size="sm"
       variant="filled"
+      width="calc(100% - 10px)"
+      marginLeft="10px"
       value={filterValue || ""}
       onChange={(e) => {
         setFilter(e.target.value || undefined) // Set undefined to remove the filter entirely
@@ -98,6 +100,7 @@ export const NumberRangeColumnFilter = ({
         value={filterValue[0] || ""}
         type="number"
         variant="filled"
+        marginLeft="10px"
         onChange={(e) => {
           const val = e.target.value
           setFilter((old = []) => [val ? parseInt(val, 10) : undefined, old[1]])
