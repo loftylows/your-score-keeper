@@ -71,6 +71,7 @@ const MyLeaderboardsSidebar = () => {
       })}
 
       <Button
+        position="sticky"
         marginTop="auto"
         width="100%"
         height="38px"
@@ -79,8 +80,8 @@ const MyLeaderboardsSidebar = () => {
         border="none"
         borderRadius="0"
         boxShadow="lg"
-        position="absolute"
         bottom="0"
+        left="0"
         zIndex="1"
         borderTop="1px solid rgba(0,0,0,.03)"
         onClick={openCreateLeaderboardDialog}
