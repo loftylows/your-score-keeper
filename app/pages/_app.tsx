@@ -9,7 +9,7 @@ import myCustomThemeObj from "app/theme"
 import AuthModalProvider from "app/auth/AuthModalProvider"
 import DbCacheLeaderboardsProvider from "app/leaderboards/DbCacheLeaderboardsProvider"
 import InMemoryLeaderboardsProvider from "../leaderboards/InMemoryLeaderboardsProvider"
-import LeaderboardsDialogProvider from "../leaderboards/DialogsProvider"
+import LeaderboardsDialogProvider from "../leaderboards/UiProvider"
 import "nprogress/nprogress.css"
 
 //Binding events.

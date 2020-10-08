@@ -24,6 +24,7 @@ import {
   LOGOUT_EVENT_NAME,
   SIGNUP_COMPLETED_EVENT_NAME,
 } from "app/browserEvents"
+import getPlayers from "app/players/queries/getPlayers"
 
 interface IState {
   leaderboards: Leaderboard[]
@@ -111,16 +112,18 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
     const { leaderboards, userId } = this.state
     if (!userId) return
 
-    const oldLeaderboardsState = { ...leaderboards }
+    const oldLeaderboardsState: IState["leaderboards"] = [...leaderboards]
 
-    const updatedLeaderboards = leaderboards.map((board) => (board.id !== input.id ? board : input))
+    const updatedLeaderboards = leaderboards.map((board) =>
+      board.id !== input.id ? board : { ...input, ownerId: userId }
+    )
 
     this.setState({
       leaderboards: updatedLeaderboards,
     })
 
     try {
-      await await updateLeaderboard({ where: { id: input.id }, data: input, userId })
+      await updateLeaderboard({ where: { id: input.id }, data: input })
     } catch (e) {
       // TODO: Notify user of error
       this.setState({
@@ -211,8 +214,16 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
 
     try {
       const { leaderboards } = await getLeaderboards({ where: { ownerId: userId } })
+      let players: Player[] = []
+      if (leaderboards.length) {
+        const res = await getPlayers({
+          where: { leaderboardId: { in: leaderboards.map((l) => l.id) } },
+        })
+        players = res.players
+      }
       this.setState({
-        leaderboards: leaderboards,
+        leaderboards,
+        players,
         isLoadingData: false,
       })
     } catch (e) {
@@ -225,9 +236,10 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
     }
   }
 
-  public setDbCacheLeaderboards: SetDbCacheLeaderboards = (userId, leaderboards) => {
+  public setDbCacheLeaderboards: SetDbCacheLeaderboards = (userId, leaderboards, players) => {
     this.setState({
-      leaderboards: leaderboards,
+      leaderboards,
+      players,
       userId,
     })
   }
@@ -238,7 +250,6 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
     this.loadDbCacheLeaderboards(userId)
   }
   public onLogout = () => {
-    console.log("on logout just ran from this func")
     this.setState({
       leaderboards: [],
       userId: null,
@@ -247,25 +258,54 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
 
   public saveLeaderboardsFromMemoryToDb: SaveLeaderboardsFromMemoryToDb = async (
     userId,
-    leaderboards
+    leaderboards,
+    players
   ) => {
-    const promises = leaderboards.map(async (leaderboard) =>
-      createLeaderboard({
+    const promises = leaderboards.map(async (leaderboard) => {
+      const oldLeaderboardId = leaderboard.id
+      const newLeaderboard = await createLeaderboard({
         data: { ...leaderboard, id: undefined, owner: { connect: { id: userId } } },
         ownerId: userId,
       })
-    )
+      const playerPromises = players
+        .filter((p) => p.leaderboardId === oldLeaderboardId)
+        .map((p) =>
+          createPlayer({ data: { ...p, id: undefined }, leaderboardId: newLeaderboard.id })
+        )
+
+      const res = await Promise.allSettled(playerPromises)
+      const newPlayers = res
+        .filter((item) => item.status === "fulfilled")
+        .map(
+          (item) =>
+            (item as PromiseFulfilledResult<ThenArgRecursive<ReturnType<typeof createPlayer>>>)
+              .value
+        )
+      return { newLeaderboard, newPlayers }
+    })
+
     const res = await Promise.allSettled(promises)
-    const newLeaderboards = res
+    const newLeaderboardsRes = res
       .filter((item) => item.status === "fulfilled")
       .map(
         (item) =>
-          (item as PromiseFulfilledResult<ThenArgRecursive<ReturnType<typeof createLeaderboard>>>)
+          (item as PromiseFulfilledResult<{ newLeaderboard: Leaderboard; newPlayers: Player[] }>)
             .value
+      )
+      .reduce(
+        (accu, item) => {
+          const res = { ...accu }
+          res.newLeaderboards = [...accu.newLeaderboards, item.newLeaderboard]
+          res.newPlayers = [...res.newPlayers, ...item.newPlayers]
+
+          return res
+        },
+        { newLeaderboards: [] as Leaderboard[], newPlayers: [] as Player[] }
       )
 
     this.setState({
-      leaderboards: [...this.state.leaderboards, ...newLeaderboards],
+      leaderboards: [...this.state.leaderboards, ...newLeaderboardsRes.newLeaderboards],
+      players: [...this.state.players, ...newLeaderboardsRes.newPlayers],
       userId: userId,
     })
   }

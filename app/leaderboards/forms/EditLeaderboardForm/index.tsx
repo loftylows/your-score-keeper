@@ -15,39 +15,57 @@ import {
 import { InfoIcon } from "@chakra-ui/icons"
 import { Form as FinalForm, Field } from "react-final-form"
 import { FORM_ERROR } from "final-form"
-import { CreateLeaderboardInput, CreateLeaderboardInputType } from "../../validations"
+import { EditLeaderboardInput, EditLeaderboardInputType } from "../../validations"
 import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboardsProvider"
 import { inMemoryLeaderboardsContext } from "app/leaderboards/InMemoryLeaderboardsProvider"
+import { uiContext } from "app/leaderboards/UiProvider"
+import { Leaderboard } from "@prisma/client"
+import { InMemoryLeaderboard } from "app/leaderboards/InMemoryLeaderboardsProvider/types"
 
-type CreateLeaderboardFormProps = {
+type EditLeaderboardFormProps = {
   onSuccess?: () => void
   onSubmitStart?: () => void
   onSubmitEnd?: () => void
   onFormFinished?: () => void
 }
 
-const CreateLeaderboardForm = (props: CreateLeaderboardFormProps) => {
+const EditLeaderboardForm = (props: EditLeaderboardFormProps) => {
   const componentProps = props
-  const { userId, dbCacheCreateLeaderboard } = React.useContext(dbCacheLeaderboardsContext)
-  const { inMemoryCreateLeaderboard } = React.useContext(inMemoryLeaderboardsContext)
+  const { userId, dbCacheEditLeaderboard, leaderboards: dbLeaderboards } = React.useContext(
+    dbCacheLeaderboardsContext
+  )
+  const { inMemoryEditLeaderboard, leaderboards: inMemoryLeaderboards } = React.useContext(
+    inMemoryLeaderboardsContext
+  )
+  const { editLeaderboardDialogIsOpenWithId } = React.useContext(uiContext)
+  const leaderboards = userId ? dbLeaderboards : inMemoryLeaderboards
+  const editingLeaderboard = editLeaderboardDialogIsOpenWithId
+    ? leaderboards.find((l) => l.id === editLeaderboardDialogIsOpenWithId)
+    : null
 
   return (
-    <FinalForm<CreateLeaderboardInputType>
-      initialValues={{ title: "" }}
+    <FinalForm<EditLeaderboardInputType>
+      initialValues={{ title: editingLeaderboard ? editingLeaderboard.title : "" }}
       validate={(values) => {
         try {
-          CreateLeaderboardInput.parse(values)
+          EditLeaderboardInput.parse(values)
         } catch (error) {
           return error.formErrors.fieldErrors
         }
       }}
       onSubmit={async (values) => {
         props.onSubmitStart && props.onSubmitStart()
+        if (!editingLeaderboard) return
+        const updatedLeaderboard = {
+          ...(editingLeaderboard as Leaderboard),
+          title: values.title,
+          ownerId: undefined,
+        }
         try {
           if (userId) {
-            dbCacheCreateLeaderboard({ title: values.title, owner: { connect: { id: userId } } })
+            dbCacheEditLeaderboard(updatedLeaderboard)
           } else {
-            inMemoryCreateLeaderboard({ title: values.title })
+            inMemoryEditLeaderboard(updatedLeaderboard)
           }
           props.onSuccess && props.onSuccess()
         } catch (error) {
@@ -119,4 +137,4 @@ const CreateLeaderboardForm = (props: CreateLeaderboardFormProps) => {
   )
 }
 
-export default CreateLeaderboardForm
+export default EditLeaderboardForm

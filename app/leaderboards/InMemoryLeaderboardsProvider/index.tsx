@@ -63,7 +63,6 @@ class InMemoryLeaderboardsProvider extends React.Component<IProps, IState> {
   componentDidMount = () => {
     window.addEventListener("beforeunload", (e) => {
       if (this.state.leaderboards.length > 0) {
-        console.log("wjhwjevwubik")
         const confirmText =
           "You are about to leave without saving your leaderboards. Please log in to to keep your leaderboards."
         e.returnValue = confirmText
@@ -143,10 +142,10 @@ class InMemoryLeaderboardsProvider extends React.Component<IProps, IState> {
 
   public onAuthCompleted = async (e: Event) => {
     const { saveLeaderboardsFromMemoryToDb } = this.props
-    const { leaderboards } = this.state
+    const { leaderboards, players } = this.state
     const userId: Maybe<UUID> = (e as CustomEvent).detail?.userId
     if (!userId || !leaderboards.length) return
-    await saveLeaderboardsFromMemoryToDb(userId, leaderboards)
+    await saveLeaderboardsFromMemoryToDb(userId, leaderboards, players)
     this.flushInMemoryLeaderboards()
   }
 

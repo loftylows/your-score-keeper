@@ -1,15 +1,14 @@
 import * as React from "react"
-import { Box, Button } from "@chakra-ui/core"
-import { Leaderboard } from "@prisma/client"
-import { InMemoryLeaderboard } from "app/leaderboards/InMemoryLeaderboardsProvider/types"
+import { Box, Button, ButtonGroup, IconButton, Text } from "@chakra-ui/core"
+import { EditIcon } from "@chakra-ui/icons"
 import { inMemoryLeaderboardsContext } from "app/leaderboards/InMemoryLeaderboardsProvider"
 import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboardsProvider"
-import { dialogsContext } from "app/leaderboards/DialogsProvider"
+import { uiContext } from "app/leaderboards/UiProvider"
 
 const MyLeaderboardsSidebar = () => {
   const { leaderboards: inMemoryLeaderboards } = React.useContext(inMemoryLeaderboardsContext)
   const { leaderboards: dbLeaderboards, userId } = React.useContext(dbCacheLeaderboardsContext)
-  const { openCreateLeaderboardDialog } = React.useContext(dialogsContext)
+  const { openCreateLeaderboardDialog, openEditLeaderboardDialog } = React.useContext(uiContext)
   return (
     <Box
       display="flex"
@@ -21,7 +20,18 @@ const MyLeaderboardsSidebar = () => {
       minWidth={{ base: "190px", md: "230px" }}
     >
       {(userId ? dbLeaderboards : inMemoryLeaderboards).map((leaderboard) => {
-        return <Button key={leaderboard.id}>{leaderboard.title}</Button>
+        return (
+          <ButtonGroup key={leaderboard.id} isAttached width="100%" variant="outline">
+            <Button width="100%" display="flex" justifyContent="flex-start" alignItems="center">
+              <Text isTruncated>{leaderboard.title}</Text>
+            </Button>
+            <IconButton
+              onClick={() => openEditLeaderboardDialog(leaderboard.id)}
+              icon={<EditIcon />}
+              aria-label="Edit leaderboard"
+            />
+          </ButtonGroup>
+        )
       })}
       <Button
         marginTop="auto"

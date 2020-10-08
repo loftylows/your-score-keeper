@@ -8,3 +8,5 @@ export type OpenCreatePlayerDialog = () => void
 export type CloseCreatePlayerDialog = () => void
 export type OpenEditPlayerDialog = (playerId: UUID) => void
 export type CloseEditPlayerDialog = () => void
+export type SetCurrentlySelectedLeaderboardId = (leaderboardId: UUID) => void
+export type RemoveCurrentlySelectedLeaderboardId = () => void

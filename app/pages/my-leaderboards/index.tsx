@@ -1,57 +1,54 @@
 import * as React from "react"
-import { BlitzPage, GetServerSideProps, PromiseReturnType, ssrQuery } from "blitz"
+import { BlitzPage, useSession } from "blitz"
 import Layout from "app/layouts/MyLeaderboardsSpace"
-import getLeaderboards from "app/leaderboards/queries/getLeaderboards"
-import { Maybe, UUID } from "common-types"
-import { getSessionContext } from "@blitzjs/server"
 import { Leaderboard } from "@prisma/client"
 import { Box, Heading } from "@chakra-ui/core"
 import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboardsProvider"
 import { inMemoryLeaderboardsContext } from "app/leaderboards/InMemoryLeaderboardsProvider"
 import { InMemoryLeaderboard } from "app/leaderboards/InMemoryLeaderboardsProvider/types"
+import { uiContext } from "app/leaderboards/UiProvider"
+import { Maybe } from "common-types"
 
-type IPageProps = {
-  initialLeaderboardsFromServer: Maybe<PromiseReturnType<typeof getLeaderboards>>
-  userId: Maybe<UUID>
-}
+type IPageProps = {}
 
-export const getServerSideProps: GetServerSideProps<IPageProps> = async ({ req, res }) => {
-  const session = await getSessionContext(req, res)
-  const { userId } = session
-
-  let leaderboards: Maybe<PromiseReturnType<typeof getLeaderboards>> = null
-  if (userId) {
-    leaderboards = await ssrQuery(getLeaderboards, { where: { ownerId: userId } }, { req, res })
-  }
-
-  return {
-    props: { initialLeaderboardsFromServer: leaderboards, userId: userId || null },
-  }
-}
-
-const MyLeaderboardsHome: BlitzPage<IPageProps> = ({ userId, initialLeaderboardsFromServer }) => {
-  const { setDbCacheLeaderboards, leaderboards: dbLeaderboards } = React.useContext(
+const MyLeaderboardsHome: BlitzPage<IPageProps> = () => {
+  const { isLoading, userId } = useSession()
+  const { loadDbCacheLeaderboards, leaderboards: dbLeaderboards } = React.useContext(
     dbCacheLeaderboardsContext
   )
   const { leaderboards: inMemoryLeaderboards } = React.useContext(inMemoryLeaderboardsContext)
-  React.useEffect(() => {
-    if (userId) {
-      setDbCacheLeaderboards(userId, initialLeaderboardsFromServer?.leaderboards || [])
-    }
-  }, [userId, setDbCacheLeaderboards, initialLeaderboardsFromServer?.leaderboards])
-
+  const { setCurrentlySelectedLeaderboardId, currentlySelectedLeaderboardId } = React.useContext(
+    uiContext
+  )
   const leaderboards: Leaderboard[] | InMemoryLeaderboard[] = userId
     ? dbLeaderboards
     : inMemoryLeaderboards
+  const hasLeaderboards = leaderboards.length > 0
+  const currentlySelectedLeaderboard: Maybe<
+    Leaderboard | InMemoryLeaderboard
+  > = currentlySelectedLeaderboardId
+    ? leaderboards.find((l) => l.id === currentlySelectedLeaderboardId) || null
+    : null
+
+  React.useEffect(() => {
+    if (userId && !isLoading) {
+      loadDbCacheLeaderboards(userId)
+    }
+  }, [userId, isLoading, loadDbCacheLeaderboards])
+
+  React.useEffect(() => {
+    if (hasLeaderboards) {
+      setCurrentlySelectedLeaderboardId(leaderboards[0].id)
+    }
+  }, [leaderboards, hasLeaderboards, setCurrentlySelectedLeaderboardId])
 
   return (
     <Box>
-      <Box>Yooooo we are on the leaderboard page!!!!!!</Box>
-      {leaderboards.map((leaderboard) => (
-        <Box key={leaderboard.id}>
-          <Heading>{leaderboard.title}</Heading>
+      {currentlySelectedLeaderboard && (
+        <Box>
+          <Heading>{currentlySelectedLeaderboard.title}</Heading>
         </Box>
-      ))}
+      )}
     </Box>
   )
 }
