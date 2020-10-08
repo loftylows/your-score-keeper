@@ -8,7 +8,12 @@ import { uiContext } from "app/leaderboards/UiProvider"
 const MyLeaderboardsSidebar = () => {
   const { leaderboards: inMemoryLeaderboards } = React.useContext(inMemoryLeaderboardsContext)
   const { leaderboards: dbLeaderboards, userId } = React.useContext(dbCacheLeaderboardsContext)
-  const { openCreateLeaderboardDialog, openEditLeaderboardDialog } = React.useContext(uiContext)
+  const {
+    openCreateLeaderboardDialog,
+    openEditLeaderboardDialog,
+    setCurrentlySelectedLeaderboardId,
+    currentlySelectedLeaderboardId,
+  } = React.useContext(uiContext)
   return (
     <Box
       display="flex"
@@ -21,8 +26,19 @@ const MyLeaderboardsSidebar = () => {
     >
       {(userId ? dbLeaderboards : inMemoryLeaderboards).map((leaderboard) => {
         return (
-          <ButtonGroup key={leaderboard.id} isAttached width="100%" variant="outline">
-            <Button width="100%" display="flex" justifyContent="flex-start" alignItems="center">
+          <ButtonGroup
+            key={leaderboard.id}
+            isAttached
+            width="100%"
+            colorScheme={currentlySelectedLeaderboardId === leaderboard.id ? "blue" : "gray"}
+          >
+            <Button
+              width="100%"
+              display="flex"
+              justifyContent="flex-start"
+              alignItems="center"
+              onClick={() => setCurrentlySelectedLeaderboardId(leaderboard.id)}
+            >
               <Text isTruncated>{leaderboard.title}</Text>
             </Button>
             <IconButton
