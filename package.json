@@ -44,6 +44,7 @@
     "react-error-boundary": "2.3.2",
     "react-final-form": "6.5.1",
     "react-icons": "3.11.0",
+    "react-table": "7.5.2",
     "secure-password": "4.0.0",
     "uuid": "8.3.0",
     "zod": "1.11.9"

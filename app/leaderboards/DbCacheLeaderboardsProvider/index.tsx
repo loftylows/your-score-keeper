@@ -60,15 +60,21 @@ const dbCacheLeaderboardsContext = React.createContext<IState>({
   saveLeaderboardsFromMemoryToDb: async () => {},
 })
 
-interface IProps {}
+interface IProps {
+  userId: Maybe<UUID>
+  leaderboardsFromServer: Leaderboard[]
+  playersFromServer: Player[]
+}
 class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props)
+
+    const { userId, playersFromServer, leaderboardsFromServer } = this.props
     this.state = {
-      leaderboards: [],
-      players: [],
+      leaderboards: leaderboardsFromServer,
+      players: playersFromServer,
       isLoadingData: false,
-      userId: null,
+      userId: userId,
       dbCacheCreateLeaderboard: this.dbCacheCreateLeaderboard,
       dbCacheEditLeaderboard: this.dbCacheEditLeaderboard,
       dbCacheDeleteLeaderboard: this.dbCacheDeleteLeaderboard,
@@ -156,7 +162,7 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
     const { players, userId } = this.state
     if (!userId) return
 
-    const oldPlayersState = { ...players }
+    const oldPlayersState = [...players]
 
     try {
       const player = await createPlayer({ data: input, leaderboardId })
@@ -165,6 +171,7 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
       })
     } catch (e) {
       // TODO: Notify user of error
+      console.log(e)
       this.setState({
         players: oldPlayersState,
       })
@@ -175,7 +182,7 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
     const { players, userId } = this.state
     if (!userId) return
 
-    const oldPlayersState = { ...players }
+    const oldPlayersState = [...players]
 
     try {
       this.setState({

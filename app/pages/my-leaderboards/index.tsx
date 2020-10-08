@@ -1,58 +1,82 @@
 import * as React from "react"
-import { BlitzPage, useSession } from "blitz"
+import { BlitzPage, ssrQuery, GetServerSideProps } from "blitz"
+import { getSessionContext } from "@blitzjs/server"
 import Layout from "app/layouts/MyLeaderboardsSpace"
-import { Leaderboard } from "@prisma/client"
-import { Box, Heading } from "@chakra-ui/core"
-import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboardsProvider"
+import { Leaderboard, Player } from "@prisma/client"
+import DbCacheLeaderboardsProvider, {
+  dbCacheLeaderboardsContext,
+} from "app/leaderboards/DbCacheLeaderboardsProvider"
 import { inMemoryLeaderboardsContext } from "app/leaderboards/InMemoryLeaderboardsProvider"
 import { InMemoryLeaderboard } from "app/leaderboards/InMemoryLeaderboardsProvider/types"
 import { uiContext } from "app/leaderboards/UiProvider"
-import { Maybe } from "common-types"
+import { Maybe, UUID } from "common-types"
+import getLeaderboards from "app/leaderboards/queries/getLeaderboards"
+import getPlayers from "app/players/queries/getPlayers"
+import LeaderboardsDialogProvider from "app/leaderboards/UiProvider"
+import LeaderboardsSpace from "app/leaderboards/components/LeaderboardSpace"
 
-type IPageProps = {}
+export const getServerSideProps: GetServerSideProps = async ({ req, res: response }) => {
+  const { userId } = await getSessionContext(req, response)
+  let leaderboards: Leaderboard[] = []
+  let players: Player[] = []
 
-const MyLeaderboardsHome: BlitzPage<IPageProps> = () => {
-  const { isLoading, userId } = useSession()
-  const { loadDbCacheLeaderboards, leaderboards: dbLeaderboards } = React.useContext(
-    dbCacheLeaderboardsContext
-  )
-  const { leaderboards: inMemoryLeaderboards } = React.useContext(inMemoryLeaderboardsContext)
-  const { setCurrentlySelectedLeaderboardId, currentlySelectedLeaderboardId } = React.useContext(
-    uiContext
-  )
-  const leaderboards: Leaderboard[] | InMemoryLeaderboard[] = userId
-    ? dbLeaderboards
-    : inMemoryLeaderboards
-  const hasLeaderboards = leaderboards.length > 0
-  const currentlySelectedLeaderboard: Maybe<
-    Leaderboard | InMemoryLeaderboard
-  > = currentlySelectedLeaderboardId
-    ? leaderboards.find((l) => l.id === currentlySelectedLeaderboardId) || null
-    : null
+  if (userId) {
+    try {
+      const queryRes = await ssrQuery(
+        getLeaderboards,
+        { where: { ownerId: userId } },
+        { req, res: response }
+      )
+      leaderboards = queryRes.leaderboards
 
-  React.useEffect(() => {
-    if (userId && !isLoading) {
-      loadDbCacheLeaderboards(userId)
+      if (leaderboards.length) {
+        const res = await ssrQuery(
+          getPlayers,
+          { where: { leaderboardId: { in: leaderboards.map((l) => l.id) } } },
+          { req, res: response }
+        )
+        players = res.players
+      }
+    } catch (e) {
+      console.log(e)
+
+      throw e
     }
-  }, [userId, isLoading, loadDbCacheLeaderboards])
+  }
 
-  React.useEffect(() => {
-    if (hasLeaderboards) {
-      setCurrentlySelectedLeaderboardId(leaderboards[0].id)
-    }
-  }, [hasLeaderboards])
-
-  return (
-    <Box>
-      {currentlySelectedLeaderboard && (
-        <Box>
-          <Heading>{currentlySelectedLeaderboard.title}</Heading>
-        </Box>
-      )}
-    </Box>
-  )
+  return {
+    props: {
+      leaderboardsFromServer: leaderboards,
+      playersFromServer: players,
+      userId,
+    },
+  }
 }
 
-MyLeaderboardsHome.getLayout = (page) => <Layout title="My Leaderboards">{page}</Layout>
+type IPageProps = {
+  leaderboardsFromServer: Leaderboard[]
+  playersFromServer: Player[]
+  userId: Maybe<UUID>
+}
+
+const MyLeaderboardsHome: BlitzPage<IPageProps> = ({
+  leaderboardsFromServer,
+  playersFromServer,
+  userId,
+}) => {
+  return (
+    <DbCacheLeaderboardsProvider
+      userId={userId}
+      leaderboardsFromServer={leaderboardsFromServer}
+      playersFromServer={playersFromServer}
+    >
+      <LeaderboardsDialogProvider>
+        <Layout title="My Leaderboards">
+          <LeaderboardsSpace />
+        </Layout>
+      </LeaderboardsDialogProvider>
+    </DbCacheLeaderboardsProvider>
+  )
+}
 
 export default MyLeaderboardsHome

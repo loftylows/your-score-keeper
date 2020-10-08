@@ -6,6 +6,6 @@ const Home: BlitzPage = () => {
   return <HeroSection />
 }
 
-Home.getLayout = (page) => <Layout title="Home">{page}</Layout>
+Home.getLayout = (page) => <Layout title="YourScoreKeeper">{page}</Layout>
 
 export default Home

@@ -4,16 +4,18 @@ import { EditIcon, HamburgerIcon } from "@chakra-ui/icons"
 import { inMemoryLeaderboardsContext } from "app/leaderboards/InMemoryLeaderboardsProvider"
 import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboardsProvider"
 import { uiContext } from "app/leaderboards/UiProvider"
+import useCurrentlySelectedLeaderboard from "app/leaderboards/hooks/useCurrentlySelectedLeaderboard"
 
 const MyLeaderboardsSidebar = () => {
   const { leaderboards: inMemoryLeaderboards } = React.useContext(inMemoryLeaderboardsContext)
   const { leaderboards: dbLeaderboards, userId } = React.useContext(dbCacheLeaderboardsContext)
+  const currentlySelectedLeaderboard = useCurrentlySelectedLeaderboard()
   const {
     openCreateLeaderboardDialog,
     openEditLeaderboardDialog,
     setCurrentlySelectedLeaderboardId,
-    currentlySelectedLeaderboardId,
   } = React.useContext(uiContext)
+
   return (
     <Box
       position="relative"
@@ -21,7 +23,7 @@ const MyLeaderboardsSidebar = () => {
       flexDirection="column"
       height="calc(100vh - 64px)"
       overflow="scroll"
-      backgroundColor="sidebar"
+      backgroundColor="gray.200"
       width={{ base: "190px", md: "230px" }}
       minWidth={{ base: "190px", md: "230px" }}
     >
@@ -31,13 +33,19 @@ const MyLeaderboardsSidebar = () => {
             key={leaderboard.id}
             isAttached
             width="100%"
-            colorScheme={currentlySelectedLeaderboardId === leaderboard.id ? "blue" : "gray"}
+            borderRadius="0"
+            colorScheme={
+              currentlySelectedLeaderboard && currentlySelectedLeaderboard.id === leaderboard.id
+                ? "blue"
+                : "gray"
+            }
           >
             <Button
               width="100%"
               display="flex"
               justifyContent="flex-start"
               alignItems="center"
+              borderRadius="0"
               _focus={{
                 outline: "none",
               }}
@@ -53,6 +61,7 @@ const MyLeaderboardsSidebar = () => {
               icon={<EditIcon />}
               title="Edit leaderboard"
               aria-label="Edit leaderboard"
+              borderRadius="0"
               _focus={{
                 outline: "none",
               }}
@@ -62,6 +71,7 @@ const MyLeaderboardsSidebar = () => {
       })}
 
       <Button
+        position="sticky"
         marginTop="auto"
         width="100%"
         height="38px"
@@ -70,8 +80,8 @@ const MyLeaderboardsSidebar = () => {
         border="none"
         borderRadius="0"
         boxShadow="lg"
-        position="absolute"
         bottom="0"
+        left="0"
         zIndex="1"
         borderTop="1px solid rgba(0,0,0,.03)"
         onClick={openCreateLeaderboardDialog}
