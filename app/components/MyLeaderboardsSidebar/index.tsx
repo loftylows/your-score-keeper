@@ -23,7 +23,7 @@ const MyLeaderboardsSidebar = () => {
       flexDirection="column"
       height="calc(100vh - 64px)"
       overflow="scroll"
-      backgroundColor="sidebar"
+      backgroundColor="gray.200"
       width={{ base: "190px", md: "230px" }}
       minWidth={{ base: "190px", md: "230px" }}
     >
