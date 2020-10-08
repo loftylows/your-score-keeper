@@ -40,7 +40,7 @@ const MyLeaderboardsHome: BlitzPage<IPageProps> = () => {
     if (hasLeaderboards) {
       setCurrentlySelectedLeaderboardId(leaderboards[0].id)
     }
-  }, [leaderboards, hasLeaderboards, setCurrentlySelectedLeaderboardId])
+  }, [hasLeaderboards])
 
   return (
     <Box>
