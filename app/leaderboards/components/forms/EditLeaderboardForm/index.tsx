@@ -15,7 +15,7 @@ import {
 import { InfoIcon } from "@chakra-ui/icons"
 import { Form as FinalForm, Field } from "react-final-form"
 import { FORM_ERROR } from "final-form"
-import { EditLeaderboardInput, EditLeaderboardInputType } from "../../validations"
+import { EditLeaderboardInput, EditLeaderboardInputType } from "../../../validations"
 import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboardsProvider"
 import { inMemoryLeaderboardsContext } from "app/leaderboards/InMemoryLeaderboardsProvider"
 import { uiContext } from "app/leaderboards/UiProvider"

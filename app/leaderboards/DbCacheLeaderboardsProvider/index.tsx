@@ -60,15 +60,21 @@ const dbCacheLeaderboardsContext = React.createContext<IState>({
   saveLeaderboardsFromMemoryToDb: async () => {},
 })
 
-interface IProps {}
+interface IProps {
+  userId: Maybe<UUID>
+  leaderboardsFromServer: Leaderboard[]
+  playersFromServer: Player[]
+}
 class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props)
+
+    const { userId, playersFromServer, leaderboardsFromServer } = this.props
     this.state = {
-      leaderboards: [],
-      players: [],
+      leaderboards: leaderboardsFromServer,
+      players: playersFromServer,
       isLoadingData: false,
-      userId: null,
+      userId: userId,
       dbCacheCreateLeaderboard: this.dbCacheCreateLeaderboard,
       dbCacheEditLeaderboard: this.dbCacheEditLeaderboard,
       dbCacheDeleteLeaderboard: this.dbCacheDeleteLeaderboard,

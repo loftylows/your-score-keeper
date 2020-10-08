@@ -21,8 +21,8 @@ import {
   SetCurrentlySelectedLeaderboardId,
   RemoveCurrentlySelectedLeaderboardId,
 } from "./types"
-import CreateLeaderboardForm from "../forms/CreateLeaderboardForm"
-import EditLeaderboardForm from "../forms/EditLeaderboardForm"
+import CreateLeaderboardForm from "../components/forms/CreateLeaderboardForm"
+import EditLeaderboardForm from "../components/forms/EditLeaderboardForm"
 
 interface IProps {
   children: React.ReactChild

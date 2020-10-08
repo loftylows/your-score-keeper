@@ -7,7 +7,6 @@ import { ChakraProvider, extendTheme } from "@chakra-ui/core"
 import LoginForm from "app/auth/components/LoginForm"
 import myCustomThemeObj from "app/theme"
 import AuthModalProvider from "app/auth/AuthModalProvider"
-import DbCacheLeaderboardsProvider from "app/leaderboards/DbCacheLeaderboardsProvider"
 import InMemoryLeaderboardsProvider from "../leaderboards/InMemoryLeaderboardsProvider"
 import LeaderboardsDialogProvider from "../leaderboards/UiProvider"
 import "nprogress/nprogress.css"
@@ -36,13 +35,11 @@ export default function App({ Component, pageProps }: AppProps) {
       {
         <ChakraProvider theme={customTheme}>
           <AuthModalProvider>
-            <DbCacheLeaderboardsProvider>
-              <InMemoryLeaderboardsProvider>
-                <LeaderboardsDialogProvider>
-                  {getLayout(<Component {...pageProps} />)}
-                </LeaderboardsDialogProvider>
-              </InMemoryLeaderboardsProvider>
-            </DbCacheLeaderboardsProvider>
+            <InMemoryLeaderboardsProvider>
+              <LeaderboardsDialogProvider>
+                {getLayout(<Component {...pageProps} />)}
+              </LeaderboardsDialogProvider>
+            </InMemoryLeaderboardsProvider>
           </AuthModalProvider>
         </ChakraProvider>
       }
