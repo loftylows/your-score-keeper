@@ -6,10 +6,10 @@ import {
   InputGroup,
   InputLeftElement,
   Button,
-  Box,
+  useToast,
 } from "@chakra-ui/core"
 import { InfoIcon } from "@chakra-ui/icons"
-import { Form as FinalForm, Field, useForm } from "react-final-form"
+import { Form as FinalForm, Field } from "react-final-form"
 import { FORM_ERROR } from "final-form"
 import { CreatePlayerInput, CreatePlayerInputType } from "app/players/validations"
 import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboardsProvider"
@@ -30,6 +30,7 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
   const { leaderboardId } = props
   const { userId, dbCacheCreatePlayer } = React.useContext(dbCacheLeaderboardsContext)
   const { inMemoryCreatePlayer } = React.useContext(inMemoryLeaderboardsContext)
+  const toast = useToast()
 
   return (
     <FinalForm<CreatePlayerInputType>
@@ -64,6 +65,13 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
               "Sorry, we had an unexpected error. Please try again. - " + error.toString(),
           }
         }
+        toast({
+          title: "Player created.",
+          status: "success",
+          duration: 2000,
+          isClosable: true,
+          position: "top",
+        })
         props.onSubmitEnd && props.onSubmitEnd()
       }}
     >

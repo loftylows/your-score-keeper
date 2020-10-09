@@ -14,6 +14,7 @@ import {
   ButtonGroup,
   Text,
   IconButton,
+  useToast,
 } from "@chakra-ui/core"
 import { InfoIcon, DeleteIcon } from "@chakra-ui/icons"
 import { Form as FinalForm, Field } from "react-final-form"
@@ -35,6 +36,7 @@ type CreatePlayerFormProps = {
 }
 
 const CreatePlayerForm = (props: CreatePlayerFormProps) => {
+  const toast = useToast()
   const componentProps = props
   const { userId, dbCacheEditPlayer, dbCacheDeletePlayer } = React.useContext(
     dbCacheLeaderboardsContext
@@ -77,6 +79,13 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
               "Sorry, we had an unexpected error. Please try again. - " + error.toString(),
           }
         }
+        toast({
+          title: "Player Updated.",
+          status: "success",
+          duration: 2000,
+          isClosable: true,
+          position: "top",
+        })
         props.onSubmitEnd && props.onSubmitEnd()
       }}
     >
@@ -185,6 +194,13 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
                       "Sorry, we had an unexpected error. Please try again. - " + error.toString(),
                   }
                 }
+                toast({
+                  title: "Player Deleted.",
+                  status: "success",
+                  duration: 2000,
+                  isClosable: true,
+                  position: "top",
+                })
                 componentProps.onFormFinished && componentProps.onFormFinished()
               }}
             />

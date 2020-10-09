@@ -11,6 +11,7 @@ import {
   FormErrorMessage,
   ButtonGroup,
   Text,
+  useToast,
 } from "@chakra-ui/core"
 import { InfoIcon } from "@chakra-ui/icons"
 import { Form as FinalForm, Field } from "react-final-form"
@@ -30,6 +31,7 @@ const CreateLeaderboardForm = (props: CreateLeaderboardFormProps) => {
   const componentProps = props
   const { userId, dbCacheCreateLeaderboard } = React.useContext(dbCacheLeaderboardsContext)
   const { inMemoryCreateLeaderboard } = React.useContext(inMemoryLeaderboardsContext)
+  const toast = useToast()
 
   return (
     <FinalForm<CreateLeaderboardInputType>
@@ -56,6 +58,14 @@ const CreateLeaderboardForm = (props: CreateLeaderboardFormProps) => {
               "Sorry, we had an unexpected error. Please try again. - " + error.toString(),
           }
         }
+        toast({
+          title: "Leaderboard created.",
+          description: "Enjoy your latest leaderboard.",
+          status: "success",
+          duration: 2000,
+          isClosable: true,
+          position: "top",
+        })
         props.onSubmitEnd && props.onSubmitEnd()
       }}
     >

@@ -13,6 +13,7 @@ import {
   ButtonGroup,
   Text,
   IconButton,
+  useToast,
 } from "@chakra-ui/core"
 import { DeleteIcon, InfoIcon } from "@chakra-ui/icons"
 import { Form as FinalForm, Field } from "react-final-form"
@@ -31,6 +32,7 @@ type EditLeaderboardFormProps = {
 }
 
 const EditLeaderboardForm = (props: EditLeaderboardFormProps) => {
+  const toast = useToast()
   const componentProps = props
   const {
     userId,
@@ -80,6 +82,13 @@ const EditLeaderboardForm = (props: EditLeaderboardFormProps) => {
               "Sorry, we had an unexpected error. Please try again. - " + error.toString(),
           }
         }
+        toast({
+          title: "Leaderboard Updated.",
+          status: "success",
+          duration: 2000,
+          isClosable: true,
+          position: "top",
+        })
         props.onSubmitEnd && props.onSubmitEnd()
       }}
     >
@@ -161,6 +170,13 @@ const EditLeaderboardForm = (props: EditLeaderboardFormProps) => {
                       "Sorry, we had an unexpected error. Please try again. - " + error.toString(),
                   }
                 }
+                toast({
+                  title: "Leaderboard Deleted.",
+                  status: "success",
+                  duration: 2000,
+                  isClosable: true,
+                  position: "top",
+                })
                 componentProps.onFormFinished && componentProps.onFormFinished()
               }}
             />
