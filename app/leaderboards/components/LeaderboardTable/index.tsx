@@ -179,7 +179,7 @@ const LeaderboardTable = ({ players }: IProps) => {
           border={`1px solid ${lighten(0.2, "#4C7BF4")}`}
           backgroundColor={`${lighten(0.35, "#4C7BF4")}`}
         >
-          Nothing found...
+          No players...
         </Box>
       )}
     </>
