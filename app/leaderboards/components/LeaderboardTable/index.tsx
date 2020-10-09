@@ -145,7 +145,7 @@ const LeaderboardTable = ({ players }: IProps) => {
           ))}
         </thead>
         <Box as="tbody" {...getTableBodyProps()}>
-          <Box height="05x" minHeight="10px" />
+          <Box as="tr" height="10px" minHeight="10px" />
           {rows.map((row, i) => {
             prepareRow(row)
             return (
