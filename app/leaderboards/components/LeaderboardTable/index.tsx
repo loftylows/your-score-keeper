@@ -146,13 +146,14 @@ const LeaderboardTable = ({ players }: IProps) => {
           ))}
         </thead>
         <Box as="tbody" {...getTableBodyProps()}>
+          <Box height="05x" minHeight="10px" />
           {rows.map((row, i) => {
             prepareRow(row)
             return (
               <Box
                 as="tr"
                 {...row.getRowProps()}
-                backgroundColor={(i + 1) % 2 === 0 ? "gray.50" : "transparent"}
+                backgroundColor={(i + 1) % 2 !== 0 ? "gray.50" : "transparent"}
               >
                 {row.cells.map((cell) => {
                   return (

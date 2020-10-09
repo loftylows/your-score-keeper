@@ -19,6 +19,7 @@ import updateLeaderboard from "../mutations/updateLeaderboard"
 import deleteLeaderboard from "../mutations/deleteLeaderboard"
 import createPlayer from "app/players/mutations/createPlayer"
 import updatePlayer from "app/players/mutations/updatePlayer"
+import deletePlayer from "app/players/mutations/deletePlayer"
 import {
   LOGIN_COMPLETED_EVENT_NAME,
   LOGOUT_EVENT_NAME,
@@ -203,10 +204,19 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
 
   public dbCacheDeletePlayer: DbCacheDeletePlayer = async (id: UUID) => {
     const { players } = this.state
+    const oldPlayersState = [...players]
 
-    this.setState({
-      players: players.filter((p) => p.id === id),
-    })
+    try {
+      this.setState({
+        players: players.filter((p) => p.id !== id),
+      })
+      await deletePlayer({ where: { id } })
+    } catch (e) {
+      // TODO: Notify user of error
+      this.setState({
+        players: oldPlayersState,
+      })
+    }
   }
 
   public flushDbCacheLeaderboards: FlushDbCacheLeaderboards = () => {
