@@ -1,4 +1,5 @@
-import { SessionContext } from "blitz"
+import { AuthorizationError, SessionContext } from "blitz"
+import { UUID } from "common-types"
 import db, { FindManyLeaderboardArgs } from "db"
 
 type GetLeaderboardsInput = {
@@ -14,13 +15,17 @@ export default async function getLeaderboards(
   { where, orderBy, skip = 0, take }: GetLeaderboardsInput,
   ctx: { session?: SessionContext } = {}
 ) {
-  ctx.session!.authorize()
+  const userId: UUID = ctx.session!.userId
 
   const leaderboards = await db.leaderboard.findMany({
     where,
     orderBy,
     take,
     skip,
+  })
+
+  leaderboards.forEach((l) => {
+    if (!l.published && l.ownerId !== userId) throw new AuthorizationError()
   })
 
   const count = await db.leaderboard.count()

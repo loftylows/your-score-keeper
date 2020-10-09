@@ -1,4 +1,5 @@
-import { NotFoundError, SessionContext } from "blitz"
+import { AuthorizationError, NotFoundError, SessionContext } from "blitz"
+import { UUID } from "common-types"
 import db, { FindOneLeaderboardArgs } from "db"
 
 type GetLeaderboardInput = {
@@ -11,11 +12,12 @@ export default async function getLeaderboard(
   { where /* include */ }: GetLeaderboardInput,
   ctx: { session?: SessionContext } = {}
 ) {
-  ctx.session!.authorize()
+  const userId: UUID = ctx.session!.userId
 
   const leaderboard = await db.leaderboard.findOne({ where })
 
   if (!leaderboard) throw new NotFoundError()
+  if (!leaderboard.published && userId !== leaderboard.ownerId) throw new AuthorizationError()
 
   return leaderboard
 }
