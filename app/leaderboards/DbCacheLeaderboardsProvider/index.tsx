@@ -210,7 +210,7 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
     }
   }
 
-  public dbCacheDeletePlayer: DbCacheDeletePlayer = async (id: UUID) => {
+  public dbCacheDeletePlayer: DbCacheDeletePlayer = async (id, leaderboardId) => {
     const { players } = this.state
     const oldPlayersState = [...players]
 
@@ -218,7 +218,7 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
       this.setState({
         players: players.filter((p) => p.id !== id),
       })
-      await deletePlayer({ where: { id } })
+      await deletePlayer({ where: { id }, leaderboardId })
     } catch (e) {
       // TODO: Notify user of error
       this.setState({

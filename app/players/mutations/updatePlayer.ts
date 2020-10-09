@@ -1,4 +1,5 @@
-import { SessionContext } from "blitz"
+import { AuthorizationError, SessionContext } from "blitz"
+import { UUID } from "common-types"
 import db, { PlayerUpdateArgs } from "db"
 
 type UpdatePlayerInput = {
@@ -8,10 +9,15 @@ type UpdatePlayerInput = {
 }
 
 export default async function updatePlayer(
-  { where, data }: UpdatePlayerInput,
+  { where, data, leaderboardId }: UpdatePlayerInput,
   ctx: { session?: SessionContext } = {}
 ) {
   ctx.session!.authorize()
+  const userId: UUID = ctx.session!.userId
+
+  const leaderboard = await db.leaderboard.findOne({ where: { id: leaderboardId } })
+
+  if (leaderboard?.ownerId !== userId) throw new AuthorizationError()
 
   // Don't allow updating
   delete (data as any).leaderboard

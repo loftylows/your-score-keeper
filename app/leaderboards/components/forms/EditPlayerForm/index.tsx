@@ -25,6 +25,7 @@ import { uiContext } from "app/leaderboards/UiProvider"
 import useCurrentlySelectedLeaderboardPlayers from "app/leaderboards/hooks/useCurrentPlayers"
 import { Maybe } from "common-types"
 import { InMemoryPlayer } from "app/leaderboards/InMemoryLeaderboardsProvider/types"
+import useCurrentlySelectedLeaderboard from "app/leaderboards/hooks/useCurrentlySelectedLeaderboard"
 
 type CreatePlayerFormProps = {
   onSuccess?: () => void
@@ -40,6 +41,7 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
   )
   const { inMemoryEditPlayer, inMemoryDeletePlayer } = React.useContext(inMemoryLeaderboardsContext)
   const players = useCurrentlySelectedLeaderboardPlayers()
+  const currentlySelectedLeaderboard = useCurrentlySelectedLeaderboard()
   const { editPlayerDialogIsOpenWithId } = React.useContext(uiContext)
   const player: Maybe<Player> =
     ((players as any[]).find((p) => p.id === editPlayerDialogIsOpenWithId) as Player) || null
@@ -170,9 +172,10 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
               aria-label="Delete player"
               icon={<DeleteIcon />}
               onClick={() => {
+                if (!currentlySelectedLeaderboard) return
                 try {
                   if (userId) {
-                    dbCacheDeletePlayer(player.id)
+                    dbCacheDeletePlayer(player.id, currentlySelectedLeaderboard.id)
                   } else {
                     inMemoryDeletePlayer(player.id)
                   }

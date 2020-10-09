@@ -8,7 +8,7 @@ export type DbCacheDeleteLeaderboard = (id: UUID) => Promise<void>
 
 export type DbCacheCreatePlayer = (leaderboardId: UUID, input: PlayerCreateInput) => Promise<void>
 export type DbCacheEditPlayer = (player: Player) => Promise<void>
-export type DbCacheDeletePlayer = (id: UUID) => Promise<void>
+export type DbCacheDeletePlayer = (id: UUID, leaderboardId: UUID) => Promise<void>
 
 export type FlushDbCacheLeaderboards = () => void
 export type LoadDbCacheLeaderboards = (userId: UUID) => Promise<void>
