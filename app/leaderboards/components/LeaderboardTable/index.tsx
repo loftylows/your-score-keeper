@@ -1,5 +1,6 @@
 import * as React from "react"
-import { useTable, useFilters } from "react-table"
+import { useTable, useFilters, useSortBy } from "react-table"
+import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
 import { FaEllipsisV } from "react-icons/fa"
 import {
   InMemoryLeaderboard,
@@ -9,6 +10,15 @@ import { DefaultColumnFilter, NumberRangeColumnFilter } from "./tableFilters"
 import { IconButton, Icon, Box } from "@chakra-ui/core"
 import { uiContext } from "app/leaderboards/UiProvider"
 
+interface ITitleBoxProps {
+  title: string
+}
+const TitleBox = ({ title }: ITitleBoxProps) => (
+  <Box display="flex" justifyContent="flex-start" paddingX="10px">
+    {title}
+  </Box>
+)
+
 interface IProps {
   leaderboard: InMemoryLeaderboard
   players: InMemoryPlayer[]
@@ -16,7 +26,7 @@ interface IProps {
 const LeaderboardTable = ({ players }: IProps) => {
   const { openEditPlayerDialog } = React.useContext(uiContext)
   const rankedPlayers = players
-    .sort((a, b) => a.score - b.score)
+    .sort((a, b) => b.score - a.score)
     .map((p, i) => {
       const icon = <Icon as={FaEllipsisV} />
       return {
@@ -37,29 +47,17 @@ const LeaderboardTable = ({ players }: IProps) => {
   const columns = React.useMemo(
     () => [
       {
-        Header: (
-          <Box display="flex" justifyContent="flex-start" paddingX="10px" marginBottom="3px">
-            Rank
-          </Box>
-        ),
+        Header: <TitleBox title="Rank" />,
         accessor: "rank", // accessor is the "key" in the data
         Filter: NumberRangeColumnFilter,
         filter: "between",
       },
       {
-        Header: (
-          <Box display="flex" justifyContent="flex-start" paddingX="10px" marginBottom="3px">
-            Name
-          </Box>
-        ),
+        Header: <TitleBox title="Name" />,
         accessor: "name",
       },
       {
-        Header: (
-          <Box display="flex" justifyContent="flex-start" paddingX="10px" marginBottom="3px">
-            Score
-          </Box>
-        ),
+        Header: <TitleBox title="Score" />,
         accessor: "score",
         Filter: NumberRangeColumnFilter,
         filter: "between",
@@ -104,7 +102,8 @@ const LeaderboardTable = ({ players }: IProps) => {
       defaultColumn, // Be sure to pass the defaultColumn option
       filterTypes,
     },
-    useFilters // useFilters!
+    useFilters,
+    useSortBy // useFilters!
   )
 
   return (
@@ -115,7 +114,28 @@ const LeaderboardTable = ({ players }: IProps) => {
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
                 <th {...column.getHeaderProps()}>
-                  {column.render("Header")}
+                  <Box display="flex" alignItems="center" marginBottom="5px">
+                    {column.render("Header")}
+                    {
+                      <Box
+                        display="flex"
+                        flexDirection="column"
+                        justifyContent="center"
+                        alignItems="center"
+                        marginLeft="0px"
+                        {...column.getSortByToggleProps()}
+                      >
+                        <TriangleDownIcon
+                          fontSize="11px"
+                          color={column.isSorted && column.isSortedDesc ? "gray.700" : "gray.200"}
+                        />
+                        <TriangleUpIcon
+                          fontSize="11px"
+                          color={column.isSorted && !column.isSortedDesc ? "gray.700" : "gray.200"}
+                        />
+                      </Box>
+                    }
+                  </Box>
                   {/* Render the columns filter UI */}
                   <div>{column.canFilter ? column.render("Filter") : null}</div>
                 </th>
@@ -134,7 +154,7 @@ const LeaderboardTable = ({ players }: IProps) => {
               >
                 {row.cells.map((cell) => {
                   return (
-                    <Box as="td" {...cell.getCellProps()} paddingX="10px">
+                    <Box as="td" {...cell.getCellProps()} padding="5px 10px">
                       {cell.render("Cell")}
                     </Box>
                   )
