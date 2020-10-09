@@ -9,6 +9,7 @@ import {
 import { DefaultColumnFilter, NumberRangeColumnFilter } from "./tableFilters"
 import { IconButton, Icon, Box } from "@chakra-ui/core"
 import { uiContext } from "app/leaderboards/UiProvider"
+import { lighten } from "polished"
 
 interface ITitleBoxProps {
   title: string
@@ -123,6 +124,7 @@ const LeaderboardTable = ({ players }: IProps) => {
                         justifyContent="center"
                         alignItems="center"
                         marginLeft="0px"
+                        title="Sort"
                         {...column.getSortByToggleProps()}
                       >
                         <TriangleDownIcon
@@ -143,7 +145,7 @@ const LeaderboardTable = ({ players }: IProps) => {
             </tr>
           ))}
         </thead>
-        <tbody {...getTableBodyProps()}>
+        <Box as="tbody" {...getTableBodyProps()}>
           {rows.map((row, i) => {
             prepareRow(row)
             return (
@@ -162,8 +164,24 @@ const LeaderboardTable = ({ players }: IProps) => {
               </Box>
             )
           })}
-        </tbody>
+        </Box>
       </Box>
+
+      {!rows.length && (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          width="100%"
+          height={{ base: "120px", md: "150px" }}
+          fontWeight="bold"
+          borderRadius="10px"
+          border={`1px solid ${lighten(0.2, "#4C7BF4")}`}
+          backgroundColor={`${lighten(0.35, "#4C7BF4")}`}
+        >
+          Nothing found...
+        </Box>
+      )}
     </>
   )
 }

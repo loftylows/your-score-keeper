@@ -21,7 +21,7 @@ const LeaderboardsSpace = () => {
       height="calc(100vh - 64px)"
       overflow="scroll"
     >
-      <Heading marginBottom="10px">{leaderboard.title}</Heading>
+      <Heading marginBottom="15px">{leaderboard.title}</Heading>
       <CreatePlayerForm leaderboardId={leaderboard.id} />
 
       <VStack spacing={4}>
