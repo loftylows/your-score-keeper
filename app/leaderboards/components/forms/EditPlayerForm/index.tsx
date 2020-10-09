@@ -140,6 +140,7 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
                       isInvalid={props.meta.touched && props.meta.invalid}
                       type="number"
                       placeholder="Score..."
+                      onFocus={(e) => e.target.select()}
                     />
                   </InputGroup>
                   <FormErrorMessage>{props.meta.error}</FormErrorMessage>
