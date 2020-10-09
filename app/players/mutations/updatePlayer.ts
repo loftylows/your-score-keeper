@@ -1,3 +1,4 @@
+import { cleanProfaneStringDataInObj } from "app/utils/profanityFilter"
 import { AuthorizationError, SessionContext } from "blitz"
 import { UUID } from "common-types"
 import db, { PlayerUpdateArgs } from "db"
@@ -23,7 +24,10 @@ export default async function updatePlayer(
   delete (data as any).leaderboard
   delete (data as any).leaderboardId
 
-  const player = await db.player.update({ where, data })
+  const player = await db.player.update({
+    where,
+    data: cleanProfaneStringDataInObj(data, ["name", "details"]),
+  })
 
   return player
 }

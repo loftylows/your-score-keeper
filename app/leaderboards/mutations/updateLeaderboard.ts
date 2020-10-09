@@ -1,6 +1,7 @@
 import { AuthorizationError, SessionContext } from "blitz"
 import { UUID } from "common-types"
 import db, { LeaderboardUpdateArgs } from "db"
+import { cleanProfaneStringDataInObj } from "app/utils/profanityFilter"
 
 type UpdateLeaderboardInput = {
   where: LeaderboardUpdateArgs["where"]
@@ -21,7 +22,10 @@ export default async function updateLeaderboard(
 
   if (oldLeaderboard?.ownerId !== userId) throw new AuthorizationError()
 
-  const leaderboard = await db.leaderboard.update({ where, data })
+  const leaderboard = await db.leaderboard.update({
+    where,
+    data: { ...cleanProfaneStringDataInObj(data, ["title", "details"]) },
+  })
 
   return leaderboard
 }

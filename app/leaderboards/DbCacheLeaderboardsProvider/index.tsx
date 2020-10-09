@@ -130,7 +130,13 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
     })
 
     try {
-      await updateLeaderboard({ where: { id: input.id }, data: input })
+      // add the new result to state in case it has been modified by the server
+      const leaderboard = await updateLeaderboard({ where: { id: input.id }, data: input })
+      this.setState({
+        leaderboards: this.state.leaderboards.map((l) =>
+          l.id !== leaderboard.id ? l : { ...leaderboard }
+        ),
+      })
     } catch (e) {
       // TODO: Notify user of error
       this.setState({
@@ -193,14 +199,20 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
 
     const oldPlayersState = [...players]
 
+    this.setState({
+      players: players.map((p) => (p.id === input.id ? { ...input } : p)),
+    })
+
     try {
-      this.setState({
-        players: players.map((p) => (p.id === input.id ? { ...input } : p)),
-      })
-      await updatePlayer({
+      const player = await updatePlayer({
         where: { id: input.id },
         data: input,
         leaderboardId: input.leaderboardId,
+      })
+
+      // add the new result to state in case it has been modified by the server
+      this.setState({
+        players: players.map((p) => (p.id !== player.id ? p : player)),
       })
     } catch (e) {
       // TODO: Notify user of error

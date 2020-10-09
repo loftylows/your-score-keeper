@@ -1,6 +1,7 @@
 import { AuthorizationError, SessionContext } from "blitz"
 import { UUID } from "common-types"
 import db, { PlayerCreateArgs } from "db"
+import { cleanProfaneStringDataInObj } from "app/utils/profanityFilter"
 
 type CreatePlayerInput = {
   data: Omit<PlayerCreateArgs["data"], "leaderboard">
@@ -18,7 +19,10 @@ export default async function createPlayer(
   if (leaderboard?.ownerId !== userId) throw new AuthorizationError()
 
   const player = await db.player.create({
-    data: { ...data, leaderboard: { connect: { id: leaderboardId } } },
+    data: {
+      ...cleanProfaneStringDataInObj(data, ["name", "details"]),
+      leaderboard: { connect: { id: leaderboardId } },
+    },
   })
 
   return player
