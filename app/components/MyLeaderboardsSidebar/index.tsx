@@ -34,6 +34,8 @@ const MyLeaderboardsSidebar = () => {
             isAttached
             width="100%"
             borderRadius="0"
+            height="40px"
+            minHeight="40px"
             colorScheme={
               currentlySelectedLeaderboard && currentlySelectedLeaderboard.id === leaderboard.id
                 ? "blue"
@@ -74,8 +76,8 @@ const MyLeaderboardsSidebar = () => {
         position="sticky"
         marginTop="auto"
         width="100%"
-        height="38px"
-        minHeight="38px"
+        height="40px"
+        minHeight="40px"
         colorScheme="gray"
         border="none"
         borderRadius="0"

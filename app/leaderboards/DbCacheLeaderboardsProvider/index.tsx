@@ -23,9 +23,16 @@ import deletePlayer from "app/players/mutations/deletePlayer"
 import {
   LOGIN_COMPLETED_EVENT_NAME,
   LOGOUT_EVENT_NAME,
+  SHOULD_SAVE_LEADERBOARDS_FROM_MEMORY_TO_DB_NAME,
   SIGNUP_COMPLETED_EVENT_NAME,
 } from "app/browserEvents"
 import getPlayers from "app/players/queries/getPlayers"
+import {
+  FlushInMemoryLeaderboards,
+  InMemoryLeaderboard,
+  InMemoryPlayer,
+} from "../InMemoryLeaderboardsProvider/types"
+import { inMemoryLeaderboardsContext } from "../InMemoryLeaderboardsProvider"
 
 interface IState {
   leaderboards: Leaderboard[]
@@ -65,6 +72,9 @@ interface IProps {
   userId: Maybe<UUID>
   leaderboardsFromServer: Leaderboard[]
   playersFromServer: Player[]
+  inMemoryLeaderboards: InMemoryLeaderboard[]
+  inMemoryPlayers: InMemoryPlayer[]
+  flushInMemoryLeaderboards: FlushInMemoryLeaderboards
 }
 class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
   constructor(props: IProps) {
@@ -281,11 +291,15 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
     })
   }
 
-  public onAuthCompleted = (e: Event) => {
+  public onAuthCompleted = async (e: Event) => {
+    const { inMemoryLeaderboards, inMemoryPlayers, flushInMemoryLeaderboards } = this.props
     const userId: Maybe<UUID> = (e as CustomEvent).detail?.userId
     if (!userId) return
+    await this.saveLeaderboardsFromMemoryToDb(userId, inMemoryLeaderboards, inMemoryPlayers)
+    flushInMemoryLeaderboards()
     this.loadDbCacheLeaderboards(userId)
   }
+
   public onLogout = () => {
     this.setState({
       leaderboards: [],
@@ -298,6 +312,9 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
     leaderboards,
     players
   ) => {
+    console.log("userId: ", userId)
+    console.log("leaderboards: ", leaderboards)
+    console.log("players: ", players)
     const promises = leaderboards.map(async (leaderboard) => {
       const oldLeaderboardId = leaderboard.id
       const newLeaderboard = await createLeaderboard({
@@ -356,5 +373,26 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
   }
 }
 
+interface IProviderProps {
+  children: React.ReactChild
+  userId: Maybe<UUID>
+  leaderboardsFromServer: Leaderboard[]
+  playersFromServer: Player[]
+}
+const Provider = ({ children, ...rest }: IProviderProps) => (
+  <inMemoryLeaderboardsContext.Consumer>
+    {({ leaderboards, players, flushInMemoryLeaderboards }) => (
+      <DbCacheLeaderboardsProvider
+        flushInMemoryLeaderboards={flushInMemoryLeaderboards}
+        inMemoryLeaderboards={leaderboards}
+        inMemoryPlayers={players}
+        {...rest}
+      >
+        {children}
+      </DbCacheLeaderboardsProvider>
+    )}
+  </inMemoryLeaderboardsContext.Consumer>
+)
+
 export { dbCacheLeaderboardsContext }
-export default DbCacheLeaderboardsProvider
+export default Provider

@@ -1,6 +1,6 @@
 import * as React from "react"
-import { Maybe, UUID } from "common-types"
 import { v4 as uuid } from "uuid"
+import { UUID } from "common-types"
 import {
   InMemoryLeaderboard,
   InMemoryCreateLeaderboard,
@@ -12,9 +12,6 @@ import {
   InMemoryDeletePlayer,
   FlushInMemoryLeaderboards,
 } from "./types"
-import { LOGIN_COMPLETED_EVENT_NAME, SIGNUP_COMPLETED_EVENT_NAME } from "app/browserEvents"
-import { dbCacheLeaderboardsContext } from "../DbCacheLeaderboardsProvider"
-import { SaveLeaderboardsFromMemoryToDb } from "../DbCacheLeaderboardsProvider/types"
 
 interface IState {
   leaderboards: InMemoryLeaderboard[]
@@ -41,7 +38,6 @@ const inMemoryLeaderboardsContext = React.createContext<IState>({
 })
 
 interface IProps {
-  saveLeaderboardsFromMemoryToDb: SaveLeaderboardsFromMemoryToDb
   children: React.ReactChild
 }
 class InMemoryLeaderboardsProvider extends React.Component<IProps, IState> {
@@ -69,14 +65,6 @@ class InMemoryLeaderboardsProvider extends React.Component<IProps, IState> {
         return confirmText
       }
     })
-
-    window.addEventListener(LOGIN_COMPLETED_EVENT_NAME, this.onAuthCompleted)
-    window.addEventListener(SIGNUP_COMPLETED_EVENT_NAME, this.onAuthCompleted)
-  }
-
-  componentWillUnmount = () => {
-    window.removeEventListener(LOGIN_COMPLETED_EVENT_NAME, this.onAuthCompleted)
-    window.removeEventListener(SIGNUP_COMPLETED_EVENT_NAME, this.onAuthCompleted)
   }
 
   public inMemoryCreateLeaderboard: InMemoryCreateLeaderboard = (leaderboardInput) => {
@@ -105,7 +93,7 @@ class InMemoryLeaderboardsProvider extends React.Component<IProps, IState> {
     const { leaderboards } = this.state
 
     this.setState({
-      leaderboards: leaderboards.filter((l) => l.id === id),
+      leaderboards: leaderboards.filter((l) => l.id !== id),
     })
   }
 
@@ -129,7 +117,7 @@ class InMemoryLeaderboardsProvider extends React.Component<IProps, IState> {
     const { players } = this.state
 
     this.setState({
-      players: players.filter((p) => p.id === id),
+      players: players.filter((p) => p.id !== id),
     })
   }
 
@@ -138,15 +126,6 @@ class InMemoryLeaderboardsProvider extends React.Component<IProps, IState> {
       leaderboards: [],
       players: [],
     })
-  }
-
-  public onAuthCompleted = async (e: Event) => {
-    const { saveLeaderboardsFromMemoryToDb } = this.props
-    const { leaderboards, players } = this.state
-    const userId: Maybe<UUID> = (e as CustomEvent).detail?.userId
-    if (!userId || !leaderboards.length) return
-    await saveLeaderboardsFromMemoryToDb(userId, leaderboards, players)
-    this.flushInMemoryLeaderboards()
   }
 
   render() {
@@ -158,15 +137,5 @@ class InMemoryLeaderboardsProvider extends React.Component<IProps, IState> {
   }
 }
 
-const Provider = ({ children }: { children: React.ReactChild }) => (
-  <dbCacheLeaderboardsContext.Consumer>
-    {({ saveLeaderboardsFromMemoryToDb }) => (
-      <InMemoryLeaderboardsProvider saveLeaderboardsFromMemoryToDb={saveLeaderboardsFromMemoryToDb}>
-        {children}
-      </InMemoryLeaderboardsProvider>
-    )}
-  </dbCacheLeaderboardsContext.Consumer>
-)
-
 export { inMemoryLeaderboardsContext }
-export default Provider
+export default InMemoryLeaderboardsProvider

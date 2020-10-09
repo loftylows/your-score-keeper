@@ -1,14 +1,20 @@
 import * as React from "react"
-import { Box, VStack, Heading } from "@chakra-ui/core"
+import { Box, VStack, Heading, ButtonGroup, Button } from "@chakra-ui/core"
 import useCurrentlySelectedLeaderboard from "app/leaderboards/hooks/useCurrentlySelectedLeaderboard"
 import CreatePlayerForm from "../forms/CreatePlayerForm"
 import useCurrentlySelectedLeaderboardPlayers from "app/leaderboards/hooks/useCurrentPlayers"
 import { InMemoryPlayer } from "app/leaderboards/InMemoryLeaderboardsProvider/types"
 import LeaderboardTable from "../LeaderboardTable"
+import { inMemoryLeaderboardsContext } from "app/leaderboards/InMemoryLeaderboardsProvider"
+import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboardsProvider"
+import { authModalContext } from "app/auth/AuthModalProvider"
 
 const LeaderboardsSpace = () => {
   const leaderboard = useCurrentlySelectedLeaderboard()
   const players = useCurrentlySelectedLeaderboardPlayers()
+  const { openAuthModal } = React.useContext(authModalContext)
+  const { userId } = React.useContext(dbCacheLeaderboardsContext)
+  const { leaderboards } = React.useContext(inMemoryLeaderboardsContext)
 
   if (!leaderboard) return null
 
@@ -21,6 +27,34 @@ const LeaderboardsSpace = () => {
       height="calc(100vh - 64px)"
       overflow="scroll"
     >
+      {!userId && leaderboards.length && (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          marginBottom="25px"
+          padding="10px"
+          width="100%"
+          backgroundColor="red.500"
+          color="white"
+          fontWeight="bold"
+          borderRadius="10px"
+        >
+          Log in to save and publish your leaderboards:
+          <ButtonGroup spacing={3} marginLeft="8px" size="xs">
+            <Button colorScheme="blue" onClick={() => openAuthModal({ type: "signup" })}>
+              Sign Up
+            </Button>
+            <Button
+              backgroundColor="gray.600"
+              _hover={{ backgroundColor: "gray.700" }}
+              onClick={() => openAuthModal({ type: "login" })}
+            >
+              Log In
+            </Button>
+          </ButtonGroup>
+        </Box>
+      )}
       <Heading marginBottom="15px">{leaderboard.title}</Heading>
       <CreatePlayerForm leaderboardId={leaderboard.id} />
 

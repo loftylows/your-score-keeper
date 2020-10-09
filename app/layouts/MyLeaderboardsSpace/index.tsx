@@ -17,7 +17,9 @@ interface IProps {
 const MyLeaderboardsSpaceLayout = ({ children, title }: IProps) => {
   const { leaderboards: dbLeaderboards, userId } = React.useContext(dbCacheLeaderboardsContext)
   const { leaderboards: inMemoryLeaderboards } = React.useContext(inMemoryLeaderboardsContext)
-  const { setCurrentlySelectedLeaderboardId } = React.useContext(uiContext)
+  const { setCurrentlySelectedLeaderboardId, openCreateLeaderboardDialog } = React.useContext(
+    uiContext
+  )
   const currentlySelectedLeaderboard = useCurrentlySelectedLeaderboard()
   const leaderboards: Leaderboard[] | InMemoryLeaderboard[] = userId
     ? dbLeaderboards
@@ -29,6 +31,12 @@ const MyLeaderboardsSpaceLayout = ({ children, title }: IProps) => {
       setCurrentlySelectedLeaderboardId(leaderboards[0].id)
     }
   }, [leaderboardsLength, currentlySelectedLeaderboard])
+
+  React.useEffect(() => {
+    if (leaderboardsLength === 0) {
+      openCreateLeaderboardDialog()
+    }
+  }, [leaderboardsLength === 0])
 
   return (
     <Box display="flex" flexDirection="column">
