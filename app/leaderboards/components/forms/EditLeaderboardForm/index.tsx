@@ -1,5 +1,6 @@
 import * as React from "react"
 import {
+  Box,
   Stack,
   FormLabel,
   FormControl,
@@ -11,16 +12,16 @@ import {
   FormErrorMessage,
   ButtonGroup,
   Text,
+  IconButton,
 } from "@chakra-ui/core"
-import { InfoIcon } from "@chakra-ui/icons"
+import { DeleteIcon, InfoIcon } from "@chakra-ui/icons"
 import { Form as FinalForm, Field } from "react-final-form"
 import { FORM_ERROR } from "final-form"
 import { EditLeaderboardInput, EditLeaderboardInputType } from "../../../validations"
 import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboardsProvider"
 import { inMemoryLeaderboardsContext } from "app/leaderboards/InMemoryLeaderboardsProvider"
-import { uiContext } from "app/leaderboards/UiProvider"
 import { Leaderboard } from "@prisma/client"
-import { InMemoryLeaderboard } from "app/leaderboards/InMemoryLeaderboardsProvider/types"
+import { uiContext } from "app/leaderboards/UiProvider"
 
 type EditLeaderboardFormProps = {
   onSuccess?: () => void
@@ -31,12 +32,17 @@ type EditLeaderboardFormProps = {
 
 const EditLeaderboardForm = (props: EditLeaderboardFormProps) => {
   const componentProps = props
-  const { userId, dbCacheEditLeaderboard, leaderboards: dbLeaderboards } = React.useContext(
-    dbCacheLeaderboardsContext
-  )
-  const { inMemoryEditLeaderboard, leaderboards: inMemoryLeaderboards } = React.useContext(
-    inMemoryLeaderboardsContext
-  )
+  const {
+    userId,
+    dbCacheEditLeaderboard,
+    leaderboards: dbLeaderboards,
+    dbCacheDeleteLeaderboard,
+  } = React.useContext(dbCacheLeaderboardsContext)
+  const {
+    inMemoryEditLeaderboard,
+    leaderboards: inMemoryLeaderboards,
+    inMemoryDeleteLeaderboard,
+  } = React.useContext(inMemoryLeaderboardsContext)
   const { editLeaderboardDialogIsOpenWithId } = React.useContext(uiContext)
   const leaderboards = userId ? dbLeaderboards : inMemoryLeaderboards
   const editingLeaderboard = editLeaderboardDialogIsOpenWithId
@@ -111,26 +117,54 @@ const EditLeaderboardForm = (props: EditLeaderboardFormProps) => {
             {props.submitError && <Text style={{ color: "red" }}>{props.submitError}</Text>}
           </Stack>
 
-          <ButtonGroup marginY="20px">
-            <Button
-              mr={3}
-              onClick={() => componentProps.onFormFinished && componentProps.onFormFinished()}
-              backgroundColor="gray.600"
-              _hover={{ backgroundColor: "gray.700" }}
-              color="white"
-            >
-              Close
-            </Button>
-            <Button
-              colorScheme="blue"
-              isLoading={props.submitting}
+          <Box display="flex" alignItems="center">
+            <ButtonGroup marginY="20px">
+              <Button
+                mr={3}
+                onClick={() => componentProps.onFormFinished && componentProps.onFormFinished()}
+                backgroundColor="gray.600"
+                _hover={{ backgroundColor: "gray.700" }}
+                color="white"
+              >
+                Close
+              </Button>
+              <Button
+                colorScheme="blue"
+                isLoading={props.submitting}
+                disabled={props.submitting}
+                isDisabled={props.submitting}
+                type="submit"
+              >
+                Submit
+              </Button>
+            </ButtonGroup>
+            <IconButton
+              variant="outline"
+              marginLeft="auto"
+              colorScheme="red"
               disabled={props.submitting}
               isDisabled={props.submitting}
-              type="submit"
-            >
-              Submit
-            </Button>
-          </ButtonGroup>
+              type="button"
+              aria-label="Delete player"
+              icon={<DeleteIcon />}
+              onClick={() => {
+                if (!editingLeaderboard) return
+                try {
+                  if (userId) {
+                    dbCacheDeleteLeaderboard(editingLeaderboard.id)
+                  } else {
+                    inMemoryDeleteLeaderboard(editingLeaderboard.id)
+                  }
+                } catch (error) {
+                  return {
+                    [FORM_ERROR]:
+                      "Sorry, we had an unexpected error. Please try again. - " + error.toString(),
+                  }
+                }
+                componentProps.onFormFinished && componentProps.onFormFinished()
+              }}
+            />
+          </Box>
         </form>
       )}
     </FinalForm>

@@ -1,17 +1,19 @@
-import { SessionContext } from "blitz"
-import db, { LeaderboardDeleteArgs } from "db"
+import { SessionContext, AuthorizationError } from "blitz"
+import { UUID } from "common-types"
+import db from "db"
 
-type DeleteLeaderboardInput = {
-  where: LeaderboardDeleteArgs["where"]
-}
-
-export default async function deleteLeaderboard(
-  { where }: DeleteLeaderboardInput,
-  ctx: { session?: SessionContext } = {}
-) {
+export default async function deleteLeaderboard(id: UUID, ctx: { session?: SessionContext } = {}) {
   ctx.session!.authorize()
 
-  const leaderboard = await db.leaderboard.delete({ where })
+  const userId: UUID = ctx.session!.userId
+  const leaderboard = await db.leaderboard.findOne({ where: { id } })
+
+  if (!leaderboard || leaderboard.ownerId !== userId) {
+    throw new AuthorizationError()
+  }
+
+  await db.player.deleteMany({ where: { leaderboardId: id } })
+  await db.leaderboard.delete({ where: { id } })
 
   return leaderboard
 }

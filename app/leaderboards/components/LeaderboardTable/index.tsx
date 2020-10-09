@@ -64,7 +64,6 @@ const LeaderboardTable = ({ players }: IProps) => {
         filter: "between",
       },
       {
-        Header: "",
         accessor: "extra",
         disableFilters: true,
       },

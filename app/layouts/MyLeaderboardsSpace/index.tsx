@@ -1,8 +1,6 @@
 import React from "react"
 import { Head } from "blitz"
 import { Box } from "@chakra-ui/core"
-// import AuthModal, {AuthModalType} from "@shared/components/AuthModal";
-// import { logIn, signUp } from "@auth";
 import Header from "app/components/Header"
 import MyLeaderboardsSidebar from "app/components/MyLeaderboardsSidebar"
 import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboardsProvider"
@@ -10,8 +8,7 @@ import { inMemoryLeaderboardsContext } from "app/leaderboards/InMemoryLeaderboar
 import { uiContext } from "app/leaderboards/UiProvider"
 import { Leaderboard } from "@prisma/client"
 import { InMemoryLeaderboard } from "app/leaderboards/InMemoryLeaderboardsProvider/types"
-// import { firebaseAuthContext } from "../../../providers/Auth";
-// import { appContext } from "../../../providers/App";
+import useCurrentlySelectedLeaderboard from "app/leaderboards/hooks/useCurrentlySelectedLeaderboard"
 
 interface IProps {
   title?: string
@@ -21,16 +18,17 @@ const MyLeaderboardsSpaceLayout = ({ children, title }: IProps) => {
   const { leaderboards: dbLeaderboards, userId } = React.useContext(dbCacheLeaderboardsContext)
   const { leaderboards: inMemoryLeaderboards } = React.useContext(inMemoryLeaderboardsContext)
   const { setCurrentlySelectedLeaderboardId } = React.useContext(uiContext)
+  const currentlySelectedLeaderboard = useCurrentlySelectedLeaderboard()
   const leaderboards: Leaderboard[] | InMemoryLeaderboard[] = userId
     ? dbLeaderboards
     : inMemoryLeaderboards
-  const hasLeaderboards = leaderboards.length > 0
+  const leaderboardsLength = leaderboards.length
 
   React.useEffect(() => {
-    if (hasLeaderboards) {
+    if (leaderboardsLength && !currentlySelectedLeaderboard) {
       setCurrentlySelectedLeaderboardId(leaderboards[0].id)
     }
-  }, [hasLeaderboards])
+  }, [leaderboardsLength, currentlySelectedLeaderboard])
 
   return (
     <Box display="flex" flexDirection="column">

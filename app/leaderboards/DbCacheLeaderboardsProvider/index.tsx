@@ -140,21 +140,29 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
   }
 
   public dbCacheDeleteLeaderboard: DbCacheDeleteLeaderboard = async (id: UUID) => {
-    const { leaderboards, userId } = this.state
+    const { leaderboards, userId, players } = this.state
     if (!userId) return
 
-    const oldLeaderboardsState = { ...leaderboards }
+    const leaderboard = leaderboards.find((l) => l.id === id)
+
+    if (!leaderboard) return
+
+    const oldLeaderboardsState = [...leaderboards]
+    const oldPlayersState = [...players]
 
     this.setState({
-      leaderboards: leaderboards.filter((l) => l.id === id),
+      leaderboards: leaderboards.filter((l) => l.id !== id),
+      players: [...players.filter((p) => p.leaderboardId !== leaderboard.id)],
     })
 
     try {
-      await deleteLeaderboard({ where: { id } })
+      await deleteLeaderboard(id)
     } catch (e) {
       // TODO: Notify user of error
+      console.log(e)
       this.setState({
         leaderboards: oldLeaderboardsState,
+        players: oldPlayersState,
       })
     }
   }
