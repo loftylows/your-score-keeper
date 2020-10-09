@@ -9,7 +9,7 @@ import {
   Box,
 } from "@chakra-ui/core"
 import { InfoIcon } from "@chakra-ui/icons"
-import { Form as FinalForm, Field } from "react-final-form"
+import { Form as FinalForm, Field, useForm } from "react-final-form"
 import { FORM_ERROR } from "final-form"
 import { CreatePlayerInput, CreatePlayerInputType } from "app/players/validations"
 import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboardsProvider"
@@ -24,6 +24,8 @@ type CreatePlayerFormProps = {
   onFormFinished?: () => void
 }
 
+const initialFormVals = { name: "", score: "0" }
+
 const CreatePlayerForm = (props: CreatePlayerFormProps) => {
   const { leaderboardId } = props
   const { userId, dbCacheCreatePlayer } = React.useContext(dbCacheLeaderboardsContext)
@@ -31,7 +33,7 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
 
   return (
     <FinalForm<CreatePlayerInputType>
-      initialValues={{ name: "", score: "0" }}
+      initialValues={initialFormVals}
       validate={(values) => {
         try {
           CreatePlayerInput.parse(values)
@@ -39,17 +41,17 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
           return error.formErrors.fieldErrors
         }
       }}
-      onSubmit={async (values) => {
+      onSubmit={async (values, formApi) => {
         props.onSubmitStart && props.onSubmitStart()
         try {
           if (userId) {
-            dbCacheCreatePlayer(leaderboardId, {
+            await dbCacheCreatePlayer(leaderboardId, {
               name: values.name,
               score: Number(values.score),
               leaderboard: { connect: { id: leaderboardId } },
             })
           } else {
-            inMemoryCreatePlayer(leaderboardId, {
+            await inMemoryCreatePlayer(leaderboardId, {
               name: values.name,
               score: Number(values.score),
               leaderboardId,
@@ -66,7 +68,15 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
       }}
     >
       {(props) => (
-        <Box as="form" onSubmit={props.handleSubmit} marginBottom="30px">
+        <form
+          onSubmit={async (event) => {
+            await props.handleSubmit(event)
+            props.form.reset()
+          }}
+          style={{
+            marginBottom: "30px",
+          }}
+        >
           <HStack spacing={4} width="100%">
             <Field name="name">
               {(props) => (
@@ -81,7 +91,6 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
                       errorBorderColor="crimson"
                       type="text"
                       placeholder="Name..."
-                      isInvalid={props.meta.touched && props.meta.invalid}
                     />
                   </InputGroup>
                 </FormControl>
@@ -101,7 +110,7 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
                       errorBorderColor="crimson"
                       type="number"
                       placeholder="Score..."
-                      isInvalid={props.meta.invalid}
+                      onFocus={(e) => e.target.select()}
                     />
                   </InputGroup>
                 </FormControl>
@@ -122,7 +131,7 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
               Add Player
             </Button>
           </HStack>
-        </Box>
+        </form>
       )}
     </FinalForm>
   )
