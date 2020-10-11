@@ -36,6 +36,7 @@ type CreatePlayerFormProps = {
 }
 
 const CreatePlayerForm = (props: CreatePlayerFormProps) => {
+  const [isDeletingPlayer, setIsDeletingPlayer] = React.useState(false)
   const toast = useToast()
   const componentProps = props
   const { userId, dbCacheEditPlayer, dbCacheDeletePlayer } = React.useContext(
@@ -176,13 +177,15 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
               variant="outline"
               marginLeft="auto"
               colorScheme="red"
-              disabled={props.submitting}
-              isDisabled={props.submitting}
+              disabled={isDeletingPlayer || props.submitting}
+              isDisabled={isDeletingPlayer || props.submitting}
+              isLoading={isDeletingPlayer}
               type="button"
               aria-label="Delete player"
               icon={<DeleteIcon />}
               onClick={() => {
                 if (!currentlySelectedLeaderboard) return
+                setIsDeletingPlayer(true)
                 try {
                   if (userId) {
                     dbCacheDeletePlayer(player.id, currentlySelectedLeaderboard.id)
@@ -194,6 +197,8 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
                     [FORM_ERROR]:
                       "Sorry, we had an unexpected error. Please try again. - " + error.toString(),
                   }
+                } finally {
+                  setIsDeletingPlayer(false)
                 }
                 toast({
                   title: "Player Deleted.",

@@ -32,6 +32,7 @@ type EditLeaderboardFormProps = {
 }
 
 const EditLeaderboardForm = (props: EditLeaderboardFormProps) => {
+  const [isDeletingLeaderboard, setIsDeletingLeaderboard] = React.useState(false)
   const toast = useToast()
   const componentProps = props
   const {
@@ -151,13 +152,15 @@ const EditLeaderboardForm = (props: EditLeaderboardFormProps) => {
               variant="outline"
               marginLeft="auto"
               colorScheme="red"
-              disabled={props.submitting}
-              isDisabled={props.submitting}
+              disabled={isDeletingLeaderboard || props.submitting}
+              isDisabled={isDeletingLeaderboard || props.submitting}
+              isLoading={isDeletingLeaderboard}
               type="button"
               aria-label="Delete player"
               icon={<DeleteIcon />}
               onClick={() => {
                 if (!editingLeaderboard) return
+                setIsDeletingLeaderboard(true)
                 try {
                   if (userId) {
                     dbCacheDeleteLeaderboard(editingLeaderboard.id)
@@ -169,6 +172,8 @@ const EditLeaderboardForm = (props: EditLeaderboardFormProps) => {
                     [FORM_ERROR]:
                       "Sorry, we had an unexpected error. Please try again. - " + error.toString(),
                   }
+                } finally {
+                  setIsDeletingLeaderboard(false)
                 }
                 toast({
                   title: "Leaderboard Deleted.",
