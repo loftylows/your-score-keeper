@@ -23,7 +23,11 @@ import {
 } from "./types"
 import EditUserForm from "../components/forms/EditUserForm"
 import deleteAccount from "app/auth/deleteAccount"
-import { ACCOUNT_DELETED_EVENT_NAME } from "app/browserEvents"
+import {
+  ACCOUNT_DELETED_EVENT_NAME,
+  LOGIN_COMPLETED_EVENT_NAME,
+  LOGOUT_EVENT_NAME,
+} from "app/browserEvents"
 import { ToastContext, ToastType } from "app/components/ToastProvider"
 
 interface IProps {
@@ -67,10 +71,14 @@ class UsersUiDialogsProvider extends React.Component<IProps, IState> {
 
   componentDidMount = () => {
     window.addEventListener(ACCOUNT_DELETED_EVENT_NAME, this.openAccountDeletedToast)
+    window.addEventListener(LOGIN_COMPLETED_EVENT_NAME, this.openLoginToast)
+    window.addEventListener(LOGOUT_EVENT_NAME, this.openLogoutToast)
   }
 
   componentWillUnmount = () => {
     window.removeEventListener(ACCOUNT_DELETED_EVENT_NAME, this.openAccountDeletedToast)
+    window.removeEventListener(LOGIN_COMPLETED_EVENT_NAME, this.openLoginToast)
+    window.removeEventListener(LOGOUT_EVENT_NAME, this.openLogoutToast)
   }
 
   toggleAccountDeletionInProgress = () => {
@@ -84,6 +92,28 @@ class UsersUiDialogsProvider extends React.Component<IProps, IState> {
   closeEditCurrentUserDialog = () => this.setState({ editCurrentUserIsOpen: false })
   openDeleteCurrentUserDialog = () => this.setState({ deleteCurrentUserIsOpen: true })
   closeDeleteCurrentUserDialog = () => this.setState({ deleteCurrentUserIsOpen: false })
+
+  openLoginToast = () => {
+    const { toast } = this.props
+    toast({
+      title: "Welcome Back.",
+      status: "success",
+      duration: 2000,
+      isClosable: true,
+      position: "top",
+    })
+  }
+
+  openLogoutToast = () => {
+    const { toast } = this.props
+    toast({
+      title: "Logged Out.",
+      status: "success",
+      duration: 2000,
+      isClosable: true,
+      position: "top",
+    })
+  }
 
   openAccountDeletedToast = () => {
     const { toast } = this.props
