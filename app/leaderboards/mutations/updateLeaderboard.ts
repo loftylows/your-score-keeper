@@ -17,6 +17,10 @@ export default async function updateLeaderboard(
 
   // Don't allow updating
   delete (data as any).user
+  delete (data as any).updatedAt
+  delete (data as any).createdAt
+  delete (data as any).owner
+  delete (data as any).id
 
   const oldLeaderboard = await db.leaderboard.findOne({ where })
 

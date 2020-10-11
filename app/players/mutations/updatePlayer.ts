@@ -23,6 +23,9 @@ export default async function updatePlayer(
   // Don't allow updating
   delete (data as any).leaderboard
   delete (data as any).leaderboardId
+  delete (data as any).createdAt
+  delete (data as any).updateAt
+  delete (data as any).id
 
   const player = await db.player.update({
     where,
