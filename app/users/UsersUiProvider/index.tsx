@@ -31,6 +31,7 @@ interface IProps {
   toast: ToastType
 }
 interface IState {
+  accountDeletionInProgress: boolean
   editCurrentUserIsOpen: boolean
   openEditCurrentUserDialog: OpenEditCurrentUserDialog
   closeEditCurrentUserDialog: CloseEditCurrentUserDialog
@@ -40,6 +41,7 @@ interface IState {
 }
 
 const usersUiContext = React.createContext<IState>({
+  accountDeletionInProgress: false,
   editCurrentUserIsOpen: false,
   openEditCurrentUserDialog: () => {},
   closeEditCurrentUserDialog: () => {},
@@ -53,6 +55,7 @@ class UsersUiDialogsProvider extends React.Component<IProps, IState> {
     super(props)
 
     this.state = {
+      accountDeletionInProgress: false,
       editCurrentUserIsOpen: false,
       openEditCurrentUserDialog: this.openEditCurrentUserDialog,
       closeEditCurrentUserDialog: this.closeEditCurrentUserDialog,
@@ -68,6 +71,13 @@ class UsersUiDialogsProvider extends React.Component<IProps, IState> {
 
   componentWillUnmount = () => {
     window.removeEventListener(ACCOUNT_DELETED_EVENT_NAME, this.openAccountDeletedToast)
+  }
+
+  toggleAccountDeletionInProgress = () => {
+    const { accountDeletionInProgress } = this.state
+    this.setState({
+      accountDeletionInProgress: !accountDeletionInProgress,
+    })
   }
 
   openEditCurrentUserDialog = () => this.setState({ editCurrentUserIsOpen: true })
@@ -134,9 +144,17 @@ class UsersUiDialogsProvider extends React.Component<IProps, IState> {
                 <Button
                   ml={3}
                   colorScheme="red"
+                  isLoading={state.accountDeletionInProgress}
                   onClick={async () => {
-                    await deleteAccount()
-                    this.closeDeleteCurrentUserDialog()
+                    this.toggleAccountDeletionInProgress()
+                    try {
+                      await deleteAccount()
+                      this.closeDeleteCurrentUserDialog()
+                    } catch (e) {
+                      console.log(e)
+                    } finally {
+                      this.toggleAccountDeletionInProgress()
+                    }
                   }}
                 >
                   Delete
