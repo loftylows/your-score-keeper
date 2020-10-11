@@ -1,6 +1,5 @@
 import * as React from "react"
 import {
-  Box,
   Stack,
   FormLabel,
   FormControl,
@@ -12,69 +11,44 @@ import {
   FormErrorMessage,
   ButtonGroup,
   Text,
-  IconButton,
   useToast,
+  IconButton,
+  Box,
 } from "@chakra-ui/core"
 import { DeleteIcon, InfoIcon } from "@chakra-ui/icons"
 import { Form as FinalForm, Field } from "react-final-form"
 import { FORM_ERROR } from "final-form"
-import { EditLeaderboardInput, EditLeaderboardInputType } from "../../../validations"
-import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboardsProvider"
-import { inMemoryLeaderboardsContext } from "app/leaderboards/InMemoryLeaderboardsProvider"
-import { Leaderboard } from "@prisma/client"
-import { uiContext } from "app/leaderboards/LeaderboardsUiProvider"
+import { EditUserInput, EditUserInputType } from "../../../validations"
+import { useCurrentUser } from "app/hooks/useCurrentUser"
+import updateUser from "app/users/mutations/updateUser"
 
-type EditLeaderboardFormProps = {
+type EditUserFormProps = {
   onSuccess?: () => void
   onSubmitStart?: () => void
   onSubmitEnd?: () => void
   onFormFinished?: () => void
 }
 
-const EditLeaderboardForm = (props: EditLeaderboardFormProps) => {
-  const toast = useToast()
+const EditUserForm = (props: EditUserFormProps) => {
   const componentProps = props
-  const {
-    userId,
-    dbCacheEditLeaderboard,
-    leaderboards: dbLeaderboards,
-    dbCacheDeleteLeaderboard,
-  } = React.useContext(dbCacheLeaderboardsContext)
-  const {
-    inMemoryEditLeaderboard,
-    leaderboards: inMemoryLeaderboards,
-    inMemoryDeleteLeaderboard,
-  } = React.useContext(inMemoryLeaderboardsContext)
-  const { editLeaderboardDialogIsOpenWithId } = React.useContext(uiContext)
-  const leaderboards = userId ? dbLeaderboards : inMemoryLeaderboards
-  const editingLeaderboard = editLeaderboardDialogIsOpenWithId
-    ? leaderboards.find((l) => l.id === editLeaderboardDialogIsOpenWithId)
-    : null
+  const user = useCurrentUser()
+  const toast = useToast()
+  if (!user) return null
 
   return (
-    <FinalForm<EditLeaderboardInputType>
-      initialValues={{ title: editingLeaderboard ? editingLeaderboard.title : "" }}
+    <FinalForm<EditUserInputType>
+      initialValues={{ name: user.name }}
       validate={(values) => {
         try {
-          EditLeaderboardInput.parse(values)
+          EditUserInput.parse(values)
         } catch (error) {
           return error.formErrors.fieldErrors
         }
       }}
       onSubmit={async (values) => {
         props.onSubmitStart && props.onSubmitStart()
-        if (!editingLeaderboard) return
-        const updatedLeaderboard = {
-          ...(editingLeaderboard as Leaderboard),
-          title: values.title,
-          ownerId: undefined,
-        }
         try {
-          if (userId) {
-            dbCacheEditLeaderboard(updatedLeaderboard)
-          } else {
-            inMemoryEditLeaderboard(updatedLeaderboard)
-          }
+          await updateUser({ where: { id: user.id }, data: { name: values.name } })
           props.onSuccess && props.onSuccess()
         } catch (error) {
           return {
@@ -83,7 +57,7 @@ const EditLeaderboardForm = (props: EditLeaderboardFormProps) => {
           }
         }
         toast({
-          title: "Leaderboard Updated.",
+          title: "User Profile Info Updated.",
           status: "success",
           duration: 2000,
           isClosable: true,
@@ -95,10 +69,10 @@ const EditLeaderboardForm = (props: EditLeaderboardFormProps) => {
       {(props) => (
         <form onSubmit={props.handleSubmit}>
           <Stack spacing={4}>
-            <Field name="title">
+            <Field name="name">
               {(props) => (
                 <FormControl
-                  id="title"
+                  id="name"
                   isRequired
                   isInvalid={props.meta.error && props.meta.touched}
                 >
@@ -115,7 +89,8 @@ const EditLeaderboardForm = (props: EditLeaderboardFormProps) => {
                       errorBorderColor="crimson"
                       isInvalid={props.meta.touched && props.meta.invalid}
                       type="text"
-                      placeholder="Title..."
+                      placeholder="Name..."
+                      onFocus={(e) => e.target.select()}
                     />
                   </InputGroup>
                   <FormErrorMessage>{props.meta.error}</FormErrorMessage>
@@ -157,13 +132,8 @@ const EditLeaderboardForm = (props: EditLeaderboardFormProps) => {
               aria-label="Delete player"
               icon={<DeleteIcon />}
               onClick={() => {
-                if (!editingLeaderboard) return
                 try {
-                  if (userId) {
-                    dbCacheDeleteLeaderboard(editingLeaderboard.id)
-                  } else {
-                    inMemoryDeleteLeaderboard(editingLeaderboard.id)
-                  }
+                  console.log("hey you just tried top delete this user")
                 } catch (error) {
                   return {
                     [FORM_ERROR]:
@@ -187,4 +157,4 @@ const EditLeaderboardForm = (props: EditLeaderboardFormProps) => {
   )
 }
 
-export default EditLeaderboardForm
+export default EditUserForm

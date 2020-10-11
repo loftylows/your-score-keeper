@@ -8,7 +8,7 @@ import {
 } from "app/leaderboards/InMemoryLeaderboardsProvider/types"
 import { DefaultColumnFilter, NumberRangeColumnFilter } from "./tableFilters"
 import { IconButton, Icon, Box } from "@chakra-ui/core"
-import { uiContext } from "app/leaderboards/UiProvider"
+import { uiContext } from "app/leaderboards/LeaderboardsUiProvider"
 import { lighten } from "polished"
 
 interface ITitleBoxProps {

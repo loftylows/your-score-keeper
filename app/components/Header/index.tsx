@@ -18,11 +18,12 @@ import { useCurrentUser } from "app/hooks/useCurrentUser"
 import { authModalContext } from "app/auth/AuthModalProvider"
 import logout from "app/auth/logout"
 import { capitalize } from "utils/string"
-import { fireLogoutEvent } from "app/browserEvents"
+import { usersUiContext } from "app/users/UsersUiProvider"
 
 const Header = () => {
   const session = useSession()
   const { openAuthModal } = React.useContext(authModalContext)
+  const { openEditCurrentUserDialog } = React.useContext(usersUiContext)
 
   const UnauthenticatedUserContent = () => (
     <ButtonGroup color="white">
@@ -75,6 +76,13 @@ const Header = () => {
 
         <MenuList>
           <MenuGroup title={currentUser ? capitalize(currentUser.name) : undefined}>
+            <MenuDivider />
+            <Link href="/my-leaderboards">
+              <a>
+                <MenuItem>My Leaderboards</MenuItem>
+              </a>
+            </Link>
+            <MenuItem onClick={() => openEditCurrentUserDialog()}>Account Settings</MenuItem>
             <MenuDivider />
             <MenuItem
               onClick={async () => {

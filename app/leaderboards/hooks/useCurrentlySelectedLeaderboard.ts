@@ -1,7 +1,7 @@
 import * as React from "react"
 import { inMemoryLeaderboardsContext } from "app/leaderboards/InMemoryLeaderboardsProvider"
 import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboardsProvider"
-import { uiContext } from "app/leaderboards/UiProvider"
+import { uiContext } from "app/leaderboards/LeaderboardsUiProvider"
 import { Leaderboard } from "@prisma/client"
 import { InMemoryLeaderboard } from "app/leaderboards/InMemoryLeaderboardsProvider/types"
 import { Maybe } from "common-types"

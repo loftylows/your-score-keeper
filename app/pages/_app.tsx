@@ -8,8 +8,9 @@ import LoginForm from "app/auth/components/LoginForm"
 import myCustomThemeObj from "app/theme"
 import AuthModalProvider from "app/auth/AuthModalProvider"
 import InMemoryLeaderboardsProvider from "../leaderboards/InMemoryLeaderboardsProvider"
-import LeaderboardsDialogProvider from "../leaderboards/UiProvider"
+import LeaderboardsDialogProvider from "../leaderboards/LeaderboardsUiProvider"
 import "nprogress/nprogress.css"
+import UsersUiDialogsProvider from "app/users/UsersUiProvider"
 
 //Binding events.
 Router.events.on("routeChangeStart", () => NProgress.start())
@@ -35,11 +36,13 @@ export default function App({ Component, pageProps }: AppProps) {
       {
         <ChakraProvider theme={customTheme}>
           <AuthModalProvider>
-            <InMemoryLeaderboardsProvider>
-              <LeaderboardsDialogProvider>
-                {getLayout(<Component {...pageProps} />)}
-              </LeaderboardsDialogProvider>
-            </InMemoryLeaderboardsProvider>
+            <UsersUiDialogsProvider>
+              <InMemoryLeaderboardsProvider>
+                <LeaderboardsDialogProvider>
+                  {getLayout(<Component {...pageProps} />)}
+                </LeaderboardsDialogProvider>
+              </InMemoryLeaderboardsProvider>
+            </UsersUiDialogsProvider>
           </AuthModalProvider>
         </ChakraProvider>
       }

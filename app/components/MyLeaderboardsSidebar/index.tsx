@@ -3,7 +3,7 @@ import { Box, Button, ButtonGroup, IconButton, Text } from "@chakra-ui/core"
 import { EditIcon, HamburgerIcon } from "@chakra-ui/icons"
 import { inMemoryLeaderboardsContext } from "app/leaderboards/InMemoryLeaderboardsProvider"
 import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboardsProvider"
-import { uiContext } from "app/leaderboards/UiProvider"
+import { uiContext } from "app/leaderboards/LeaderboardsUiProvider"
 import useCurrentlySelectedLeaderboard from "app/leaderboards/hooks/useCurrentlySelectedLeaderboard"
 
 const MyLeaderboardsSidebar = () => {

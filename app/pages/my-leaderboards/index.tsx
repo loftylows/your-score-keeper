@@ -7,7 +7,7 @@ import DbCacheLeaderboardsProvider from "app/leaderboards/DbCacheLeaderboardsPro
 import { Maybe, UUID } from "common-types"
 import getLeaderboards from "app/leaderboards/queries/getLeaderboards"
 import getPlayers from "app/players/queries/getPlayers"
-import LeaderboardsDialogProvider from "app/leaderboards/UiProvider"
+import LeaderboardsDialogProvider from "app/leaderboards/LeaderboardsUiProvider"
 import LeaderboardsSpace from "app/leaderboards/components/LeaderboardSpace"
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res: response }) => {
