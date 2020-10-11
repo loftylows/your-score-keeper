@@ -1,7 +1,3 @@
-import {
-  InMemoryLeaderboard,
-  InMemoryPlayer,
-} from "app/leaderboards/InMemoryLeaderboardsProvider/types"
 import { UUID } from "common-types"
 
 export interface AuthEventDetails {
@@ -28,16 +24,9 @@ export const fireLogoutEvent = () => {
   window.dispatchEvent(event)
 }
 
-export const SHOULD_SAVE_LEADERBOARDS_FROM_MEMORY_TO_DB_NAME = "shouldSaveInMemoryLeaderboards"
-export const fireShouldSaveLeaderboardsFromMemoryToDbEvent = (
-  userId: UUID,
-  leaderboards: InMemoryLeaderboard[],
-  players: InMemoryPlayer[],
-  onFinished?: Function
-) => {
-  const event = new CustomEvent(SHOULD_SAVE_LEADERBOARDS_FROM_MEMORY_TO_DB_NAME, {
-    detail: { userId, leaderboards, players, onFinished },
-  })
+export const ACCOUNT_DELETED_EVENT_NAME = "accountDeleted"
+export const fireAccountDeletedEvent = () => {
+  const event = new Event(ACCOUNT_DELETED_EVENT_NAME)
   if (typeof window === "undefined") return
   window.dispatchEvent(event)
 }

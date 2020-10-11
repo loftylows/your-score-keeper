@@ -21,6 +21,7 @@ import { FORM_ERROR } from "final-form"
 import { EditUserInput, EditUserInputType } from "../../../validations"
 import { useCurrentUser } from "app/hooks/useCurrentUser"
 import updateUser from "app/users/mutations/updateUser"
+import { usersUiContext } from "app/users/UsersUiProvider"
 
 type EditUserFormProps = {
   onSuccess?: () => void
@@ -31,6 +32,9 @@ type EditUserFormProps = {
 
 const EditUserForm = (props: EditUserFormProps) => {
   const componentProps = props
+  const { openDeleteCurrentUserDialog, closeEditCurrentUserDialog } = React.useContext(
+    usersUiContext
+  )
   const user = useCurrentUser()
   const toast = useToast()
   if (!user) return null
@@ -132,22 +136,9 @@ const EditUserForm = (props: EditUserFormProps) => {
               aria-label="Delete player"
               icon={<DeleteIcon />}
               onClick={() => {
-                try {
-                  console.log("hey you just tried top delete this user")
-                } catch (error) {
-                  return {
-                    [FORM_ERROR]:
-                      "Sorry, we had an unexpected error. Please try again. - " + error.toString(),
-                  }
-                }
-                toast({
-                  title: "Leaderboard Deleted.",
-                  status: "success",
-                  duration: 2000,
-                  isClosable: true,
-                  position: "top",
-                })
-                componentProps.onFormFinished && componentProps.onFormFinished()
+                props.form.reset()
+                closeEditCurrentUserDialog()
+                openDeleteCurrentUserDialog()
               }}
             />
           </Box>

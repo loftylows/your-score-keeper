@@ -23,7 +23,6 @@ import deletePlayer from "app/players/mutations/deletePlayer"
 import {
   LOGIN_COMPLETED_EVENT_NAME,
   LOGOUT_EVENT_NAME,
-  SHOULD_SAVE_LEADERBOARDS_FROM_MEMORY_TO_DB_NAME,
   SIGNUP_COMPLETED_EVENT_NAME,
 } from "app/browserEvents"
 import getPlayers from "app/players/queries/getPlayers"

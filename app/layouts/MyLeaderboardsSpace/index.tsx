@@ -32,12 +32,6 @@ const MyLeaderboardsSpaceLayout = ({ children, title }: IProps) => {
     }
   }, [leaderboardsLength, currentlySelectedLeaderboard])
 
-  React.useEffect(() => {
-    if (leaderboardsLength === 0) {
-      openCreateLeaderboardDialog()
-    }
-  }, [leaderboardsLength === 0])
-
   return (
     <Box display="flex" flexDirection="column">
       <Head>

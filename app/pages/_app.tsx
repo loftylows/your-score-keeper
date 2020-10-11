@@ -11,6 +11,7 @@ import InMemoryLeaderboardsProvider from "../leaderboards/InMemoryLeaderboardsPr
 import LeaderboardsDialogProvider from "../leaderboards/LeaderboardsUiProvider"
 import "nprogress/nprogress.css"
 import UsersUiDialogsProvider from "app/users/UsersUiProvider"
+import ToastProvider from "app/components/ToastProvider"
 
 //Binding events.
 Router.events.on("routeChangeStart", () => NProgress.start())
@@ -35,15 +36,17 @@ export default function App({ Component, pageProps }: AppProps) {
     >
       {
         <ChakraProvider theme={customTheme}>
-          <AuthModalProvider>
-            <UsersUiDialogsProvider>
-              <InMemoryLeaderboardsProvider>
-                <LeaderboardsDialogProvider>
-                  {getLayout(<Component {...pageProps} />)}
-                </LeaderboardsDialogProvider>
-              </InMemoryLeaderboardsProvider>
-            </UsersUiDialogsProvider>
-          </AuthModalProvider>
+          <ToastProvider>
+            <AuthModalProvider>
+              <UsersUiDialogsProvider>
+                <InMemoryLeaderboardsProvider>
+                  <LeaderboardsDialogProvider>
+                    {getLayout(<Component {...pageProps} />)}
+                  </LeaderboardsDialogProvider>
+                </InMemoryLeaderboardsProvider>
+              </UsersUiDialogsProvider>
+            </AuthModalProvider>
+          </ToastProvider>
         </ChakraProvider>
       }
     </ErrorBoundary>
