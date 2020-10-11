@@ -148,4 +148,4 @@ const EditUserForm = (props: EditUserFormProps) => {
   )
 }
 
-export default EditUserForm
+export default React.memo(EditUserForm)

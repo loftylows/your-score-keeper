@@ -14,10 +14,8 @@ import {
   Spinner,
 } from "@chakra-ui/core"
 import { darken } from "polished"
-import { useCurrentUser } from "app/hooks/useCurrentUser"
 import { authModalContext } from "app/auth/AuthModalProvider"
 import logout from "app/auth/logout"
-import { capitalize } from "utils/string"
 import { usersUiContext } from "app/users/UsersUiProvider"
 
 const Header = () => {
@@ -43,8 +41,6 @@ const Header = () => {
   )
 
   const AuthenticatedUserContent = () => {
-    const currentUser = useCurrentUser()
-
     return (
       <Menu>
         <MenuButton
@@ -75,8 +71,7 @@ const Header = () => {
         </MenuButton>
 
         <MenuList>
-          <MenuGroup title={currentUser ? capitalize(currentUser.name) : undefined}>
-            <MenuDivider />
+          <MenuGroup title={undefined}>
             <Link href="/my-leaderboards">
               <a>
                 <MenuItem>My Leaderboards</MenuItem>
