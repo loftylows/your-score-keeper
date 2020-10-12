@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useSession, Link } from "blitz"
-import { FaUserCircle } from "react-icons/fa"
+import { FaUserCircle, FaAlignJustify } from "react-icons/fa"
 import {
   Box,
   ButtonGroup,
@@ -12,13 +12,19 @@ import {
   MenuGroup,
   MenuDivider,
   Spinner,
+  Icon,
+  IconButton,
 } from "@chakra-ui/core"
 import { darken } from "polished"
 import { authModalContext } from "app/auth/AuthModalProvider"
 import logout from "app/auth/logout"
 import { usersUiContext } from "app/users/UsersUiProvider"
 
-const Header = () => {
+interface IProps {
+  showingMobileSidebar?: boolean
+  openSidebar?: () => void
+}
+const Header = ({ showingMobileSidebar, openSidebar }: IProps) => {
   const session = useSession()
   const { openAuthModal } = React.useContext(authModalContext)
   const { openEditCurrentUserDialog } = React.useContext(usersUiContext)
@@ -104,11 +110,22 @@ const Header = () => {
       boxShadow="sm"
       zIndex={1}
     >
-      <Link passHref href="/">
-        <Box color="rgba(255, 255, 255, .9)" as="a" marginLeft="25px" fontSize="xl">
-          YourScoreKeeper
-        </Box>
-      </Link>
+      <Box display="flex" alignItems="center" marginLeft={showingMobileSidebar ? "15px" : "25px"}>
+        {showingMobileSidebar && openSidebar && (
+          <IconButton
+            icon={<Icon as={FaAlignJustify} />}
+            colorScheme="white"
+            onClick={openSidebar}
+            aria-label="Open mobile sidebar"
+            size="lg"
+          />
+        )}
+        <Link passHref href="/">
+          <Box color="rgba(255, 255, 255, .9)" as="a" fontSize="xl">
+            YourScoreKeeper
+          </Box>
+        </Link>
+      </Box>
 
       {/* Header auth items */}
       <Box

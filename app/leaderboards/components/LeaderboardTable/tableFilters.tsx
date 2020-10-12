@@ -36,6 +36,7 @@ export const DefaultColumnFilter = ({ column: { filterValue, preFilteredRows, se
 
   return (
     <Input
+      display={{ base: "none", lg: "initial" }}
       size="sm"
       variant="filled"
       width="calc(100% - 10px)"
@@ -65,6 +66,7 @@ export const SelectColumnFilter = ({ column: { filterValue, setFilter, preFilter
   // Render a multi-select box
   return (
     <Select
+      display={{ base: "none", lg: "initial" }}
       value={filterValue}
       onBlur={(e) => {
         setFilter(e.target.value || undefined)
@@ -94,7 +96,7 @@ export const NumberRangeColumnFilter = ({
   }, [id, preFilteredRows])
 
   return (
-    <Box display="flex">
+    <Box display={{ base: "none", lg: "flex" }}>
       <Input
         size="sm"
         value={filterValue[0] || ""}

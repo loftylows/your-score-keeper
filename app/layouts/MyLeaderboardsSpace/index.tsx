@@ -1,6 +1,15 @@
 import React from "react"
 import { Head } from "blitz"
-import { Box } from "@chakra-ui/core"
+import { isMobile } from "mobile-device-detect"
+import {
+  Box,
+  useBreakpointValue,
+  Drawer,
+  DrawerContent,
+  DrawerOverlay,
+  DrawerCloseButton,
+  DrawerHeader,
+} from "@chakra-ui/core"
 import Header from "app/components/Header"
 import MyLeaderboardsSidebar from "app/components/MyLeaderboardsSidebar"
 import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboardsProvider"
@@ -15,11 +24,10 @@ interface IProps {
   children: React.ReactNode
 }
 const MyLeaderboardsSpaceLayout = ({ children, title }: IProps) => {
+  const [mobileSidebarOpen, setMobileSidebarOpen] = React.useState(false)
   const { leaderboards: dbLeaderboards, userId } = React.useContext(dbCacheLeaderboardsContext)
   const { leaderboards: inMemoryLeaderboards } = React.useContext(inMemoryLeaderboardsContext)
-  const { setCurrentlySelectedLeaderboardId, openCreateLeaderboardDialog } = React.useContext(
-    uiContext
-  )
+  const { setCurrentlySelectedLeaderboardId } = React.useContext(uiContext)
   const currentlySelectedLeaderboard = useCurrentlySelectedLeaderboard()
   const leaderboards: Leaderboard[] | InMemoryLeaderboard[] = userId
     ? dbLeaderboards
@@ -31,6 +39,15 @@ const MyLeaderboardsSpaceLayout = ({ children, title }: IProps) => {
       setCurrentlySelectedLeaderboardId(leaderboards[0].id)
     }
   }, [leaderboardsLength, currentlySelectedLeaderboard])
+  const closeMobileSidebar = () => setMobileSidebarOpen(false)
+  const openMobileSidebar = () => setMobileSidebarOpen(true)
+
+  const btnRef = React.useRef<HTMLButtonElement>(null)
+  const showMobileSidebar = useBreakpointValue({ base: true, md: false }) || false
+
+  React.useEffect(() => {
+    if (!showMobileSidebar && mobileSidebarOpen) setMobileSidebarOpen(false)
+  }, [showMobileSidebar])
 
   return (
     <Box display="flex" flexDirection="column">
@@ -43,9 +60,30 @@ const MyLeaderboardsSpaceLayout = ({ children, title }: IProps) => {
           rel="stylesheet"
         />
       </Head>
-      <Header />
+      <Header
+        showingMobileSidebar={showMobileSidebar}
+        openSidebar={showMobileSidebar ? openMobileSidebar : undefined}
+      />
       <Box display="flex">
-        <MyLeaderboardsSidebar />
+        {!showMobileSidebar ? (
+          <MyLeaderboardsSidebar />
+        ) : (
+          <Drawer
+            isOpen={mobileSidebarOpen}
+            placement="left"
+            onClose={closeMobileSidebar}
+            finalFocusRef={btnRef}
+            size="xs"
+          >
+            <DrawerOverlay>
+              <DrawerContent onClick={closeMobileSidebar}>
+                <DrawerCloseButton />
+                <DrawerHeader>My Leaderboards</DrawerHeader>
+                <MyLeaderboardsSidebar inDrawer={showMobileSidebar} />
+              </DrawerContent>
+            </DrawerOverlay>
+          </Drawer>
+        )}
         {children}
       </Box>
     </Box>

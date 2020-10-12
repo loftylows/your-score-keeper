@@ -39,6 +39,7 @@
     "blitz": "0.23.4",
     "final-form": "4.20.1",
     "mailchecker": "3.3.14",
+    "mobile-device-detect": "0.4.3",
     "nprogress": "0.2.0",
     "polished": "3.6.7",
     "react": "0.0.0-experimental-7f28234f8",

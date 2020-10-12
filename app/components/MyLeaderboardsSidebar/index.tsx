@@ -6,7 +6,10 @@ import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboards
 import { uiContext } from "app/leaderboards/LeaderboardsUiProvider"
 import useCurrentlySelectedLeaderboard from "app/leaderboards/hooks/useCurrentlySelectedLeaderboard"
 
-const MyLeaderboardsSidebar = () => {
+interface IProps {
+  inDrawer?: boolean
+}
+const MyLeaderboardsSidebar = ({ inDrawer }: IProps) => {
   const { leaderboards: inMemoryLeaderboards } = React.useContext(inMemoryLeaderboardsContext)
   const { leaderboards: dbLeaderboards, userId } = React.useContext(dbCacheLeaderboardsContext)
   const currentlySelectedLeaderboard = useCurrentlySelectedLeaderboard()
@@ -23,11 +26,11 @@ const MyLeaderboardsSidebar = () => {
       position="relative"
       display="flex"
       flexDirection="column"
-      height="calc(100vh - 64px)"
+      height={inDrawer ? "100vh" : "calc(100vh - 64px)"}
       overflow="scroll"
       backgroundColor="gray.200"
-      width={{ base: "190px", md: "230px" }}
-      minWidth={{ base: "190px", md: "230px" }}
+      width={{ base: inDrawer ? "100%" : "230px" }}
+      minWidth={{ base: "230px" }}
     >
       {(userId ? dbLeaderboards : inMemoryLeaderboards).map((leaderboard) => {
         return (

@@ -26,7 +26,7 @@ interface IProps {
   players: InMemoryPlayer[]
   userId: Maybe<UUID>
 }
-const LeaderboardTable = ({ players, leaderboard, userId }: IProps) => {
+const LeaderboardTable = ({ players, leaderboard }: IProps) => {
   const { openEditPlayerDialog } = React.useContext(uiContext)
   const rankedPlayers = players
     .sort(
