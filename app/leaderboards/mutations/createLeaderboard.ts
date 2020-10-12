@@ -15,6 +15,8 @@ export default async function createLeaderboard(
   const userId: UUID = ctx.session!.userId
 
   if (userId !== ownerId) throw new AuthorizationError()
+  const count = await db.leaderboard.count({ where: { ownerId: userId } })
+  if (count >= 15) throw new AuthorizationError()
 
   const leaderboard = await db.leaderboard.create({
     data: {

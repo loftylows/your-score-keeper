@@ -14,9 +14,13 @@ export default async function createPlayer(
   ctx.session!.authorize()
   const userId: UUID = ctx.session!.userId
 
-  const leaderboard = await db.leaderboard.findOne({ where: { id: leaderboardId } })
+  const leaderboard = await db.leaderboard.findOne({
+    where: { id: leaderboardId },
+    include: { players: { select: { id: true } } },
+  })
 
   if (leaderboard?.ownerId !== userId) throw new AuthorizationError()
+  if (leaderboard.players.length >= 150) throw new AuthorizationError()
 
   const player = await db.player.create({
     data: {

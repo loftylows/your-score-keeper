@@ -1,6 +1,6 @@
 import * as React from "react"
 import {
-  HStack,
+  Stack,
   FormControl,
   Input,
   InputGroup,
@@ -18,6 +18,7 @@ import { UUID } from "common-types"
 
 type CreatePlayerFormProps = {
   leaderboardId: UUID
+  playersCount: number
   onSuccess?: () => void
   onSubmitStart?: () => void
   onSubmitEnd?: () => void
@@ -27,10 +28,11 @@ type CreatePlayerFormProps = {
 const initialFormVals = { name: "", score: "0" }
 
 const CreatePlayerForm = (props: CreatePlayerFormProps) => {
-  const { leaderboardId } = props
+  const { leaderboardId, playersCount } = props
   const { userId, dbCacheCreatePlayer } = React.useContext(dbCacheLeaderboardsContext)
   const { inMemoryCreatePlayer } = React.useContext(inMemoryLeaderboardsContext)
   const toast = useToast()
+  const hasReachedMaxPlayers = playersCount >= 150
 
   return (
     <FinalForm<CreatePlayerInputType>
@@ -85,7 +87,7 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
             marginBottom: "30px",
           }}
         >
-          <HStack spacing={4} width="100%">
+          <Stack spacing={4} width="100%" direction={{ base: "column", md: "row" }}>
             <Field name="name">
               {(props) => (
                 <FormControl id="name" isRequired>
@@ -130,15 +132,25 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
               variant="outline"
               colorScheme="blue"
               isLoading={props.submitting}
-              disabled={props.submitting || !props.values.name || !props.values.score}
-              isDisabled={props.submitting || !props.values.name || !props.values.score}
+              disabled={
+                props.submitting ||
+                !props.values.name ||
+                !props.values.score ||
+                hasReachedMaxPlayers
+              }
+              isDisabled={
+                props.submitting ||
+                !props.values.name ||
+                !props.values.score ||
+                hasReachedMaxPlayers
+              }
               type="submit"
               textTransform="uppercase"
-              minWidth={{ base: "150px" }}
+              minWidth={{ base: hasReachedMaxPlayers ? "170px" : "150px" }}
             >
-              Add Player
+              {hasReachedMaxPlayers ? "150 Players Max" : "Add Player"}
             </Button>
-          </HStack>
+          </Stack>
         </form>
       )}
     </FinalForm>

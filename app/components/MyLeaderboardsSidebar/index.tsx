@@ -16,6 +16,8 @@ const MyLeaderboardsSidebar = () => {
     setCurrentlySelectedLeaderboardId,
   } = React.useContext(uiContext)
 
+  const leaderboardsCount = dbLeaderboards.length + inMemoryLeaderboards.length
+
   return (
     <Box
       position="relative"
@@ -87,8 +89,10 @@ const MyLeaderboardsSidebar = () => {
         zIndex="1"
         borderTop="1px solid rgba(0,0,0,.03)"
         onClick={openCreateLeaderboardDialog}
+        disabled={leaderboardsCount >= 15}
+        isDisabled={leaderboardsCount >= 15}
       >
-        Add Leaderboard
+        {leaderboardsCount >= 15 ? "15 Leaderboards Max" : "Add Leaderboard"}
       </Button>
     </Box>
   )

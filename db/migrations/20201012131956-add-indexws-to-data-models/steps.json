@@ -1,0 +1,53 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "Leaderboard",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[ownerId]"
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "Leaderboard",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[published]"
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "Leaderboard",
+          "arguments": [
+            {
+              "name": "",
+              "value": "[private]"
+            }
+          ]
+        },
+        "directive": "index"
+      }
+    }
+  ]
+}
