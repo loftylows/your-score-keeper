@@ -251,7 +251,6 @@ class DialogsProvider extends React.Component<IProps, IState> {
                       this.setPublishingLeaderboardWithId(null)
                       toast({
                         title: "Leaderboard Published.",
-                        description: "Share you leaderboard to let other people see.",
                         status: "success",
                         duration: 3000,
                         isClosable: true,
@@ -284,7 +283,7 @@ class DialogsProvider extends React.Component<IProps, IState> {
 
               <AlertDialogBody>
                 Are you sure you want to unpublish this leaderboard? It will only be visible to you
-                once this is done and all public links to this leaderboard will no longer be work.
+                once this is done and all public links to this leaderboard will no longer work.
               </AlertDialogBody>
 
               <AlertDialogFooter>
@@ -307,7 +306,6 @@ class DialogsProvider extends React.Component<IProps, IState> {
                       this.setUnpublishingLeaderboardWithId(null)
                       toast({
                         title: "Leaderboard Unpublished.",
-                        description: "Publish you leaderboard again to share it with others.",
                         status: "warning",
                         duration: 3000,
                         isClosable: true,
