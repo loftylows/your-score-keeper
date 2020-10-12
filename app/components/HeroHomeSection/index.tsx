@@ -62,11 +62,13 @@ const HeroSection = () => {
             </Box>
           </Link>
 
-          {/* <Link href='/sign-up' passHref>
-                        <StyledActionBtnLink>
-                            <StyledActionBtnSecondary>Sign Up</StyledActionBtnSecondary>
-                        </StyledActionBtnLink>
-                    </Link> */}
+          <Link href="/latest-leaderboards" passHref>
+            <Box as="a" marginX="25px" marginBottom={{ base: "20px", md: "0" }}>
+              <Button backgroundColor="gray.600" _hover={{ backgroundColor: "gray.700" }} size="lg">
+                Latest Leaderboards
+              </Button>
+            </Box>
+          </Link>
         </Box>
 
         <Box marginTop="30px" marginX="auto" padding="15px" width="710px" maxWidth="100%">
