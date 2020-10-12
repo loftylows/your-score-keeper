@@ -111,7 +111,7 @@ const CreateLeaderboardForm = (props: CreateLeaderboardFormProps) => {
             <Field name="playersScoreSortDirection">
               {(props) => (
                 <FormControl
-                  id="title"
+                  id="playersScoreSortDirection"
                   isRequired
                   isInvalid={props.meta.error && props.meta.touched}
                 >
