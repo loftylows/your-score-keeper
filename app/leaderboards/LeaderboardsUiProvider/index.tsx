@@ -7,6 +7,14 @@ import {
   ModalOverlay,
   ModalHeader,
   ModalCloseButton,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogBody,
+  AlertDialogFooter,
+  Button,
+  useToast,
 } from "@chakra-ui/core"
 import { dbCacheLeaderboardsContext } from "../DbCacheLeaderboardsProvider"
 import {
@@ -20,14 +28,25 @@ import {
   CloseEditPlayerDialog,
   SetCurrentlySelectedLeaderboardId,
   RemoveCurrentlySelectedLeaderboardId,
+  SetPublishingLeaderboardWithId,
+  SetUnpublishingLeaderboardWithId,
 } from "./types"
 import CreateLeaderboardForm from "../components/forms/CreateLeaderboardForm"
 import EditLeaderboardForm from "../components/forms/EditLeaderboardForm"
 import EditPlayerForm from "../components/forms/EditPlayerForm"
+import updateLeaderboard from "../mutations/updateLeaderboard"
+import { ToastContext } from "app/components/ToastProvider"
+import {
+  DbCachePublishLeaderboard,
+  DbCacheUnpublishLeaderboard,
+} from "../DbCacheLeaderboardsProvider/types"
 
 interface IProps {
   children: React.ReactChild
   userId: Maybe<UUID>
+  toast: ReturnType<typeof useToast>
+  dbCachePublishLeaderboard: DbCachePublishLeaderboard
+  dbCacheUnpublishLeaderboard: DbCacheUnpublishLeaderboard
 }
 interface IState {
   createLeaderboardDialogIsOpen: boolean
@@ -35,6 +54,12 @@ interface IState {
   createPlayerDialogIsOpen: boolean
   editPlayerDialogIsOpenWithId: Maybe<UUID>
   currentlySelectedLeaderboardId: Maybe<UUID>
+  publishingLeaderboardWithId: Maybe<UUID>
+  leaderboardPublishingInProgress: boolean
+  unpublishingLeaderboardWithId: Maybe<UUID>
+  leaderboardUnpublishingInProgress: boolean
+  setPublishingLeaderboardWithId: SetPublishingLeaderboardWithId
+  setUnpublishingLeaderboardWithId: SetUnpublishingLeaderboardWithId
   setCurrentlySelectedLeaderboardId: SetCurrentlySelectedLeaderboardId
   removeCurrentlySelectedLeaderboardId: RemoveCurrentlySelectedLeaderboardId
   openCreateLeaderboardDialog: OpenCreateLeaderboardDialog
@@ -53,6 +78,12 @@ const uiContext = React.createContext<IState>({
   createPlayerDialogIsOpen: false,
   editPlayerDialogIsOpenWithId: null,
   currentlySelectedLeaderboardId: null,
+  publishingLeaderboardWithId: null,
+  leaderboardPublishingInProgress: false,
+  unpublishingLeaderboardWithId: null,
+  leaderboardUnpublishingInProgress: false,
+  setPublishingLeaderboardWithId: () => {},
+  setUnpublishingLeaderboardWithId: () => {},
   setCurrentlySelectedLeaderboardId: () => {},
   removeCurrentlySelectedLeaderboardId: () => {},
   openCreateLeaderboardDialog: () => {},
@@ -65,6 +96,8 @@ const uiContext = React.createContext<IState>({
   closeEditPlayerDialog: () => {},
 })
 class DialogsProvider extends React.Component<IProps, IState> {
+  _cancelPublishingLeaderboardButtonRef = React.createRef<HTMLButtonElement>()
+  _cancelUnpublishingLeaderboardButtonRef = React.createRef<HTMLButtonElement>()
   constructor(props: IProps) {
     super(props)
 
@@ -74,6 +107,12 @@ class DialogsProvider extends React.Component<IProps, IState> {
       createPlayerDialogIsOpen: false,
       editPlayerDialogIsOpenWithId: null,
       currentlySelectedLeaderboardId: null,
+      publishingLeaderboardWithId: null,
+      leaderboardPublishingInProgress: false,
+      unpublishingLeaderboardWithId: null,
+      leaderboardUnpublishingInProgress: false,
+      setPublishingLeaderboardWithId: this.setPublishingLeaderboardWithId,
+      setUnpublishingLeaderboardWithId: this.setUnpublishingLeaderboardWithId,
       setCurrentlySelectedLeaderboardId: this.setCurrentlySelectedLeaderboardId,
       removeCurrentlySelectedLeaderboardId: this.removeCurrentlySelectedLeaderboardId,
       openCreateLeaderboardDialog: this.openCreateLeaderboardDialog,
@@ -87,7 +126,8 @@ class DialogsProvider extends React.Component<IProps, IState> {
     }
   }
 
-  setCurrentlySelectedLeaderboardId = (id) => this.setState({ currentlySelectedLeaderboardId: id })
+  setCurrentlySelectedLeaderboardId = (id: UUID) =>
+    this.setState({ currentlySelectedLeaderboardId: id })
   removeCurrentlySelectedLeaderboardId = () =>
     this.setState({ currentlySelectedLeaderboardId: null })
   openCreateLeaderboardDialog = () => this.setState({ createLeaderboardDialogIsOpen: true })
@@ -99,9 +139,19 @@ class DialogsProvider extends React.Component<IProps, IState> {
   closeCreatePlayerDialog = () => this.setState({ createPlayerDialogIsOpen: false })
   openEditPlayerDialog = (playerId) => this.setState({ editPlayerDialogIsOpenWithId: playerId })
   closeEditPlayerDialog = () => this.setState({ editPlayerDialogIsOpenWithId: null })
+  setPublishingLeaderboardWithId: SetPublishingLeaderboardWithId = (id) =>
+    this.setState({ publishingLeaderboardWithId: id })
+  toggleLeaderboardPublishingInProgress = () =>
+    this.setState({ leaderboardPublishingInProgress: !this.state.leaderboardPublishingInProgress })
+  setUnpublishingLeaderboardWithId: SetUnpublishingLeaderboardWithId = (id) =>
+    this.setState({ unpublishingLeaderboardWithId: id })
+  toggleLeaderboardUnpublishingInProgress = () =>
+    this.setState({
+      leaderboardUnpublishingInProgress: !this.state.leaderboardPublishingInProgress,
+    })
 
   render() {
-    const { children } = this.props
+    const { children, toast, dbCachePublishLeaderboard, dbCacheUnpublishLeaderboard } = this.props
     const { state } = this
     return (
       <uiContext.Provider value={state}>
@@ -164,6 +214,118 @@ class DialogsProvider extends React.Component<IProps, IState> {
             </ModalContent>
           </ModalOverlay>
         </Modal>
+
+        <AlertDialog
+          isOpen={!!state.publishingLeaderboardWithId}
+          leastDestructiveRef={this._cancelPublishingLeaderboardButtonRef}
+          onClose={() => this.setPublishingLeaderboardWithId(null)}
+        >
+          <AlertDialogOverlay>
+            <AlertDialogContent>
+              <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                Publish Leaderboard
+              </AlertDialogHeader>
+
+              <AlertDialogBody>
+                Are you sure you want to publish this leaderboard? It will be publicly visible for
+                all.
+              </AlertDialogBody>
+
+              <AlertDialogFooter>
+                <Button
+                  ref={this._cancelPublishingLeaderboardButtonRef}
+                  onClick={() => this.setPublishingLeaderboardWithId(null)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  ml={3}
+                  colorScheme="green"
+                  isLoading={state.leaderboardPublishingInProgress}
+                  onClick={async () => {
+                    if (!state.publishingLeaderboardWithId) return
+
+                    this.toggleLeaderboardPublishingInProgress()
+                    try {
+                      await dbCachePublishLeaderboard(state.publishingLeaderboardWithId)
+                      this.setPublishingLeaderboardWithId(null)
+                      toast({
+                        title: "Leaderboard Published.",
+                        description: "Share you leaderboard to let other people see.",
+                        status: "success",
+                        duration: 3000,
+                        isClosable: true,
+                        position: "top",
+                      })
+                    } catch (e) {
+                      console.log(e)
+                    } finally {
+                      this.toggleLeaderboardPublishingInProgress()
+                    }
+                  }}
+                >
+                  Publish
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialogOverlay>
+        </AlertDialog>
+
+        <AlertDialog
+          isOpen={!!state.unpublishingLeaderboardWithId}
+          leastDestructiveRef={this._cancelPublishingLeaderboardButtonRef}
+          onClose={() => this.setUnpublishingLeaderboardWithId(null)}
+        >
+          <AlertDialogOverlay>
+            <AlertDialogContent>
+              <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                Unpublish Leaderboard
+              </AlertDialogHeader>
+
+              <AlertDialogBody>
+                Are you sure you want to unpublish this leaderboard? It will only be visible to you
+                once this is done and all public links to this leaderboard will no longer be work.
+              </AlertDialogBody>
+
+              <AlertDialogFooter>
+                <Button
+                  ref={this._cancelPublishingLeaderboardButtonRef}
+                  onClick={() => this.setUnpublishingLeaderboardWithId(null)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  ml={3}
+                  colorScheme="orange"
+                  isLoading={state.leaderboardUnpublishingInProgress}
+                  onClick={async () => {
+                    if (!state.unpublishingLeaderboardWithId) return
+
+                    this.toggleLeaderboardPublishingInProgress()
+                    try {
+                      await dbCacheUnpublishLeaderboard(state.unpublishingLeaderboardWithId)
+                      this.setUnpublishingLeaderboardWithId(null)
+                      toast({
+                        title: "Leaderboard Unpublished.",
+                        description: "Publish you leaderboard again to share it with others.",
+                        status: "warning",
+                        duration: 3000,
+                        isClosable: true,
+                        position: "top",
+                      })
+                    } catch (e) {
+                      console.log(e)
+                    } finally {
+                      this.toggleLeaderboardUnpublishingInProgress()
+                    }
+                  }}
+                >
+                  Unpublish
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialogOverlay>
+        </AlertDialog>
       </uiContext.Provider>
     )
   }
@@ -173,9 +335,22 @@ interface IProviderProps {
 }
 const Provider = ({ children }: IProviderProps) => {
   return (
-    <dbCacheLeaderboardsContext.Consumer>
-      {({ userId }) => <DialogsProvider userId={userId}>{children}</DialogsProvider>}
-    </dbCacheLeaderboardsContext.Consumer>
+    <ToastContext.Consumer>
+      {(toast) => (
+        <dbCacheLeaderboardsContext.Consumer>
+          {({ userId, dbCachePublishLeaderboard, dbCacheUnpublishLeaderboard }) => (
+            <DialogsProvider
+              userId={userId}
+              toast={toast}
+              dbCachePublishLeaderboard={dbCachePublishLeaderboard}
+              dbCacheUnpublishLeaderboard={dbCacheUnpublishLeaderboard}
+            >
+              {children}
+            </DialogsProvider>
+          )}
+        </dbCacheLeaderboardsContext.Consumer>
+      )}
+    </ToastContext.Consumer>
   )
 }
 

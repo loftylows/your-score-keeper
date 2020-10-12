@@ -8,8 +8,14 @@ import LeaderboardTable from "../LeaderboardTable"
 import { inMemoryLeaderboardsContext } from "app/leaderboards/InMemoryLeaderboardsProvider"
 import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboardsProvider"
 import { authModalContext } from "app/auth/AuthModalProvider"
+import { Leaderboard } from "@prisma/client"
+import { uiContext } from "app/leaderboards/LeaderboardsUiProvider"
+import { Link } from "blitz"
 
 const LeaderboardsSpace = () => {
+  const { setPublishingLeaderboardWithId, setUnpublishingLeaderboardWithId } = React.useContext(
+    uiContext
+  )
   const leaderboard = useCurrentlySelectedLeaderboard()
   const players = useCurrentlySelectedLeaderboardPlayers()
   const { openAuthModal } = React.useContext(authModalContext)
@@ -55,6 +61,65 @@ const LeaderboardsSpace = () => {
           </ButtonGroup>
         </Box>
       )}
+
+      {userId && !(leaderboard as Leaderboard).published && (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          marginBottom="25px"
+          padding="10px"
+          width="100%"
+          backgroundColor="orange.500"
+          color="white"
+          fontWeight="bold"
+          borderRadius="10px"
+        >
+          Publish this leaderboard to make it public and shareable:
+          <ButtonGroup spacing={3} marginLeft="8px" size="xs">
+            <Button
+              colorScheme="green"
+              onClick={() => setPublishingLeaderboardWithId(leaderboard.id)}
+            >
+              Publish
+            </Button>
+          </ButtonGroup>
+        </Box>
+      )}
+
+      {userId && (leaderboard as Leaderboard).published && (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          marginBottom="25px"
+          padding="10px"
+          width="100%"
+          backgroundColor="green.300"
+          color="white"
+          fontWeight="bold"
+          borderRadius="10px"
+        >
+          <Box>
+            This leaderboard is currently{" "}
+            <Link href={`/leaderboards/${leaderboard.id}`} passHref>
+              <Box as="a" textDecoration="underline">
+                published
+              </Box>
+            </Link>
+            . All changes made will be publicly visible:
+          </Box>
+          <ButtonGroup spacing={3} marginLeft="8px" size="xs">
+            <Button
+              colorScheme="orange"
+              onClick={() => setUnpublishingLeaderboardWithId(leaderboard.id)}
+            >
+              Unpublish
+            </Button>
+          </ButtonGroup>
+        </Box>
+      )}
+
       <Heading marginBottom="15px">{leaderboard.title}</Heading>
       <CreatePlayerForm leaderboardId={leaderboard.id} />
 

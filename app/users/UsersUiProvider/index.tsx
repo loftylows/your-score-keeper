@@ -14,6 +14,8 @@ import {
   AlertDialogBody,
   AlertDialogFooter,
   Button,
+  Box,
+  Spinner,
 } from "@chakra-ui/core"
 import {
   OpenEditCurrentUserDialog,
@@ -142,10 +144,24 @@ class UsersUiDialogsProvider extends React.Component<IProps, IState> {
               <ModalCloseButton />
               <ModalBody>
                 {state.editCurrentUserIsOpen && (
-                  <EditUserForm
-                    onFormFinished={state.closeEditCurrentUserDialog}
-                    onSuccess={state.closeEditCurrentUserDialog}
-                  />
+                  <React.Suspense
+                    fallback={
+                      <Box
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        width="100%"
+                        height="100%"
+                      >
+                        <Spinner />
+                      </Box>
+                    }
+                  >
+                    <EditUserForm
+                      onFormFinished={state.closeEditCurrentUserDialog}
+                      onSuccess={state.closeEditCurrentUserDialog}
+                    />
+                  </React.Suspense>
                 )}
               </ModalBody>
             </ModalContent>

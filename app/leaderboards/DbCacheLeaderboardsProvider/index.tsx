@@ -11,6 +11,8 @@ import {
   LoadDbCacheLeaderboards,
   SetDbCacheLeaderboards,
   SaveLeaderboardsFromMemoryToDb,
+  DbCachePublishLeaderboard,
+  DbCacheUnpublishLeaderboard,
 } from "./types"
 import { Leaderboard, Player } from "@prisma/client"
 import createLeaderboard from "../mutations/createLeaderboard"
@@ -40,6 +42,8 @@ interface IState {
   userId: Maybe<UUID>
   dbCacheCreateLeaderboard: DbCacheCreateLeaderboard
   dbCacheEditLeaderboard: DbCacheEditLeaderboard
+  dbCachePublishLeaderboard: DbCachePublishLeaderboard
+  dbCacheUnpublishLeaderboard: DbCacheUnpublishLeaderboard
   dbCacheDeleteLeaderboard: DbCacheDeleteLeaderboard
   dbCacheCreatePlayer: DbCacheCreatePlayer
   dbCacheEditPlayer: DbCacheEditPlayer
@@ -55,6 +59,8 @@ const dbCacheLeaderboardsContext = React.createContext<IState>({
   players: [],
   isLoadingData: false,
   userId: null,
+  dbCachePublishLeaderboard: async () => {},
+  dbCacheUnpublishLeaderboard: async () => {},
   dbCacheCreateLeaderboard: async () => {},
   dbCacheEditLeaderboard: async () => {},
   dbCacheDeleteLeaderboard: async () => {},
@@ -87,6 +93,8 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
       userId: userId,
       dbCacheCreateLeaderboard: this.dbCacheCreateLeaderboard,
       dbCacheEditLeaderboard: this.dbCacheEditLeaderboard,
+      dbCachePublishLeaderboard: this.dbCachePublishLeaderboard,
+      dbCacheUnpublishLeaderboard: this.dbCacheUnpublishLeaderboard,
       dbCacheDeleteLeaderboard: this.dbCacheDeleteLeaderboard,
       dbCacheCreatePlayer: this.dbCacheCreatePlayer,
       dbCacheEditPlayer: this.dbCacheEditPlayer,
@@ -141,6 +149,70 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
     try {
       // add the new result to state in case it has been modified by the server
       const leaderboard = await updateLeaderboard({ where: { id: input.id }, data: input })
+      this.setState({
+        leaderboards: this.state.leaderboards.map((l) =>
+          l.id !== leaderboard.id ? l : { ...leaderboard }
+        ),
+      })
+    } catch (e) {
+      // TODO: Notify user of error
+      this.setState({
+        leaderboards: oldLeaderboardsState,
+      })
+    }
+  }
+
+  public dbCachePublishLeaderboard: DbCachePublishLeaderboard = async (id) => {
+    const { leaderboards, userId } = this.state
+    if (!userId) return
+    const leaderboard = leaderboards.find((l) => l.id === id)
+    if (!leaderboard) return
+
+    const oldLeaderboardsState: IState["leaderboards"] = [...leaderboards]
+
+    const updatedLeaderboards = leaderboards.map((board) =>
+      board.id !== id ? board : { ...leaderboard, published: true }
+    )
+
+    this.setState({
+      leaderboards: updatedLeaderboards,
+    })
+
+    try {
+      // add the new result to state in case it has been modified by the server
+      const leaderboard = await updateLeaderboard({ where: { id: id }, data: { published: true } })
+      this.setState({
+        leaderboards: this.state.leaderboards.map((l) =>
+          l.id !== leaderboard.id ? l : { ...leaderboard }
+        ),
+      })
+    } catch (e) {
+      // TODO: Notify user of error
+      this.setState({
+        leaderboards: oldLeaderboardsState,
+      })
+    }
+  }
+
+  public dbCacheUnpublishLeaderboard: DbCacheUnpublishLeaderboard = async (id) => {
+    const { leaderboards, userId } = this.state
+    if (!userId) return
+    const leaderboard = leaderboards.find((l) => l.id === id)
+    if (!leaderboard) return
+
+    const oldLeaderboardsState: IState["leaderboards"] = [...leaderboards]
+
+    const updatedLeaderboards = leaderboards.map((board) =>
+      board.id !== id ? board : { ...leaderboard, published: false }
+    )
+
+    this.setState({
+      leaderboards: updatedLeaderboards,
+    })
+
+    try {
+      // add the new result to state in case it has been modified by the server
+      const leaderboard = await updateLeaderboard({ where: { id: id }, data: { published: false } })
       this.setState({
         leaderboards: this.state.leaderboards.map((l) =>
           l.id !== leaderboard.id ? l : { ...leaderboard }

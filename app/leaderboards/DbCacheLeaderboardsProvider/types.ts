@@ -4,6 +4,8 @@ import { InMemoryLeaderboard, InMemoryPlayer } from "../InMemoryLeaderboardsProv
 
 export type DbCacheCreateLeaderboard = (input: LeaderboardCreateInput) => Promise<void>
 export type DbCacheEditLeaderboard = (leaderboard: Omit<Leaderboard, "ownerId">) => Promise<void>
+export type DbCachePublishLeaderboard = (leaderboardId: UUID) => Promise<void>
+export type DbCacheUnpublishLeaderboard = (leaderboardId: UUID) => Promise<void>
 export type DbCacheDeleteLeaderboard = (id: UUID) => Promise<void>
 
 export type DbCacheCreatePlayer = (leaderboardId: UUID, input: PlayerCreateInput) => Promise<void>
