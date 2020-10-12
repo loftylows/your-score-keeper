@@ -44,6 +44,7 @@ const LeaderboardTable = ({ players, leaderboard, userId }: IProps) => {
           <IconButton
             variant="ghost"
             aria-label="More options"
+            title="More options"
             icon={icon}
             onClick={() => openEditPlayerDialog(p.id)}
           />
@@ -70,8 +71,10 @@ const LeaderboardTable = ({ players, leaderboard, userId }: IProps) => {
         filter: "between",
       },
       {
+        id: "extra",
         accessor: "extra",
         disableFilters: true,
+        disableSortBy: true,
       },
     ],
     []
@@ -122,7 +125,7 @@ const LeaderboardTable = ({ players, leaderboard, userId }: IProps) => {
                 <th {...column.getHeaderProps()}>
                   <Box display="flex" alignItems="center" marginBottom="5px">
                     {column.render("Header")}
-                    {
+                    {column.id !== "extra" && (
                       <Box
                         display="flex"
                         flexDirection="column"
@@ -141,7 +144,7 @@ const LeaderboardTable = ({ players, leaderboard, userId }: IProps) => {
                           color={column.isSorted && !column.isSortedDesc ? "gray.700" : "gray.200"}
                         />
                       </Box>
-                    }
+                    )}
                   </Box>
                   {/* Render the columns filter UI */}
                   <div>{column.canFilter ? column.render("Filter") : null}</div>
