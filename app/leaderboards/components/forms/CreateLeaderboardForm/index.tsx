@@ -12,6 +12,7 @@ import {
   ButtonGroup,
   Text,
   useToast,
+  Select,
 } from "@chakra-ui/core"
 import { InfoIcon } from "@chakra-ui/icons"
 import { Form as FinalForm, Field } from "react-final-form"
@@ -35,7 +36,7 @@ const CreateLeaderboardForm = (props: CreateLeaderboardFormProps) => {
 
   return (
     <FinalForm<CreateLeaderboardInputType>
-      initialValues={{ title: "" }}
+      initialValues={{ title: "", playersScoreSortDirection: "DESC" }}
       validate={(values) => {
         try {
           CreateLeaderboardInput.parse(values)
@@ -47,9 +48,16 @@ const CreateLeaderboardForm = (props: CreateLeaderboardFormProps) => {
         props.onSubmitStart && props.onSubmitStart()
         try {
           if (userId) {
-            dbCacheCreateLeaderboard({ title: values.title, owner: { connect: { id: userId } } })
+            dbCacheCreateLeaderboard({
+              title: values.title,
+              playersScoreSortDirection: values.playersScoreSortDirection,
+              owner: { connect: { id: userId } },
+            })
           } else {
-            inMemoryCreateLeaderboard({ title: values.title })
+            inMemoryCreateLeaderboard({
+              title: values.title,
+              playersScoreSortDirection: values.playersScoreSortDirection,
+            })
           }
           props.onSuccess && props.onSuccess()
         } catch (error) {
@@ -95,6 +103,29 @@ const CreateLeaderboardForm = (props: CreateLeaderboardFormProps) => {
                       placeholder="Title..."
                     />
                   </InputGroup>
+                  <FormErrorMessage>{props.meta.error}</FormErrorMessage>
+                </FormControl>
+              )}
+            </Field>
+
+            <Field name="playersScoreSortDirection">
+              {(props) => (
+                <FormControl
+                  id="title"
+                  isRequired
+                  isInvalid={props.meta.error && props.meta.touched}
+                >
+                  <FormLabel>
+                    Players Score Sort Direction <RequiredIndicator />
+                  </FormLabel>
+                  <Select
+                    {...props.input}
+                    placeholder="Players score sort direction"
+                    isInvalid={props.meta.touched && props.meta.invalid}
+                  >
+                    <option value="DESC">Descending</option>
+                    <option value="ASC">Ascending</option>
+                  </Select>
                   <FormErrorMessage>{props.meta.error}</FormErrorMessage>
                 </FormControl>
               )}

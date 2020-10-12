@@ -1,12 +1,15 @@
+import { LeaderboardPlayersScoreSortDirection } from "@prisma/client"
 import { UUID } from "common-types"
 
 export interface InMemoryLeaderboard {
   id: UUID
   title: string
+  playersScoreSortDirection: LeaderboardPlayersScoreSortDirection
 }
 
 export interface InMemoryLeaderboardCreateInput {
   title: string
+  playersScoreSortDirection: LeaderboardPlayersScoreSortDirection
 }
 
 export type InMemoryCreateLeaderboard = (input: InMemoryLeaderboardCreateInput) => void

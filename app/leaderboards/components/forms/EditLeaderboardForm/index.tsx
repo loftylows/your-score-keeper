@@ -14,6 +14,7 @@ import {
   Text,
   IconButton,
   useToast,
+  Select,
 } from "@chakra-ui/core"
 import { DeleteIcon, InfoIcon } from "@chakra-ui/icons"
 import { Form as FinalForm, Field } from "react-final-form"
@@ -21,7 +22,7 @@ import { FORM_ERROR } from "final-form"
 import { EditLeaderboardInput, EditLeaderboardInputType } from "../../../validations"
 import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboardsProvider"
 import { inMemoryLeaderboardsContext } from "app/leaderboards/InMemoryLeaderboardsProvider"
-import { Leaderboard } from "@prisma/client"
+import { Leaderboard, LeaderboardPlayersScoreSortDirection } from "@prisma/client"
 import { uiContext } from "app/leaderboards/LeaderboardsUiProvider"
 
 type EditLeaderboardFormProps = {
@@ -54,7 +55,12 @@ const EditLeaderboardForm = (props: EditLeaderboardFormProps) => {
 
   return (
     <FinalForm<EditLeaderboardInputType>
-      initialValues={{ title: editingLeaderboard ? editingLeaderboard.title : "" }}
+      initialValues={{
+        title: editingLeaderboard ? editingLeaderboard.title : "",
+        playersScoreSortDirection: (editingLeaderboard
+          ? editingLeaderboard.playersScoreSortDirection
+          : "DESC") as LeaderboardPlayersScoreSortDirection,
+      }}
       validate={(values) => {
         try {
           EditLeaderboardInput.parse(values)
@@ -68,6 +74,7 @@ const EditLeaderboardForm = (props: EditLeaderboardFormProps) => {
         const updatedLeaderboard = {
           ...(editingLeaderboard as Leaderboard),
           title: values.title,
+          playersScoreSortDirection: values.playersScoreSortDirection as LeaderboardPlayersScoreSortDirection,
           ownerId: undefined,
         }
         try {
@@ -119,6 +126,29 @@ const EditLeaderboardForm = (props: EditLeaderboardFormProps) => {
                       placeholder="Title..."
                     />
                   </InputGroup>
+                  <FormErrorMessage>{props.meta.error}</FormErrorMessage>
+                </FormControl>
+              )}
+            </Field>
+
+            <Field name="playersScoreSortDirection">
+              {(props) => (
+                <FormControl
+                  id="playersScoreSortDirection"
+                  isRequired
+                  isInvalid={props.meta.error && props.meta.touched}
+                >
+                  <FormLabel>
+                    Players Score Sort Direction <RequiredIndicator />
+                  </FormLabel>
+                  <Select
+                    {...props.input}
+                    placeholder="Players score sort direction"
+                    isInvalid={props.meta.touched && props.meta.invalid}
+                  >
+                    <option value="DESC">Descending</option>
+                    <option value="ASC">Ascending</option>
+                  </Select>
                   <FormErrorMessage>{props.meta.error}</FormErrorMessage>
                 </FormControl>
               )}

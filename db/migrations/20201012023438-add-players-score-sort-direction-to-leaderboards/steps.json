@@ -1,0 +1,45 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateEnum",
+      "enum": "LeaderboardPlayersScoreSortDirection",
+      "values": [
+        "ASC",
+        "DESC"
+      ]
+    },
+    {
+      "tag": "CreateField",
+      "model": "Leaderboard",
+      "field": "playersScoreSortDirection",
+      "type": "LeaderboardPlayersScoreSortDirection",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Leaderboard",
+          "field": "playersScoreSortDirection"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Leaderboard",
+          "field": "playersScoreSortDirection"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "DESC"
+    }
+  ]
+}

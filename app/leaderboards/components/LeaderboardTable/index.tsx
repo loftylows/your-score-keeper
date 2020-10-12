@@ -10,6 +10,7 @@ import { DefaultColumnFilter, NumberRangeColumnFilter } from "./tableFilters"
 import { IconButton, Icon, Box } from "@chakra-ui/core"
 import { uiContext } from "app/leaderboards/LeaderboardsUiProvider"
 import { lighten } from "polished"
+import { Maybe, UUID } from "common-types"
 
 interface ITitleBoxProps {
   title: string
@@ -23,11 +24,16 @@ const TitleBox = ({ title }: ITitleBoxProps) => (
 interface IProps {
   leaderboard: InMemoryLeaderboard
   players: InMemoryPlayer[]
+  userId: Maybe<UUID>
 }
-const LeaderboardTable = ({ players }: IProps) => {
+const LeaderboardTable = ({ players, leaderboard, userId }: IProps) => {
   const { openEditPlayerDialog } = React.useContext(uiContext)
   const rankedPlayers = players
-    .sort((a, b) => b.score - a.score)
+    .sort(
+      leaderboard.playersScoreSortDirection === "DESC"
+        ? (a, b) => b.score - a.score
+        : (a, b) => a.score - b.score
+    )
     .map((p, i) => {
       const icon = <Icon as={FaEllipsisV} />
       return {
