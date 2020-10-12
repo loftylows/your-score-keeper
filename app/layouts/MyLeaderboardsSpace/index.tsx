@@ -1,6 +1,5 @@
 import React from "react"
 import { Head } from "blitz"
-import { isMobile } from "mobile-device-detect"
 import {
   Box,
   useBreakpointValue,
@@ -21,9 +20,10 @@ import useCurrentlySelectedLeaderboard from "app/leaderboards/hooks/useCurrently
 
 interface IProps {
   title?: string
+  isMobile?: boolean
   children: React.ReactNode
 }
-const MyLeaderboardsSpaceLayout = ({ children, title }: IProps) => {
+const MyLeaderboardsSpaceLayout = ({ children, title, isMobile }: IProps) => {
   const [mobileSidebarOpen, setMobileSidebarOpen] = React.useState(false)
   const { leaderboards: dbLeaderboards, userId } = React.useContext(dbCacheLeaderboardsContext)
   const { leaderboards: inMemoryLeaderboards } = React.useContext(inMemoryLeaderboardsContext)
@@ -43,7 +43,7 @@ const MyLeaderboardsSpaceLayout = ({ children, title }: IProps) => {
   const openMobileSidebar = () => setMobileSidebarOpen(true)
 
   const btnRef = React.useRef<HTMLButtonElement>(null)
-  const showMobileSidebar = useBreakpointValue({ base: true, md: false }) || false
+  const showMobileSidebar = useBreakpointValue({ base: true, md: false }) || isMobile || false
 
   React.useEffect(() => {
     if (!showMobileSidebar && mobileSidebarOpen) setMobileSidebarOpen(false)

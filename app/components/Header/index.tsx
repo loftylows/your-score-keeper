@@ -121,7 +121,7 @@ const Header = ({ showingMobileSidebar, openSidebar }: IProps) => {
           />
         )}
         <Link passHref href="/">
-          <Box color="rgba(255, 255, 255, .9)" as="a" fontSize="xl">
+          <Box color="rgba(255, 255, 255, .9)" as="a" fontSize={{ base: "lg", md: "xl" }}>
             YourScoreKeeper
           </Box>
         </Link>

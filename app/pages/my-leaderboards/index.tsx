@@ -1,4 +1,5 @@
 import * as React from "react"
+import mobile, { IsMobileOptions } from "is-mobile"
 import { BlitzPage, ssrQuery, GetServerSideProps } from "blitz"
 import { getSessionContext } from "@blitzjs/server"
 import Layout from "app/layouts/MyLeaderboardsSpace"
@@ -14,6 +15,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res: respons
   const { userId } = await getSessionContext(req, response)
   let leaderboards: Leaderboard[] = []
   let players: Player[] = []
+  const isMobile = mobile({
+    ua: req.headers["user-agent"],
+  })
 
   if (userId) {
     try {
@@ -44,6 +48,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res: respons
       leaderboardsFromServer: leaderboards,
       playersFromServer: players,
       userId,
+      isMobile,
     },
   }
 }
@@ -52,12 +57,14 @@ type IPageProps = {
   leaderboardsFromServer: Leaderboard[]
   playersFromServer: Player[]
   userId: Maybe<UUID>
+  isMobile: boolean
 }
 
 const MyLeaderboardsHome: BlitzPage<IPageProps> = ({
   leaderboardsFromServer,
   playersFromServer,
   userId,
+  isMobile,
 }) => {
   return (
     <DbCacheLeaderboardsProvider
@@ -66,7 +73,7 @@ const MyLeaderboardsHome: BlitzPage<IPageProps> = ({
       playersFromServer={playersFromServer}
     >
       <LeaderboardsDialogProvider>
-        <Layout title="My Leaderboards">
+        <Layout title="My Leaderboards" isMobile={isMobile}>
           <LeaderboardsSpace />
         </Layout>
       </LeaderboardsDialogProvider>
