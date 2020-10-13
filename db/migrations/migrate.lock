@@ -4,3 +4,5 @@
 20201004050420-initial-migration
 20201012023438-add-players-score-sort-direction-to-leaderboards
 20201012131956-add-indexws-to-data-models
+20201013115821-add-leaderboard-view-count-to-leaderboard-type
+20201013134414-remove-views-field-from-leaderboard

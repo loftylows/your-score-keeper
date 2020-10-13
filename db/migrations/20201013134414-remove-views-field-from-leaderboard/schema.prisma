@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgres"
+  url = "***"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// --------------------------------------
+
+enum LeaderboardPlayersScoreSortDirection {
+  ASC
+  DESC
+}
+
+model User {
+  id                 String        @id @default(uuid())
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  name               String
+  email              String        @unique
+  hashedPassword     String?
+  role               String        @default("user")
+  sessions           Session[]
+  profilePicUrl      String?
+  profileDescription String?
+  Leaderboard        Leaderboard[]
+}
+
+model Session {
+  id                 String    @id @default(uuid())
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  expiresAt          DateTime?
+  handle             String    @unique
+  user               User?     @relation(fields: [userId], references: [id])
+  userId             String?
+  hashedSessionToken String?
+  antiCSRFToken      String?
+  publicData         String?
+  privateData        String?
+}
+
+model Leaderboard {
+  id                        String                               @id @default(uuid())
+  createdAt                 DateTime                             @default(now())
+  updatedAt                 DateTime                             @updatedAt
+  owner                     User                                 @relation(fields: [ownerId], references: [id])
+  ownerId                   String
+  private                   Boolean                              @default(false)
+  published                 Boolean                              @default(false)
+  playersScoreSortDirection LeaderboardPlayersScoreSortDirection @default(DESC)
+  players                   Player[]
+  title                     String
+
+  @@index([title])
+  @@index([ownerId])
+  @@index([published])
+  @@index([private])
+}
+
+model Player {
+  id            String      @id @default(uuid())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  name          String
+  score         Float
+  details       String?
+  leaderboard   Leaderboard @relation(fields: [leaderboardId], references: [id])
+  leaderboardId String
+
+  @@index([leaderboardId])
+}

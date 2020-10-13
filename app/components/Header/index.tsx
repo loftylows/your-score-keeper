@@ -14,11 +14,13 @@ import {
   Spinner,
   Icon,
   IconButton,
+  HStack,
 } from "@chakra-ui/core"
 import { darken } from "polished"
 import { authModalContext } from "app/auth/AuthModalProvider"
 import logout from "app/auth/logout"
 import { usersUiContext } from "app/users/UsersUiProvider"
+import buildSearchQuery from "app/leaderboards/searchUrlBuilder"
 
 interface IProps {
   showingMobileSidebar?: boolean
@@ -121,35 +123,50 @@ const Header = ({ showingMobileSidebar, openSidebar }: IProps) => {
           />
         )}
         <Link passHref href="/">
-          <Box color="rgba(255, 255, 255, .9)" as="a" fontSize={{ base: "lg", md: "xl" }}>
+          <Box
+            color="rgba(255, 255, 255, .9)"
+            as="a"
+            fontSize={{ base: "lg", md: "xl" }}
+            marginRight="10px"
+          >
             YourScoreKeeper
           </Box>
         </Link>
+
+        <HStack marginLeft="10px" spacing={4}>
+          <Link passHref href={buildSearchQuery({ sortBy: "latest" })}>
+            <Box color="rgba(255, 255, 255, .9)" as="a" fontSize={{ base: "sm", md: "md" }}>
+              Leaderboards
+            </Box>
+          </Link>
+        </HStack>
       </Box>
 
       {/* Header auth items */}
-      <Box
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-        marginLeft="auto"
-        paddingX="30px"
-      >
-        {session.userId ? (
-          <React.Suspense
-            fallback={
-              <Box display="flex" justifyContent="center" alignItems="center">
-                <Spinner />
-              </Box>
-            }
-          >
-            <AuthenticatedUserContent />
-          </React.Suspense>
-        ) : (
-          <UnauthenticatedUserContent />
-        )}
-      </Box>
+      {session.isLoading ? null : (
+        <Box
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="center"
+          marginLeft="auto"
+          paddingX="30px"
+        >
+          {session.userId ? (
+            <React.Suspense
+              fallback={
+                <Box display="flex" justifyContent="center" alignItems="center">
+                  <Spinner />
+                </Box>
+              }
+            >
+              <AuthenticatedUserContent />
+            </React.Suspense>
+          ) : (
+            <UnauthenticatedUserContent />
+          )}
+        </Box>
+      )}
 
       {/* Header accent colors */}
       <Box
