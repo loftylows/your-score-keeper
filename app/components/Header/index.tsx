@@ -133,7 +133,7 @@ const Header = ({ showingMobileSidebar, openSidebar }: IProps) => {
           </Box>
         </Link>
 
-        <HStack marginLeft="10px" spacing={4}>
+        <HStack marginLeft="10px" spacing={4} display="flex" alignItems="flex-end">
           <Link passHref href={buildSearchQuery({ sortBy: "latest" })}>
             <Box color="rgba(255, 255, 255, .9)" as="a" fontSize={{ base: "sm", md: "md" }}>
               Leaderboards

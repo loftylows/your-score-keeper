@@ -1,9 +1,10 @@
 import qs from "querystringify"
 
-type CreatedFilter = "latest" | "oldest"
-interface QueryOptions {
+export type CreatedFilter = "latest" | "oldest"
+export interface QueryOptions {
   sortBy?: CreatedFilter
   name?: string
+  page?: number
 }
 
 export type BuildSearchQuery = (queryOptions?: QueryOptions) => string

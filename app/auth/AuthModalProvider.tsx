@@ -20,7 +20,7 @@ export type SetAuthRequestInProgress = (bool: boolean) => void
 interface IState {
   authModalDetails: Maybe<{ type: AuthModalType }>
   openAuthModal: OpenAuthModal
-  toggleAuthModalType: ToggleAuthModal
+  toggleAuthModal: ToggleAuthModal
   closeAuthModal: CloseAuthModal
   authRequestInProgress: boolean
 }
@@ -28,7 +28,7 @@ interface IState {
 export const authModalContext = React.createContext<IState>({
   authModalDetails: null,
   openAuthModal: () => {},
-  toggleAuthModalType: () => {},
+  toggleAuthModal: () => {},
   closeAuthModal: () => {},
   authRequestInProgress: false,
 })
@@ -38,7 +38,7 @@ class AuthProvider extends React.Component<any, IState> {
     this.state = {
       authModalDetails: null,
       openAuthModal: this.openAuthModal,
-      toggleAuthModalType: this.toggleAuthModalType,
+      toggleAuthModal: this.toggleAuthModal,
       closeAuthModal: this.closeAuthModal,
       authRequestInProgress: false,
     }
@@ -50,7 +50,7 @@ class AuthProvider extends React.Component<any, IState> {
     })
   }
 
-  toggleAuthModalType: ToggleAuthModal = () => {
+  toggleAuthModal: ToggleAuthModal = () => {
     const { authModalDetails } = this.state
     if (!authModalDetails) return
 
@@ -73,7 +73,7 @@ class AuthProvider extends React.Component<any, IState> {
   }
 
   render() {
-    const { authModalDetails, authRequestInProgress } = this.state
+    const { authModalDetails } = this.state
     const isOpen = !!authModalDetails
     const authModalType = authModalDetails ? authModalDetails.type : null
     const title = !isOpen ? null : authModalType === "login" ? "Log In" : "Sign Up"
@@ -89,11 +89,16 @@ class AuthProvider extends React.Component<any, IState> {
               <ModalCloseButton />
               <ModalBody>
                 {!isOpen ? null : authModalType === "login" ? (
-                  <LoginForm onSuccess={this.closeAuthModal} onFormFinished={this.closeAuthModal} />
+                  <LoginForm
+                    onSuccess={this.closeAuthModal}
+                    onFormFinished={this.closeAuthModal}
+                    toggleAuthFormType={this.toggleAuthModal}
+                  />
                 ) : (
                   <SignupForm
                     onSuccess={this.closeAuthModal}
                     onFormFinished={this.closeAuthModal}
+                    toggleAuthFormType={this.toggleAuthModal}
                   />
                 )}
               </ModalBody>

@@ -12,18 +12,22 @@ import {
   FormErrorMessage,
   ButtonGroup,
   Text,
+  VStack,
+  Box,
 } from "@chakra-ui/core"
 import { EmailIcon, LockIcon, UnlockIcon } from "@chakra-ui/icons"
 import { Form as FinalForm, Field } from "react-final-form"
 import { FORM_ERROR } from "final-form"
 import { LoginInputType, LoginInput } from "app/auth/validations"
 import { loginWithEmailAndPassword } from "../login"
+import { ToggleAuthModal } from "../AuthModalProvider"
 
 type LoginFormProps = {
   onSuccess?: () => void
   onSubmitStart?: () => void
   onSubmitEnd?: () => void
   onFormFinished?: () => void
+  toggleAuthFormType?: () => any
 }
 
 export const LoginForm = (props: LoginFormProps) => {
@@ -151,6 +155,15 @@ export const LoginForm = (props: LoginFormProps) => {
               Submit
             </Button>
           </ButtonGroup>
+
+          {componentProps.toggleAuthFormType && (
+            <VStack>
+              <Box>or</Box>
+              <Button variant="ghost" onClick={componentProps.toggleAuthFormType}>
+                Want to sign up?
+              </Button>
+            </VStack>
+          )}
         </form>
       )}
     </FinalForm>
