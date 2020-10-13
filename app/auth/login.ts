@@ -4,5 +4,5 @@ import { LoginInputType } from "./validations"
 
 export const loginWithEmailAndPassword = async (input: LoginInputType) => {
   const user = await loginWithEmailAndPasswordMutation(input)
-  fireLoginCompletedEvent(user.id)
+  setTimeout(() => fireLoginCompletedEvent(user.id), 2000)
 }

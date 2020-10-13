@@ -1,6 +1,7 @@
 import * as React from "react"
 import { Link } from "blitz"
 import { Box, Button, Image, Heading } from "@chakra-ui/core"
+import buildSearchQuery from "app/leaderboards/searchUrlBuilder"
 
 const HeroSection = () => {
   return (
@@ -62,7 +63,7 @@ const HeroSection = () => {
             </Box>
           </Link>
 
-          <Link href="/latest-leaderboards" passHref>
+          <Link href={buildSearchQuery({ sortBy: "latest" })} passHref>
             <Box as="a" marginX="25px" marginBottom={{ base: "20px", md: "0" }}>
               <Button backgroundColor="gray.600" _hover={{ backgroundColor: "gray.700" }} size="lg">
                 Latest Leaderboards
