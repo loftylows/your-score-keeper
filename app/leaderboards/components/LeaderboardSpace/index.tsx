@@ -12,6 +12,8 @@ import { Leaderboard } from "@prisma/client"
 import { uiContext } from "app/leaderboards/LeaderboardsUiProvider"
 import { Link } from "blitz"
 
+const minWidth = "355px"
+
 const LeaderboardsSpace = () => {
   const { setPublishingLeaderboardWithId, setUnpublishingLeaderboardWithId } = React.useContext(
     uiContext
@@ -30,6 +32,7 @@ const LeaderboardsSpace = () => {
       flexDirection="column"
       padding={{ base: "10px", sm: "30px" }}
       width="100%"
+      minWidth={minWidth}
       height="calc(100vh - 64px)"
       overflow="scroll"
     >

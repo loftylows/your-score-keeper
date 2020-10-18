@@ -12,7 +12,7 @@ type GetLeaderboardsInput = {
 }
 
 export default async function getLeaderboards(
-  { where, orderBy, skip = 0, take }: GetLeaderboardsInput,
+  { where, orderBy, skip = 0, take = 20 }: GetLeaderboardsInput,
   ctx: { session?: SessionContext } = {}
 ) {
   const userId: UUID = ctx.session!.userId
@@ -20,12 +20,13 @@ export default async function getLeaderboards(
   const leaderboards = await db.leaderboard.findMany({
     where,
     orderBy,
-    take,
+    take: take > 20 || take < 1 || !Number.isInteger(take) ? 20 : take,
     skip,
   })
 
   leaderboards.forEach((l) => {
-    if (!l.published && l.ownerId !== userId) throw new AuthorizationError()
+    const isNotOwner = l.ownerId !== userId
+    if ((!l.published && isNotOwner) || (l.private && isNotOwner)) throw new AuthorizationError()
   })
 
   const count = await db.leaderboard.count()

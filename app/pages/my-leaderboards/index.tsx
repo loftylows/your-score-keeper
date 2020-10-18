@@ -1,5 +1,5 @@
 import * as React from "react"
-import mobile, { IsMobileOptions } from "is-mobile"
+import mobile from "is-mobile"
 import { BlitzPage, ssrQuery, GetServerSideProps } from "blitz"
 import { getSessionContext } from "@blitzjs/server"
 import Layout from "app/layouts/MyLeaderboardsSpace"

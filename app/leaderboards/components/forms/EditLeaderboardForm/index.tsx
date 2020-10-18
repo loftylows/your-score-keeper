@@ -47,7 +47,9 @@ const EditLeaderboardForm = (props: EditLeaderboardFormProps) => {
     leaderboards: inMemoryLeaderboards,
     inMemoryDeleteLeaderboard,
   } = React.useContext(inMemoryLeaderboardsContext)
-  const { editLeaderboardDialogIsOpenWithId } = React.useContext(uiContext)
+  const { editLeaderboardDialogIsOpenWithId, setDeletingLeaderboardWithId } = React.useContext(
+    uiContext
+  )
   const leaderboards = userId ? dbLeaderboards : inMemoryLeaderboards
   const editingLeaderboard = editLeaderboardDialogIsOpenWithId
     ? leaderboards.find((l) => l.id === editLeaderboardDialogIsOpenWithId)
@@ -190,29 +192,8 @@ const EditLeaderboardForm = (props: EditLeaderboardFormProps) => {
               icon={<DeleteIcon />}
               onClick={() => {
                 if (!editingLeaderboard) return
-                setIsDeletingLeaderboard(true)
-                try {
-                  if (userId) {
-                    dbCacheDeleteLeaderboard(editingLeaderboard.id)
-                  } else {
-                    inMemoryDeleteLeaderboard(editingLeaderboard.id)
-                  }
-                } catch (error) {
-                  return {
-                    [FORM_ERROR]:
-                      "Sorry, we had an unexpected error. Please try again. - " + error.toString(),
-                  }
-                } finally {
-                  setIsDeletingLeaderboard(false)
-                }
-                toast({
-                  title: "Leaderboard Deleted.",
-                  status: "success",
-                  duration: 2000,
-                  isClosable: true,
-                  position: "top",
-                })
-                componentProps.onFormFinished && componentProps.onFormFinished()
+                if (componentProps.onFormFinished) componentProps.onFormFinished()
+                setDeletingLeaderboardWithId(editingLeaderboard.id)
               }}
             />
           </Box>

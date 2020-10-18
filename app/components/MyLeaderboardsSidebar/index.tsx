@@ -1,6 +1,6 @@
 import * as React from "react"
-import { Box, Button, ButtonGroup, IconButton, Text } from "@chakra-ui/core"
-import { EditIcon, HamburgerIcon } from "@chakra-ui/icons"
+import { Box, Button, ButtonGroup, Icon, IconButton, Text } from "@chakra-ui/core"
+import { CheckCircleIcon, EditIcon, HamburgerIcon, WarningIcon } from "@chakra-ui/icons"
 import { inMemoryLeaderboardsContext } from "app/leaderboards/InMemoryLeaderboardsProvider"
 import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboardsProvider"
 import { uiContext } from "app/leaderboards/LeaderboardsUiProvider"
@@ -33,6 +33,8 @@ const MyLeaderboardsSidebar = ({ inDrawer }: IProps) => {
       minWidth={{ base: "230px" }}
     >
       {(userId ? dbLeaderboards : inMemoryLeaderboards).map((leaderboard) => {
+        const isCurrentLeaderboard =
+          currentlySelectedLeaderboard && currentlySelectedLeaderboard.id === leaderboard.id
         return (
           <ButtonGroup
             key={leaderboard.id}
@@ -41,11 +43,7 @@ const MyLeaderboardsSidebar = ({ inDrawer }: IProps) => {
             borderRadius="0"
             height="40px"
             minHeight="40px"
-            colorScheme={
-              currentlySelectedLeaderboard && currentlySelectedLeaderboard.id === leaderboard.id
-                ? "blue"
-                : "gray"
-            }
+            colorScheme={isCurrentLeaderboard ? "blue" : "gray"}
           >
             <Button
               width="100%"
@@ -58,7 +56,14 @@ const MyLeaderboardsSidebar = ({ inDrawer }: IProps) => {
               }}
               onClick={() => setCurrentlySelectedLeaderboardId(leaderboard.id)}
             >
-              <HamburgerIcon marginRight="5px" />
+              {!(leaderboard as any).published ? (
+                <WarningIcon
+                  marginRight="5px"
+                  color={isCurrentLeaderboard ? "orange.400" : "orange.500"}
+                />
+              ) : (
+                <HamburgerIcon marginRight="5px" />
+              )}
               <Text title={leaderboard.title} isTruncated>
                 {leaderboard.title}
               </Text>

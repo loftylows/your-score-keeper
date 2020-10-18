@@ -30,6 +30,7 @@ import {
   RemoveCurrentlySelectedLeaderboardId,
   SetPublishingLeaderboardWithId,
   SetUnpublishingLeaderboardWithId,
+  SetDeletingLeaderboardWithId,
 } from "./types"
 import CreateLeaderboardForm from "../components/forms/CreateLeaderboardForm"
 import EditLeaderboardForm from "../components/forms/EditLeaderboardForm"
@@ -37,9 +38,11 @@ import EditPlayerForm from "../components/forms/EditPlayerForm"
 import updateLeaderboard from "../mutations/updateLeaderboard"
 import { ToastContext } from "app/components/ToastProvider"
 import {
+  DbCacheDeleteLeaderboard,
   DbCachePublishLeaderboard,
   DbCacheUnpublishLeaderboard,
 } from "../DbCacheLeaderboardsProvider/types"
+import { WarningTwoIcon } from "@chakra-ui/icons"
 
 interface IProps {
   children: React.ReactChild
@@ -47,6 +50,7 @@ interface IProps {
   toast: ReturnType<typeof useToast>
   dbCachePublishLeaderboard: DbCachePublishLeaderboard
   dbCacheUnpublishLeaderboard: DbCacheUnpublishLeaderboard
+  dbCacheDeleteLeaderboard: DbCacheDeleteLeaderboard
 }
 interface IState {
   createLeaderboardDialogIsOpen: boolean
@@ -58,8 +62,11 @@ interface IState {
   leaderboardPublishingInProgress: boolean
   unpublishingLeaderboardWithId: Maybe<UUID>
   leaderboardUnpublishingInProgress: boolean
+  deletingLeaderboardWithId: Maybe<UUID>
+  leaderboardDeletingInProgress: boolean
   setPublishingLeaderboardWithId: SetPublishingLeaderboardWithId
   setUnpublishingLeaderboardWithId: SetUnpublishingLeaderboardWithId
+  setDeletingLeaderboardWithId: SetDeletingLeaderboardWithId
   setCurrentlySelectedLeaderboardId: SetCurrentlySelectedLeaderboardId
   removeCurrentlySelectedLeaderboardId: RemoveCurrentlySelectedLeaderboardId
   openCreateLeaderboardDialog: OpenCreateLeaderboardDialog
@@ -82,8 +89,11 @@ const uiContext = React.createContext<IState>({
   leaderboardPublishingInProgress: false,
   unpublishingLeaderboardWithId: null,
   leaderboardUnpublishingInProgress: false,
+  deletingLeaderboardWithId: null,
+  leaderboardDeletingInProgress: false,
   setPublishingLeaderboardWithId: () => {},
   setUnpublishingLeaderboardWithId: () => {},
+  setDeletingLeaderboardWithId: () => {},
   setCurrentlySelectedLeaderboardId: () => {},
   removeCurrentlySelectedLeaderboardId: () => {},
   openCreateLeaderboardDialog: () => {},
@@ -98,6 +108,7 @@ const uiContext = React.createContext<IState>({
 class DialogsProvider extends React.Component<IProps, IState> {
   _cancelPublishingLeaderboardButtonRef = React.createRef<HTMLButtonElement>()
   _cancelUnpublishingLeaderboardButtonRef = React.createRef<HTMLButtonElement>()
+  _cancelDeletingLeaderboardButtonRef = React.createRef<HTMLButtonElement>()
   constructor(props: IProps) {
     super(props)
 
@@ -111,8 +122,11 @@ class DialogsProvider extends React.Component<IProps, IState> {
       leaderboardPublishingInProgress: false,
       unpublishingLeaderboardWithId: null,
       leaderboardUnpublishingInProgress: false,
+      deletingLeaderboardWithId: null,
+      leaderboardDeletingInProgress: false,
       setPublishingLeaderboardWithId: this.setPublishingLeaderboardWithId,
       setUnpublishingLeaderboardWithId: this.setUnpublishingLeaderboardWithId,
+      setDeletingLeaderboardWithId: this.setDeletingLeaderboardWithId,
       setCurrentlySelectedLeaderboardId: this.setCurrentlySelectedLeaderboardId,
       removeCurrentlySelectedLeaderboardId: this.removeCurrentlySelectedLeaderboardId,
       openCreateLeaderboardDialog: this.openCreateLeaderboardDialog,
@@ -149,9 +163,21 @@ class DialogsProvider extends React.Component<IProps, IState> {
     this.setState({
       leaderboardUnpublishingInProgress: !this.state.leaderboardPublishingInProgress,
     })
+  setDeletingLeaderboardWithId: SetDeletingLeaderboardWithId = (id) =>
+    this.setState({ deletingLeaderboardWithId: id })
+  toggleLeaderboardDeletingInProgress = () =>
+    this.setState({
+      leaderboardDeletingInProgress: !this.state.leaderboardDeletingInProgress,
+    })
 
   render() {
-    const { children, toast, dbCachePublishLeaderboard, dbCacheUnpublishLeaderboard } = this.props
+    const {
+      children,
+      toast,
+      dbCachePublishLeaderboard,
+      dbCacheUnpublishLeaderboard,
+      dbCacheDeleteLeaderboard,
+    } = this.props
     const { state } = this
     return (
       <uiContext.Provider value={state}>
@@ -296,6 +322,61 @@ class DialogsProvider extends React.Component<IProps, IState> {
                 <Button
                   ml={3}
                   colorScheme="orange"
+                  isLoading={state.leaderboardDeletingInProgress}
+                  onClick={async () => {
+                    if (!state.deletingLeaderboardWithId) return
+
+                    this.toggleLeaderboardDeletingInProgress()
+                    try {
+                      await dbCacheDeleteLeaderboard(state.deletingLeaderboardWithId)
+                      this.setDeletingLeaderboardWithId(null)
+                      toast({
+                        title: "Leaderboard Deleted.",
+                        status: "warning",
+                        duration: 3000,
+                        isClosable: true,
+                        position: "top",
+                      })
+                    } catch (e) {
+                      console.log(e)
+                    } finally {
+                      this.toggleLeaderboardDeletingInProgress()
+                    }
+                  }}
+                >
+                  Delete Leaderboard
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialogOverlay>
+        </AlertDialog>
+
+        <AlertDialog
+          isOpen={!!state.deletingLeaderboardWithId}
+          leastDestructiveRef={this._cancelDeletingLeaderboardButtonRef}
+          onClose={() => this.setDeletingLeaderboardWithId(null)}
+        >
+          <AlertDialogOverlay>
+            <AlertDialogContent>
+              <AlertDialogHeader fontSize="lg" fontWeight="bold" display="flex" alignItems="center">
+                <WarningTwoIcon marginRight="5px" color="red.500" /> Unpublish Leaderboard
+              </AlertDialogHeader>
+
+              <AlertDialogBody>
+                Are you sure you want to delete this leaderboard? This action is permanent and you
+                will no longer have access to it.
+              </AlertDialogBody>
+
+              <AlertDialogFooter>
+                <Button
+                  ref={this._cancelPublishingLeaderboardButtonRef}
+                  onClick={() => this.setDeletingLeaderboardWithId(null)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  ml={3}
+                  colorScheme="red"
                   isLoading={state.leaderboardUnpublishingInProgress}
                   onClick={async () => {
                     if (!state.unpublishingLeaderboardWithId) return
@@ -336,12 +417,18 @@ const Provider = ({ children }: IProviderProps) => {
     <ToastContext.Consumer>
       {(toast) => (
         <dbCacheLeaderboardsContext.Consumer>
-          {({ userId, dbCachePublishLeaderboard, dbCacheUnpublishLeaderboard }) => (
+          {({
+            userId,
+            dbCachePublishLeaderboard,
+            dbCacheUnpublishLeaderboard,
+            dbCacheDeleteLeaderboard,
+          }) => (
             <DialogsProvider
               userId={userId}
               toast={toast}
               dbCachePublishLeaderboard={dbCachePublishLeaderboard}
               dbCacheUnpublishLeaderboard={dbCacheUnpublishLeaderboard}
+              dbCacheDeleteLeaderboard={dbCacheDeleteLeaderboard}
             >
               {children}
             </DialogsProvider>

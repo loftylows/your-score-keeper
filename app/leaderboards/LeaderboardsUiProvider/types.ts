@@ -12,3 +12,4 @@ export type SetCurrentlySelectedLeaderboardId = (leaderboardId: UUID) => void
 export type RemoveCurrentlySelectedLeaderboardId = () => void
 export type SetPublishingLeaderboardWithId = (id: Maybe<UUID>) => void
 export type SetUnpublishingLeaderboardWithId = (id: Maybe<UUID>) => void
+export type SetDeletingLeaderboardWithId = (id: Maybe<UUID>) => void
