@@ -7,11 +7,12 @@ import { Box, Heading, Select } from "@chakra-ui/core"
 import qs from "querystringify"
 import getLeaderboards from "app/leaderboards/queries/getLeaderboards"
 import { Maybe, ThenArgRecursive, UUID } from "common-types"
-import { QueryOptions } from "app/leaderboards/searchUrlBuilder"
+import buildSearchQuery, { QueryOptions } from "app/leaderboards/searchUrlBuilder"
 import url from "url"
 import LeaderboardsList from "app/leaderboards/components/LeaderboardsList"
 const leaderboardsPerPage = 20
 
+export type SortType = "latest" | "oldest"
 export type LeaderboardsQueryRes = ThenArgRecursive<ReturnType<typeof getLeaderboards>>
 interface IProps {
   leaderboardsQueryRes: ThenArgRecursive<ReturnType<typeof getLeaderboards>>
@@ -113,7 +114,9 @@ const LeaderboardsPage: BlitzPage<IProps> = ({
         </Box>
         <Select
           onChange={(ev) => {
-            Router.push(`/leaderboards?sortBy=${ev.target.value}`)
+            Router.push(
+              buildSearchQuery({ sortBy: (ev.target.value || "latest") as SortType, page })
+            )
           }}
           value={sortBy === "asc" ? "oldest" : "latest"}
           placeholder="Sort Order"

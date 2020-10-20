@@ -63,7 +63,7 @@ const HeroSection = () => {
             </Box>
           </Link>
 
-          <Link href={buildSearchQuery({ sortBy: "latest" })} passHref>
+          <Link href={buildSearchQuery({ sortBy: "latest", page: 1 })} passHref>
             <Box as="a" marginX="25px" marginBottom={{ base: "20px", md: "0" }}>
               <Button backgroundColor="gray.600" _hover={{ backgroundColor: "gray.700" }} size="lg">
                 Latest Leaderboards
