@@ -20,6 +20,13 @@ export default async function getLeaderboards(
   const leaderboards = await db.leaderboard.findMany({
     where,
     orderBy,
+    include: {
+      owner: {
+        select: {
+          name: true,
+        },
+      },
+    },
     take: take > 20 || take < 1 || !Number.isInteger(take) ? 20 : take,
     skip,
   })
@@ -37,5 +44,6 @@ export default async function getLeaderboards(
     leaderboards,
     nextPage,
     hasMore,
+    count,
   }
 }

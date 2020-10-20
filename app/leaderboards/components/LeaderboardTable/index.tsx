@@ -11,6 +11,8 @@ import { IconButton, Icon, Box } from "@chakra-ui/core"
 import { uiContext } from "app/leaderboards/LeaderboardsUiProvider"
 import { lighten } from "polished"
 import { Maybe, UUID } from "common-types"
+import { Leaderboard, Player } from "@prisma/client"
+import { isSavedLeaderboard } from "app/leaderboards/typeAssertions"
 
 interface ITitleBoxProps {
   title: string
@@ -22,11 +24,15 @@ const TitleBox = ({ title }: ITitleBoxProps) => (
 )
 
 interface IProps {
-  leaderboard: InMemoryLeaderboard
-  players: InMemoryPlayer[]
+  leaderboard: InMemoryLeaderboard | Leaderboard
+  players: (InMemoryPlayer | Player)[]
   userId: Maybe<UUID>
+  isReadOnly?: boolean
 }
-const LeaderboardTable = ({ players, leaderboard }: IProps) => {
+const LeaderboardTable = ({ players, leaderboard, userId, isReadOnly }: IProps) => {
+  const isLeaderboardOwner = isSavedLeaderboard(leaderboard)
+    ? leaderboard.ownerId === userId
+    : false
   const { openEditPlayerDialog } = React.useContext(uiContext)
   const rankedPlayers = players
     .sort(
@@ -72,12 +78,12 @@ const LeaderboardTable = ({ players, leaderboard }: IProps) => {
       },
       {
         id: "extra",
-        accessor: "extra",
+        accessor: isLeaderboardOwner && !isReadOnly ? "extra" : undefined,
         disableFilters: true,
         disableSortBy: true,
       },
     ],
-    []
+    [isReadOnly, isLeaderboardOwner]
   )
 
   const filterTypes = React.useMemo(

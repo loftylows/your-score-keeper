@@ -1,10 +1,11 @@
 import * as React from "react"
-import { Box, Button, ButtonGroup, Icon, IconButton, Text } from "@chakra-ui/core"
-import { CheckCircleIcon, EditIcon, HamburgerIcon, WarningIcon } from "@chakra-ui/icons"
+import { Box, Button, ButtonGroup, IconButton, Text } from "@chakra-ui/core"
+import { EditIcon, HamburgerIcon, WarningIcon } from "@chakra-ui/icons"
 import { inMemoryLeaderboardsContext } from "app/leaderboards/InMemoryLeaderboardsProvider"
 import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboardsProvider"
 import { uiContext } from "app/leaderboards/LeaderboardsUiProvider"
 import useCurrentlySelectedLeaderboard from "app/leaderboards/hooks/useCurrentlySelectedLeaderboard"
+import { Router } from "blitz"
 
 interface IProps {
   inDrawer?: boolean
@@ -54,7 +55,10 @@ const MyLeaderboardsSidebar = ({ inDrawer }: IProps) => {
               _focus={{
                 outline: "none",
               }}
-              onClick={() => setCurrentlySelectedLeaderboardId(leaderboard.id)}
+              onClick={() => {
+                setCurrentlySelectedLeaderboardId(leaderboard.id)
+                Router.push(`/my-leaderboards?id=${leaderboard.id}`)
+              }}
             >
               {!(leaderboard as any).published ? (
                 <WarningIcon
