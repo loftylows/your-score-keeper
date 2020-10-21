@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Leaderboard, User } from "@prisma/client"
-import { Box, Heading, VStack } from "@chakra-ui/core"
+import { Box, Button, Heading, VStack } from "@chakra-ui/core"
 import { formatDistance } from "date-fns"
 import { Link } from "blitz"
 
@@ -15,7 +15,7 @@ const LeaderboardsList = ({ leaderboards }: IProps) => {
         const owner = leaderboard?.owner as User
         const itemHeight = 120
         return (
-          <Box
+          <Button
             as="li"
             display="flex"
             width="750px"
@@ -51,7 +51,7 @@ const LeaderboardsList = ({ leaderboards }: IProps) => {
                 </Box>
               </Box>
             </Link>
-          </Box>
+          </Button>
         )
       })}
     </VStack>
