@@ -5,7 +5,7 @@ import { uiContext } from "app/leaderboards/LeaderboardsUiProvider"
 import { Leaderboard } from "@prisma/client"
 import { InMemoryLeaderboard } from "app/leaderboards/InMemoryLeaderboardsProvider/types"
 import { Maybe } from "common-types"
-import { useQuery, useRouterQuery } from "blitz"
+import { useRouterQuery } from "blitz"
 
 const useCurrentlySelectedLeaderboard = (): Maybe<InMemoryLeaderboard | Leaderboard> => {
   const { leaderboards: inMemoryLeaderboards } = React.useContext(inMemoryLeaderboardsContext)

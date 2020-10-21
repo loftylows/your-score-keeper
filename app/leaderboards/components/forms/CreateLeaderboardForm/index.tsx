@@ -20,6 +20,7 @@ import { FORM_ERROR } from "final-form"
 import { CreateLeaderboardInput, CreateLeaderboardInputType } from "../../../validations"
 import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboardsProvider"
 import { inMemoryLeaderboardsContext } from "app/leaderboards/InMemoryLeaderboardsProvider"
+import { Router } from "blitz"
 
 type CreateLeaderboardFormProps = {
   onSuccess?: () => void
@@ -48,11 +49,13 @@ const CreateLeaderboardForm = (props: CreateLeaderboardFormProps) => {
         props.onSubmitStart && props.onSubmitStart()
         try {
           if (userId) {
-            dbCacheCreateLeaderboard({
+            const leaderboard = await dbCacheCreateLeaderboard({
               title: values.title,
               playersScoreSortDirection: values.playersScoreSortDirection,
               owner: { connect: { id: userId } },
             })
+
+            leaderboard && Router.push(`/my-leaderboards?id=${leaderboard.id}`)
           } else {
             inMemoryCreateLeaderboard({
               title: values.title,

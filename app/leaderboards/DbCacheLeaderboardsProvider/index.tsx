@@ -61,7 +61,7 @@ const dbCacheLeaderboardsContext = React.createContext<IState>({
   userId: null,
   dbCachePublishLeaderboard: async () => {},
   dbCacheUnpublishLeaderboard: async () => {},
-  dbCacheCreateLeaderboard: async () => {},
+  dbCacheCreateLeaderboard: async () => ({} as Leaderboard),
   dbCacheEditLeaderboard: async () => {},
   dbCacheDeleteLeaderboard: async () => {},
   dbCacheCreatePlayer: async () => {},
@@ -120,16 +120,20 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
 
   public dbCacheCreateLeaderboard: DbCacheCreateLeaderboard = async (input) => {
     const { userId } = this.state
-    if (!userId) return
+    if (!userId) return null
+
+    let leaderboard: Maybe<Leaderboard> = null
 
     try {
-      const leaderboard = await createLeaderboard({ data: input, ownerId: userId })
+      leaderboard = await createLeaderboard({ data: input, ownerId: userId })
       this.setState({
         leaderboards: [...this.state.leaderboards, leaderboard],
       })
     } catch (e) {
       // TODO: Notify user of error
     }
+
+    return leaderboard
   }
 
   public dbCacheEditLeaderboard: DbCacheEditLeaderboard = async (input) => {

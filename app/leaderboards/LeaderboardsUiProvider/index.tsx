@@ -297,31 +297,31 @@ class DialogsProvider extends React.Component<IProps, IState> {
         </AlertDialog>
 
         <AlertDialog
-          isOpen={!!state.unpublishingLeaderboardWithId}
-          leastDestructiveRef={this._cancelPublishingLeaderboardButtonRef}
-          onClose={() => this.setUnpublishingLeaderboardWithId(null)}
+          isOpen={!!state.deletingLeaderboardWithId}
+          leastDestructiveRef={this._cancelDeletingLeaderboardButtonRef}
+          onClose={() => this.setDeletingLeaderboardWithId(null)}
         >
           <AlertDialogOverlay>
             <AlertDialogContent>
               <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                Unpublish Leaderboard
+                Delete Leaderboard
               </AlertDialogHeader>
 
               <AlertDialogBody>
-                Are you sure you want to unpublish this leaderboard? It will only be visible to you
-                once this is done and all public links to this leaderboard will no longer work.
+                Are you sure you want to delete this leaderboard? This action is permanent and you
+                will no longer have access to it.
               </AlertDialogBody>
 
               <AlertDialogFooter>
                 <Button
-                  ref={this._cancelPublishingLeaderboardButtonRef}
-                  onClick={() => this.setUnpublishingLeaderboardWithId(null)}
+                  ref={this._cancelDeletingLeaderboardButtonRef}
+                  onClick={() => this.setDeletingLeaderboardWithId(null)}
                 >
                   Cancel
                 </Button>
                 <Button
                   ml={3}
-                  colorScheme="orange"
+                  colorScheme="red"
                   isLoading={state.leaderboardDeletingInProgress}
                   onClick={async () => {
                     if (!state.deletingLeaderboardWithId) return
@@ -352,9 +352,9 @@ class DialogsProvider extends React.Component<IProps, IState> {
         </AlertDialog>
 
         <AlertDialog
-          isOpen={!!state.deletingLeaderboardWithId}
-          leastDestructiveRef={this._cancelDeletingLeaderboardButtonRef}
-          onClose={() => this.setDeletingLeaderboardWithId(null)}
+          isOpen={!!state.unpublishingLeaderboardWithId}
+          leastDestructiveRef={this._cancelPublishingLeaderboardButtonRef}
+          onClose={() => this.setUnpublishingLeaderboardWithId(null)}
         >
           <AlertDialogOverlay>
             <AlertDialogContent>
@@ -363,20 +363,20 @@ class DialogsProvider extends React.Component<IProps, IState> {
               </AlertDialogHeader>
 
               <AlertDialogBody>
-                Are you sure you want to delete this leaderboard? This action is permanent and you
-                will no longer have access to it.
+                Are you sure you want to unpublish this leaderboard? It will only be visible to you
+                once this is done and all public links to this leaderboard will no longer work.
               </AlertDialogBody>
 
               <AlertDialogFooter>
                 <Button
                   ref={this._cancelPublishingLeaderboardButtonRef}
-                  onClick={() => this.setDeletingLeaderboardWithId(null)}
+                  onClick={() => this.setUnpublishingLeaderboardWithId(null)}
                 >
                   Cancel
                 </Button>
                 <Button
                   ml={3}
-                  colorScheme="red"
+                  colorScheme="orange"
                   isLoading={state.leaderboardUnpublishingInProgress}
                   onClick={async () => {
                     if (!state.unpublishingLeaderboardWithId) return

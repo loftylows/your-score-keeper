@@ -24,10 +24,10 @@ const LeaderboardsSpace = () => {
   const leaderboard = useCurrentlySelectedLeaderboard()
   const players = useCurrentlySelectedLeaderboardPlayers()
   const { openAuthModal } = React.useContext(authModalContext)
-  const { userId } = React.useContext(dbCacheLeaderboardsContext)
-  const { leaderboards } = React.useContext(inMemoryLeaderboardsContext)
+  const { userId, leaderboards: dbLeaderboards } = React.useContext(dbCacheLeaderboardsContext)
+  const { leaderboards: inMemoryLeaderboards } = React.useContext(inMemoryLeaderboardsContext)
 
-  if (!leaderboard)
+  if (!leaderboard && ![...inMemoryLeaderboards, ...dbLeaderboards].length) {
     return (
       <Box
         display="flex"
@@ -49,18 +49,37 @@ const LeaderboardsSpace = () => {
         </Button>
       </Box>
     )
+  } else if (!leaderboard) {
+    return (
+      <Box
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+        margin="30px 20px"
+        width="100%"
+        height={{ base: "160px", md: "170px" }}
+        fontWeight="bold"
+        borderRadius="10px"
+        border={`1px solid ${lighten(0.2, "#4C7BF4")}`}
+        backgroundColor={`${lighten(0.35, "#4C7BF4")}`}
+      >
+        <Heading size="lg">No leaderboard found.</Heading>
+      </Box>
+    )
+  }
 
   return (
     <Box
       display="flex"
       flexDirection="column"
-      padding={{ base: "10px", sm: "30px" }}
+      padding={{ base: "15px 10px", sm: "30px" }}
       width="100%"
       minWidth={minWidth}
       height="calc(100vh - 64px)"
       overflow="scroll"
     >
-      {!userId && leaderboards.length && (
+      {!userId && inMemoryLeaderboards.length && (
         <Box
           display="flex"
           flexDirection={{ base: "column", md: "row" }}

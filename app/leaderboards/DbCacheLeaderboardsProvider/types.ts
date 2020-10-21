@@ -1,8 +1,10 @@
 import { Leaderboard, LeaderboardCreateInput, Player, PlayerCreateInput } from "@prisma/client"
-import { UUID } from "common-types"
+import { Maybe, UUID } from "common-types"
 import { InMemoryLeaderboard, InMemoryPlayer } from "../InMemoryLeaderboardsProvider/types"
 
-export type DbCacheCreateLeaderboard = (input: LeaderboardCreateInput) => Promise<void>
+export type DbCacheCreateLeaderboard = (
+  input: LeaderboardCreateInput
+) => Promise<Maybe<Leaderboard>>
 export type DbCacheEditLeaderboard = (leaderboard: Omit<Leaderboard, "ownerId">) => Promise<void>
 export type DbCachePublishLeaderboard = (leaderboardId: UUID) => Promise<void>
 export type DbCacheUnpublishLeaderboard = (leaderboardId: UUID) => Promise<void>

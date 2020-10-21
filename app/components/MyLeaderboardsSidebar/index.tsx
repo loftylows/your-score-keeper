@@ -6,6 +6,7 @@ import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboards
 import { uiContext } from "app/leaderboards/LeaderboardsUiProvider"
 import useCurrentlySelectedLeaderboard from "app/leaderboards/hooks/useCurrentlySelectedLeaderboard"
 import { Router } from "blitz"
+import { isSavedLeaderboard } from "app/leaderboards/typeAssertions"
 
 interface IProps {
   inDrawer?: boolean
@@ -57,7 +58,11 @@ const MyLeaderboardsSidebar = ({ inDrawer }: IProps) => {
               }}
               onClick={() => {
                 setCurrentlySelectedLeaderboardId(leaderboard.id)
-                Router.push(`/my-leaderboards?id=${leaderboard.id}`)
+                Router.push(
+                  isSavedLeaderboard(leaderboard)
+                    ? `/my-leaderboards?id=${leaderboard.id}`
+                    : "/my-leaderboards"
+                )
               }}
             >
               {!(leaderboard as any).published ? (
@@ -103,6 +108,8 @@ const MyLeaderboardsSidebar = ({ inDrawer }: IProps) => {
         onClick={openCreateLeaderboardDialog}
         disabled={leaderboardsCount >= 15}
         isDisabled={leaderboardsCount >= 15}
+        backgroundColor={leaderboardsCount >= 15 ? "#f5f5dc" : "gray"}
+        opacity="1"
       >
         {leaderboardsCount >= 15 ? "15 Leaderboards Max" : "Add Leaderboard"}
       </Button>
