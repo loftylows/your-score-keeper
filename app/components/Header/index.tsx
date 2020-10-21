@@ -16,6 +16,7 @@ import {
   IconButton,
   HStack,
   Heading,
+  useBreakpointValue,
 } from "@chakra-ui/core"
 import { darken } from "polished"
 import { authModalContext } from "app/auth/AuthModalProvider"
@@ -31,17 +32,23 @@ const Header = ({ showingMobileSidebar, openSidebar }: IProps) => {
   const session = useSession()
   const { openAuthModal } = React.useContext(authModalContext)
   const { openEditCurrentUserDialog } = React.useContext(usersUiContext)
+  const buttonSize = useBreakpointValue({ base: "sm", md: "md" })
 
   const UnauthenticatedUserContent = () => (
     <ButtonGroup color="white">
-      <Button colorScheme="blue" size="md" mr={3} onClick={() => openAuthModal({ type: "signup" })}>
+      <Button
+        colorScheme="blue"
+        size={buttonSize}
+        mr={3}
+        onClick={() => openAuthModal({ type: "signup" })}
+      >
         Sign Up
       </Button>
 
       <Button
         backgroundColor="gray.600"
         _hover={{ backgroundColor: "gray.700" }}
-        size="md"
+        size={buttonSize}
         onClick={() => openAuthModal({ type: "login" })}
       >
         Log In
@@ -113,7 +120,7 @@ const Header = ({ showingMobileSidebar, openSidebar }: IProps) => {
       boxShadow="sm"
       zIndex={1}
     >
-      <Box display="flex" alignItems="center" marginLeft={showingMobileSidebar ? "15px" : "25px"}>
+      <Box display="flex" alignItems="center" marginLeft={{ base: "10px", md: "25px" }}>
         {showingMobileSidebar && openSidebar && (
           <IconButton
             icon={<Icon as={FaAlignJustify} />}
@@ -158,7 +165,7 @@ const Header = ({ showingMobileSidebar, openSidebar }: IProps) => {
           justifyContent="center"
           alignItems="center"
           marginLeft="auto"
-          paddingX="30px"
+          paddingX={{ base: "10px", md: "30px" }}
         >
           {session.userId ? (
             <React.Suspense

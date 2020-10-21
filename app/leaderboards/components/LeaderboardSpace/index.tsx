@@ -13,13 +13,13 @@ import { uiContext } from "app/leaderboards/LeaderboardsUiProvider"
 import { Link } from "blitz"
 import { lighten } from "polished"
 
-const minWidth = "355px"
+const minWidth = "320px"
 
 const LeaderboardsSpace = () => {
   const {
     setPublishingLeaderboardWithId,
     setUnpublishingLeaderboardWithId,
-    currentlySelectedLeaderboardId,
+    openCreateLeaderboardDialog,
   } = React.useContext(uiContext)
   const leaderboard = useCurrentlySelectedLeaderboard()
   const players = useCurrentlySelectedLeaderboardPlayers()
@@ -44,7 +44,7 @@ const LeaderboardsSpace = () => {
       >
         <Heading size="lg">No leaderboard here.</Heading>
         <Heading size="lg">Try creating one.</Heading>
-        <Button colorScheme="blue" marginTop="15px">
+        <Button colorScheme="blue" marginTop="15px" onClick={openCreateLeaderboardDialog}>
           Create Leaderboard
         </Button>
       </Box>
@@ -63,6 +63,7 @@ const LeaderboardsSpace = () => {
       {!userId && leaderboards.length && (
         <Box
           display="flex"
+          flexDirection={{ base: "column", md: "row" }}
           justifyContent="center"
           alignItems="center"
           marginBottom="25px"
@@ -74,7 +75,12 @@ const LeaderboardsSpace = () => {
           borderRadius="10px"
         >
           Log in to save and publish your leaderboards:
-          <ButtonGroup spacing={3} marginLeft="8px" size="xs">
+          <ButtonGroup
+            spacing={3}
+            marginLeft={{ base: "0px", md: "8px" }}
+            marginTop={{ base: "10px", md: 0 }}
+            size="xs"
+          >
             <Button colorScheme="blue" onClick={() => openAuthModal({ type: "signup" })}>
               Sign Up
             </Button>
