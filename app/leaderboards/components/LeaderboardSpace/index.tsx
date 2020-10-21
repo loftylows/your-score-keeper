@@ -11,6 +11,7 @@ import { authModalContext } from "app/auth/AuthModalProvider"
 import { Leaderboard } from "@prisma/client"
 import { uiContext } from "app/leaderboards/LeaderboardsUiProvider"
 import { Link } from "blitz"
+import { lighten } from "polished"
 
 const minWidth = "355px"
 
@@ -24,7 +25,23 @@ const LeaderboardsSpace = () => {
   const { userId } = React.useContext(dbCacheLeaderboardsContext)
   const { leaderboards } = React.useContext(inMemoryLeaderboardsContext)
 
-  if (!leaderboard) return null
+  if (!leaderboard)
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        margin="30px 20px"
+        width="100%"
+        height={{ base: "120px", md: "150px" }}
+        fontWeight="bold"
+        borderRadius="10px"
+        border={`1px solid ${lighten(0.2, "#4C7BF4")}`}
+        backgroundColor={`${lighten(0.35, "#4C7BF4")}`}
+      >
+        <Heading size="lg">Leaderboard Not Found</Heading>
+      </Box>
+    )
 
   return (
     <Box
