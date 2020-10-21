@@ -15,8 +15,14 @@ import {
   Icon,
   IconButton,
   HStack,
-  Heading,
   useBreakpointValue,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  DrawerHeader,
+  DrawerBody,
+  VStack,
 } from "@chakra-ui/core"
 import { darken } from "polished"
 import { authModalContext } from "app/auth/AuthModalProvider"
@@ -24,11 +30,19 @@ import logout from "app/auth/logout"
 import { usersUiContext } from "app/users/UsersUiProvider"
 import buildSearchQuery from "app/leaderboards/searchUrlBuilder"
 
+const mobileNavLinksConfig = [
+  { href: "/", title: "Home" },
+  { href: buildSearchQuery({ sortBy: "latest", page: 1 }), title: "Leaderboards" },
+  { href: "/my-leaderboards", title: "My Leaderboards" },
+]
+
 interface IProps {
   showingMobileSidebar?: boolean
   openSidebar?: () => void
 }
 const Header = ({ showingMobileSidebar, openSidebar }: IProps) => {
+  const closeBtnRef = React.useRef<HTMLButtonElement>(null)
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false)
   const session = useSession()
   const { openAuthModal } = React.useContext(authModalContext)
   const { openEditCurrentUserDialog } = React.useContext(usersUiContext)
@@ -153,7 +167,14 @@ const Header = ({ showingMobileSidebar, openSidebar }: IProps) => {
         </Box>
       </Box>
 
-      <Button color="white" display={{ base: "flex", md: "none" }} size="md" variant="ghost">
+      <Button
+        color="white"
+        display={{ base: "flex", md: "none" }}
+        size="md"
+        variant="ghost"
+        ref={closeBtnRef}
+        onClick={() => setMobileMenuOpen(true)}
+      >
         Menu
       </Button>
 
@@ -201,6 +222,52 @@ const Header = ({ showingMobileSidebar, openSidebar }: IProps) => {
           bgColor="brand.600"
         />
       </Box>
+
+      <Drawer
+        isOpen={mobileMenuOpen}
+        placement="left"
+        onClose={() => setMobileMenuOpen(false)}
+        finalFocusRef={closeBtnRef}
+      >
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerCloseButton />
+          <DrawerHeader>Menu</DrawerHeader>
+
+          <DrawerBody backgroundColor="gray.300" padding="0px">
+            <Box as="ul">
+              <VStack spacing={0} display="flex">
+                {mobileNavLinksConfig.map((item) => {
+                  return (
+                    <Button
+                      as="li"
+                      padding="0px"
+                      width="100%"
+                      borderRadius="0px"
+                      borderBottom="1px solid rgba(0,0,0,.05)"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Link passHref href={item.href}>
+                        <Box
+                          as="a"
+                          display="flex"
+                          justifyContent="center"
+                          alignItems="center"
+                          width="100%"
+                          height="100%"
+                          fontSize={{ base: "sm", md: "md" }}
+                        >
+                          {item.title}
+                        </Box>
+                      </Link>
+                    </Button>
+                  )
+                })}
+              </VStack>
+            </Box>
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
     </Box>
   )
 }

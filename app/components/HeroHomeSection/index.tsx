@@ -1,9 +1,11 @@
 import * as React from "react"
 import { Link } from "blitz"
-import { Box, Button, Image, Heading } from "@chakra-ui/core"
+import { Box, Button, Image, Heading, useBreakpointValue } from "@chakra-ui/core"
 import buildSearchQuery from "app/leaderboards/searchUrlBuilder"
 
 const HeroSection = () => {
+  const buttonSize = useBreakpointValue({ base: "md", md: "lg" })
+
   return (
     <Box
       position="relative"
@@ -36,7 +38,12 @@ const HeroSection = () => {
         zIndex={-1}
       />
 
-      <Box display="flex" flexDirection="column" maxWidth="100%" padding="20px 15px">
+      <Box
+        display="flex"
+        flexDirection="column"
+        maxWidth="100%"
+        padding={{ base: "40px 15px", md: "20px 15px" }}
+      >
         <Heading as="h1" textAlign="center" fontWeight="bold" size="xl">
           The Leader of Leaderboards
         </Heading>
@@ -57,7 +64,7 @@ const HeroSection = () => {
         <Box display="flex" justifyContent="center" flexWrap="wrap" marginTop="25px">
           <Link href="/my-leaderboards" passHref>
             <Box as="a" marginX="25px" marginBottom={{ base: "20px", md: "0" }}>
-              <Button colorScheme="primaryBtn" size="lg">
+              <Button colorScheme="primaryBtn" size={buttonSize}>
                 Create Leaderboard
               </Button>
             </Box>
@@ -65,7 +72,11 @@ const HeroSection = () => {
 
           <Link href={buildSearchQuery({ sortBy: "latest", page: 1 })} passHref>
             <Box as="a" marginX="25px" marginBottom={{ base: "20px", md: "0" }}>
-              <Button backgroundColor="gray.600" _hover={{ backgroundColor: "gray.700" }} size="lg">
+              <Button
+                backgroundColor="gray.600"
+                _hover={{ backgroundColor: "gray.700" }}
+                size={buttonSize}
+              >
                 Latest Leaderboards
               </Button>
             </Box>
