@@ -22,6 +22,7 @@ const MyLeaderboardsSidebar = ({ inDrawer }: IProps) => {
   } = React.useContext(uiContext)
 
   const leaderboardsCount = dbLeaderboards.length + inMemoryLeaderboards.length
+  const atMaxLeaderboards = leaderboardsCount >= 15
 
   return (
     <Box
@@ -93,25 +94,25 @@ const MyLeaderboardsSidebar = ({ inDrawer }: IProps) => {
 
       <Button
         position="sticky"
-        marginTop="auto"
+        marginTop={leaderboardsCount ? "auto" : "0"}
         width="100%"
         height="40px"
-        minHeight="40px"
+        minHeight={leaderboardsCount ? "40px" : "50px"}
         colorScheme="gray"
         border="none"
         borderRadius="0"
-        boxShadow="lg"
+        boxShadow={leaderboardsCount ? "lg" : "xs"}
         bottom="0"
         left="0"
         zIndex="1"
         borderTop="1px solid rgba(0,0,0,.03)"
         onClick={openCreateLeaderboardDialog}
-        disabled={leaderboardsCount >= 15}
-        isDisabled={leaderboardsCount >= 15}
-        backgroundColor={leaderboardsCount >= 15 ? "#f5f5dc" : "gray"}
+        disabled={atMaxLeaderboards}
+        isDisabled={atMaxLeaderboards}
+        backgroundColor={atMaxLeaderboards ? "#f5f5dc" : "gray"}
         opacity="1 !important"
       >
-        {leaderboardsCount >= 15 ? "15 Leaderboards Max" : "Add Leaderboard"}
+        {atMaxLeaderboards ? "15 Leaderboards Max" : "Add Leaderboard"}
       </Button>
     </Box>
   )

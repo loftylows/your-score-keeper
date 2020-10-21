@@ -43,6 +43,8 @@ import {
   DbCacheUnpublishLeaderboard,
 } from "../DbCacheLeaderboardsProvider/types"
 import { WarningTwoIcon } from "@chakra-ui/icons"
+import { inMemoryLeaderboardsContext } from "../InMemoryLeaderboardsProvider"
+import { InMemoryDeleteLeaderboard } from "../InMemoryLeaderboardsProvider/types"
 
 interface IProps {
   children: React.ReactChild
@@ -51,6 +53,7 @@ interface IProps {
   dbCachePublishLeaderboard: DbCachePublishLeaderboard
   dbCacheUnpublishLeaderboard: DbCacheUnpublishLeaderboard
   dbCacheDeleteLeaderboard: DbCacheDeleteLeaderboard
+  inMemoryDeleteLeaderboard: InMemoryDeleteLeaderboard
 }
 interface IState {
   createLeaderboardDialogIsOpen: boolean
@@ -177,6 +180,8 @@ class DialogsProvider extends React.Component<IProps, IState> {
       dbCachePublishLeaderboard,
       dbCacheUnpublishLeaderboard,
       dbCacheDeleteLeaderboard,
+      inMemoryDeleteLeaderboard,
+      userId,
     } = this.props
     const { state } = this
     return (
@@ -328,7 +333,12 @@ class DialogsProvider extends React.Component<IProps, IState> {
 
                     this.toggleLeaderboardDeletingInProgress()
                     try {
-                      await dbCacheDeleteLeaderboard(state.deletingLeaderboardWithId)
+                      if (userId) {
+                        await dbCacheDeleteLeaderboard(state.deletingLeaderboardWithId)
+                      } else {
+                        inMemoryDeleteLeaderboard(state.deletingLeaderboardWithId)
+                      }
+
                       this.setDeletingLeaderboardWithId(null)
                       toast({
                         title: "Leaderboard Deleted.",
@@ -423,15 +433,20 @@ const Provider = ({ children }: IProviderProps) => {
             dbCacheUnpublishLeaderboard,
             dbCacheDeleteLeaderboard,
           }) => (
-            <DialogsProvider
-              userId={userId}
-              toast={toast}
-              dbCachePublishLeaderboard={dbCachePublishLeaderboard}
-              dbCacheUnpublishLeaderboard={dbCacheUnpublishLeaderboard}
-              dbCacheDeleteLeaderboard={dbCacheDeleteLeaderboard}
-            >
-              {children}
-            </DialogsProvider>
+            <inMemoryLeaderboardsContext.Consumer>
+              {({ inMemoryDeleteLeaderboard }) => (
+                <DialogsProvider
+                  userId={userId}
+                  toast={toast}
+                  dbCachePublishLeaderboard={dbCachePublishLeaderboard}
+                  dbCacheUnpublishLeaderboard={dbCacheUnpublishLeaderboard}
+                  dbCacheDeleteLeaderboard={dbCacheDeleteLeaderboard}
+                  inMemoryDeleteLeaderboard={inMemoryDeleteLeaderboard}
+                >
+                  {children}
+                </DialogsProvider>
+              )}
+            </inMemoryLeaderboardsContext.Consumer>
           )}
         </dbCacheLeaderboardsContext.Consumer>
       )}
