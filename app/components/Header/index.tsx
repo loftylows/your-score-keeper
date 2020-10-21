@@ -15,6 +15,7 @@ import {
   Icon,
   IconButton,
   HStack,
+  Heading,
 } from "@chakra-ui/core"
 import { darken } from "polished"
 import { authModalContext } from "app/auth/AuthModalProvider"
@@ -122,25 +123,32 @@ const Header = ({ showingMobileSidebar, openSidebar }: IProps) => {
             size="lg"
           />
         )}
-        <Link passHref href="/">
-          <Box
-            color="rgba(255, 255, 255, .9)"
-            as="a"
-            fontSize={{ base: "lg", md: "xl" }}
-            marginRight="10px"
-          >
-            YourScoreKeeper
-          </Box>
-        </Link>
 
-        <HStack marginLeft="10px" spacing={4} display="flex" alignItems="flex-end">
-          <Link passHref href={buildSearchQuery({ sortBy: "latest", page: 1 })}>
-            <Box color="rgba(255, 255, 255, .9)" as="a" fontSize={{ base: "sm", md: "md" }}>
-              Leaderboards
+        <Box display={{ base: "none", md: "flex" }}>
+          <Link passHref href="/">
+            <Box
+              color="rgba(255, 255, 255, .9)"
+              as="a"
+              fontSize={{ base: "lg", md: "xl" }}
+              marginRight="10px"
+            >
+              YourScoreKeeper
             </Box>
           </Link>
-        </HStack>
+
+          <HStack marginLeft="10px" spacing={4} display="flex" alignItems="flex-end">
+            <Link passHref href={buildSearchQuery({ sortBy: "latest", page: 1 })}>
+              <Box color="rgba(255, 255, 255, .9)" as="a" fontSize={{ base: "sm", md: "md" }}>
+                Leaderboards
+              </Box>
+            </Link>
+          </HStack>
+        </Box>
       </Box>
+
+      <Button color="white" display={{ base: "flex", md: "none" }} size="md" variant="ghost">
+        Menu
+      </Button>
 
       {/* Header auth items */}
       {session.isLoading ? null : (

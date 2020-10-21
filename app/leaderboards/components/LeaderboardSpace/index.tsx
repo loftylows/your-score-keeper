@@ -16,9 +16,11 @@ import { lighten } from "polished"
 const minWidth = "355px"
 
 const LeaderboardsSpace = () => {
-  const { setPublishingLeaderboardWithId, setUnpublishingLeaderboardWithId } = React.useContext(
-    uiContext
-  )
+  const {
+    setPublishingLeaderboardWithId,
+    setUnpublishingLeaderboardWithId,
+    currentlySelectedLeaderboardId,
+  } = React.useContext(uiContext)
   const leaderboard = useCurrentlySelectedLeaderboard()
   const players = useCurrentlySelectedLeaderboardPlayers()
   const { openAuthModal } = React.useContext(authModalContext)
@@ -29,17 +31,22 @@ const LeaderboardsSpace = () => {
     return (
       <Box
         display="flex"
+        flexDirection="column"
         justifyContent="center"
         alignItems="center"
         margin="30px 20px"
         width="100%"
-        height={{ base: "120px", md: "150px" }}
+        height={{ base: "160px", md: "170px" }}
         fontWeight="bold"
         borderRadius="10px"
         border={`1px solid ${lighten(0.2, "#4C7BF4")}`}
         backgroundColor={`${lighten(0.35, "#4C7BF4")}`}
       >
-        <Heading size="lg">Leaderboard Not Found</Heading>
+        <Heading size="lg">No leaderboard here.</Heading>
+        <Heading size="lg">Try creating one.</Heading>
+        <Button colorScheme="blue" marginTop="15px">
+          Create Leaderboard
+        </Button>
       </Box>
     )
 
