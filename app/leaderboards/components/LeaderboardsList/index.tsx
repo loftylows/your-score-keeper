@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Leaderboard, User } from "@prisma/client"
-import { Box, Button, Heading, VStack } from "@chakra-ui/core"
+import { Box, Button, Heading, Text, VStack } from "@chakra-ui/core"
 import { formatDistance } from "date-fns"
 import { Link } from "blitz"
 
@@ -13,7 +13,7 @@ const LeaderboardsList = ({ leaderboards }: IProps) => {
     <VStack as="ul" listStyleType="none" spacing={4}>
       {leaderboards.map((leaderboard) => {
         const owner = leaderboard?.owner as User
-        const itemHeight = 120
+        const itemHeight = 130
         return (
           <Button
             as="li"
@@ -38,16 +38,19 @@ const LeaderboardsList = ({ leaderboards }: IProps) => {
                 <Heading size="lg" fontWeight="bold">
                   {leaderboard.title}
                 </Heading>
-                <Box as="small" marginTop="auto" display="block">
-                  Created
-                  {owner ? (
-                    <span>
-                      {" "}
-                      by <b>{owner.name}</b>
-                    </span>
-                  ) : null}
-                  {` ${formatDistance(today, leaderboard.createdAt)} ago`} |{" "}
-                  {`Last updated ${formatDistance(today, leaderboard.updatedAt)} ago`}
+                <Box as="small" marginTop="auto" display="flex" flexDirection="column">
+                  <Text display="flex" isTruncated marginBottom="3px">
+                    Created
+                    {owner ? (
+                      <Box as="span" marginX="3px" display={{ base: "none", md: "block" }}>
+                        by <b>{owner.name}</b>
+                      </Box>
+                    ) : null}
+                    {` ${formatDistance(today, leaderboard.createdAt)} ago`}
+                  </Text>
+                  <Text isTruncated>
+                    {` Last updated ${formatDistance(today, leaderboard.updatedAt)} ago`}
+                  </Text>
                 </Box>
               </Box>
             </Link>
