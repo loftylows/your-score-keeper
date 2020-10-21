@@ -13,7 +13,7 @@ const LeaderboardsList = ({ leaderboards }: IProps) => {
     <VStack as="ul" listStyleType="none" spacing={4}>
       {leaderboards.map((leaderboard) => {
         const owner = leaderboard?.owner as User
-        const itemHeight = 100
+        const itemHeight = 120
         return (
           <Box
             as="li"
@@ -23,6 +23,7 @@ const LeaderboardsList = ({ leaderboards }: IProps) => {
             minHeight={`${itemHeight}px`}
             boxShadow="md"
             borderRadius="10px"
+            border="1px solid rgba(0,0,0,.05)"
             key={leaderboard.id}
           >
             <Link href={`leaderboards/${leaderboard.id}`} passHref>
@@ -30,7 +31,7 @@ const LeaderboardsList = ({ leaderboards }: IProps) => {
                 as="a"
                 display="flex"
                 flexDirection="column"
-                padding="10px 20px"
+                padding="20px"
                 height={`${itemHeight}px`}
                 width="100%"
               >

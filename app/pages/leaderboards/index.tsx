@@ -78,9 +78,22 @@ const LeaderboardsPage: BlitzPage<IProps> = ({ leaderboardsQueryRes, sortBy, pag
       alignItems="center"
       padding={{ base: "30px 10px", md: "40px 20px" }}
     >
-      <Heading size="xl" marginBottom="30px">
-        Leaderboards
-      </Heading>
+      <Box
+        marginBottom="30px"
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        alignContent="center"
+      >
+        <Heading size="xl" textAlign="center">
+          Leaderboards
+        </Heading>
+        <Box as="small" textAlign="center">
+          Showing <b>{leaderboardsPerPage}</b> of <b>{leaderboardsQueryRes.count}</b> public
+          leaderboards
+        </Box>
+      </Box>
+
       <Box display="flex" alignItems="center">
         <Box whiteSpace="nowrap" fontSize="lg" fontWeight="bold" marginRight="10px">
           Sort By:
@@ -98,7 +111,10 @@ const LeaderboardsPage: BlitzPage<IProps> = ({ leaderboardsQueryRes, sortBy, pag
           <option value="oldest">Oldest</option>
         </Select>
       </Box>
-      <LeaderboardsList leaderboards={leaderboardsQueryRes.leaderboards} />
+
+      <Box padding="20px" width="100%" maxWidth="100%">
+        <LeaderboardsList leaderboards={leaderboardsQueryRes.leaderboards} />
+      </Box>
 
       <Box marginTop="30px">
         <Pagination
