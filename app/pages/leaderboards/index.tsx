@@ -10,10 +10,18 @@ import { Maybe, ThenArgRecursive, UUID } from "common-types"
 import buildSearchQuery, { QueryOptions } from "app/leaderboards/searchUrlBuilder"
 import url from "url"
 import LeaderboardsList from "app/leaderboards/components/LeaderboardsList"
-const leaderboardsPerPage = 20
+import Pagination from "app/components/Pagination"
+const leaderboardsPerPage = 10
 
 export type SortType = "latest" | "oldest"
 export type LeaderboardsQueryRes = ThenArgRecursive<ReturnType<typeof getLeaderboards>>
+export const sortByToSortType = (i: SortOrder): SortType => (i === "asc" ? "oldest" : "latest")
+const getPage = (pageNumber: any) =>
+  Number.isInteger(Number(pageNumber)) && Number(pageNumber) > 0 ? Number(pageNumber) : 1
+const getSortBy = (sortBy: any): "desc" | "asc" => {
+  if (sortBy !== "latest" && sortBy !== "oldest") return "desc"
+  return sortBy === "latest" ? "desc" : "asc"
+}
 interface IProps {
   leaderboardsQueryRes: ThenArgRecursive<ReturnType<typeof getLeaderboards>>
   userId: Maybe<UUID>
@@ -26,11 +34,9 @@ export const getServerSideProps: GetServerSideProps<IProps> = async ({ req, res:
   const query = (qs.parse(search) as unknown) as QueryOptions
   let leaderboardsQueryRes: ThenArgRecursive<ReturnType<typeof getLeaderboards>>
   const { sortBy, page } = query
-  const pageNumber = Number(page)
+  const pageNumber = getPage(page)
 
-  let createdAtSort: SortOrder = "desc"
-  if (sortBy === "latest") createdAtSort = "desc"
-  if (sortBy === "oldest") createdAtSort = "asc"
+  let createdAtSort: SortOrder = getSortBy(sortBy)
 
   try {
     const queryRes = await ssrQuery(
@@ -44,7 +50,7 @@ export const getServerSideProps: GetServerSideProps<IProps> = async ({ req, res:
           createdAt: createdAtSort,
         },
         take: leaderboardsPerPage,
-        skip: pageNumber > 1 ? pageNumber * leaderboardsPerPage : 0,
+        skip: pageNumber > 1 ? (pageNumber - 1) * leaderboardsPerPage : 0,
       },
       { req, res: response }
     )
@@ -64,40 +70,7 @@ export const getServerSideProps: GetServerSideProps<IProps> = async ({ req, res:
   }
 }
 
-const LeaderboardsPage: BlitzPage<IProps> = ({
-  leaderboardsQueryRes: leaderboardsQueryResFromServer,
-  sortBy,
-  page,
-}: IProps) => {
-  const [leaderboardsQueryRes, setLeaderboardsQueryRes] = React.useState(
-    leaderboardsQueryResFromServer
-  )
-  const tablePageCount =
-    leaderboardsQueryRes.count > 20 && leaderboardsQueryRes.count % leaderboardsPerPage
-      ? leaderboardsQueryRes.count
-      : 1
-
-  React.useEffect(() => {
-    getLeaderboards({
-      where: {
-        private: false,
-        published: true,
-      },
-      orderBy: {
-        createdAt: sortBy,
-      },
-      take: leaderboardsPerPage,
-      skip: page > 1 ? page * leaderboardsPerPage : 0,
-    })
-      .then((res) => {
-        setLeaderboardsQueryRes(res)
-      })
-      .catch((e) => {
-        // TODO: Notify user of error
-        console.debug(e)
-      })
-  }, [sortBy])
-
+const LeaderboardsPage: BlitzPage<IProps> = ({ leaderboardsQueryRes, sortBy, page }: IProps) => {
   return (
     <Box
       display="flex"
@@ -126,6 +99,15 @@ const LeaderboardsPage: BlitzPage<IProps> = ({
         </Select>
       </Box>
       <LeaderboardsList leaderboards={leaderboardsQueryRes.leaderboards} />
+
+      <Box marginTop="30px">
+        <Pagination
+          pageLimit={leaderboardsPerPage}
+          currentPage={page}
+          totalRecords={leaderboardsQueryRes.count}
+          linkBuilder={(page) => buildSearchQuery({ page, sortBy: sortByToSortType(sortBy) })}
+        />
+      </Box>
     </Box>
   )
 }
