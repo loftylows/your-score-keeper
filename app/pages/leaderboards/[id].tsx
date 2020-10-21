@@ -60,7 +60,7 @@ const LeaderboardPage: BlitzPage<IProps> = ({ leaderboard, userId: userIdFromSer
       alignItems="center"
       padding={{ base: "30px 10px", md: "40px 20px" }}
     >
-      <Heading size="xl" marginBottom="30px">
+      <Heading size="xl" marginBottom="30px" display="flex" alignItems="center">
         {leaderboard.title}
         {isLeaderboardOwner ? (
           <Link href={`/my-leaderboards?id=${leaderboard.id}`} passHref>

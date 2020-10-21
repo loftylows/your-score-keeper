@@ -41,18 +41,10 @@ const fetchPageNumbers: FetchPageNumbers = ({ totalPages, currentPage, pageNeigh
   const totalNumbers = pageNeighbors * 2 + 3
   const totalBlocks = totalNumbers + 2
 
-  console.log("totalNumbers: ", totalNumbers)
-  console.log("totalPages: ", totalPages)
-  console.log("totalBlocks: ", totalBlocks)
-
   if (totalPages > totalBlocks) {
     const startPage = Math.max(2, currentPage - pageNeighbors)
     const endPage = Math.min(totalPages - 1, currentPage + pageNeighbors)
     let pages: (string | number)[] = range(startPage, endPage)
-
-    console.log("startPage: ", startPage)
-    console.log("endPage: ", endPage)
-    console.log("pages: ", pages)
 
     /**
      * hasLeftSpill: has hidden pages to the left
