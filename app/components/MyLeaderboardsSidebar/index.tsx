@@ -109,7 +109,7 @@ const MyLeaderboardsSidebar = ({ inDrawer }: IProps) => {
         disabled={leaderboardsCount >= 15}
         isDisabled={leaderboardsCount >= 15}
         backgroundColor={leaderboardsCount >= 15 ? "#f5f5dc" : "gray"}
-        opacity="1"
+        opacity="1 !important"
       >
         {leaderboardsCount >= 15 ? "15 Leaderboards Max" : "Add Leaderboard"}
       </Button>
