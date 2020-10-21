@@ -28,7 +28,7 @@ interface IState {
 const inMemoryLeaderboardsContext = React.createContext<IState>({
   leaderboards: [],
   players: [],
-  inMemoryCreateLeaderboard: () => {},
+  inMemoryCreateLeaderboard: () => ({} as any),
   inMemoryEditLeaderboard: () => {},
   inMemoryDeleteLeaderboard: () => {},
   inMemoryCreatePlayer: () => {},
@@ -68,15 +68,16 @@ class InMemoryLeaderboardsProvider extends React.Component<IProps, IState> {
   }
 
   public inMemoryCreateLeaderboard: InMemoryCreateLeaderboard = (leaderboardInput) => {
+    const newLeaderboard = {
+      ...leaderboardInput,
+      id: uuid(),
+    } as InMemoryLeaderboard
+
     this.setState({
-      leaderboards: [
-        ...this.state.leaderboards,
-        {
-          ...leaderboardInput,
-          id: uuid(),
-        },
-      ],
+      leaderboards: [...this.state.leaderboards, newLeaderboard],
     })
+
+    return newLeaderboard
   }
 
   public inMemoryEditLeaderboard: InMemoryEditLeaderboard = (input) => {

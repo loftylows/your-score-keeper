@@ -12,7 +12,9 @@ export interface InMemoryLeaderboardCreateInput {
   playersScoreSortDirection: LeaderboardPlayersScoreSortDirection
 }
 
-export type InMemoryCreateLeaderboard = (input: InMemoryLeaderboardCreateInput) => void
+export type InMemoryCreateLeaderboard = (
+  input: InMemoryLeaderboardCreateInput
+) => InMemoryLeaderboard
 export type InMemoryEditLeaderboard = (leaderboard: InMemoryLeaderboard) => void
 export type InMemoryDeleteLeaderboard = (id: UUID) => void
 

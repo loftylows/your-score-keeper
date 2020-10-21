@@ -21,6 +21,7 @@ import { CreateLeaderboardInput, CreateLeaderboardInputType } from "../../../val
 import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboardsProvider"
 import { inMemoryLeaderboardsContext } from "app/leaderboards/InMemoryLeaderboardsProvider"
 import { Router } from "blitz"
+import { uiContext } from "app/leaderboards/LeaderboardsUiProvider"
 
 type CreateLeaderboardFormProps = {
   onSuccess?: () => void
@@ -33,6 +34,7 @@ const CreateLeaderboardForm = (props: CreateLeaderboardFormProps) => {
   const componentProps = props
   const { userId, dbCacheCreateLeaderboard } = React.useContext(dbCacheLeaderboardsContext)
   const { inMemoryCreateLeaderboard } = React.useContext(inMemoryLeaderboardsContext)
+  const { setCurrentlySelectedLeaderboardId } = React.useContext(uiContext)
   const toast = useToast()
 
   return (
@@ -57,10 +59,13 @@ const CreateLeaderboardForm = (props: CreateLeaderboardFormProps) => {
 
             leaderboard && Router.push(`/my-leaderboards?id=${leaderboard.id}`)
           } else {
-            inMemoryCreateLeaderboard({
+            const leaderboard = inMemoryCreateLeaderboard({
               title: values.title,
               playersScoreSortDirection: values.playersScoreSortDirection,
             })
+
+            setCurrentlySelectedLeaderboardId && setCurrentlySelectedLeaderboardId(leaderboard.id)
+            Router.push(`/my-leaderboards`)
           }
           props.onSuccess && props.onSuccess()
         } catch (error) {
