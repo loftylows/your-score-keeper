@@ -391,7 +391,7 @@ class DialogsProvider extends React.Component<IProps, IState> {
                   onClick={async () => {
                     if (!state.unpublishingLeaderboardWithId) return
 
-                    this.toggleLeaderboardPublishingInProgress()
+                    this.toggleLeaderboardUnpublishingInProgress()
                     try {
                       await dbCacheUnpublishLeaderboard(state.unpublishingLeaderboardWithId)
                       this.setUnpublishingLeaderboardWithId(null)
