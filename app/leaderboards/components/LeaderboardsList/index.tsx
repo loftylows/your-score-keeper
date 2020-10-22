@@ -5,7 +5,7 @@ import { formatDistance } from "date-fns"
 import { Link } from "blitz"
 
 interface IProps {
-  leaderboards: (Leaderboard & { owner: { name: string } })[]
+  leaderboards: (Leaderboard & { owner: { username: string } })[]
 }
 const LeaderboardsList = ({ leaderboards }: IProps) => {
   const today = React.useMemo(() => new Date(), [])
@@ -43,7 +43,7 @@ const LeaderboardsList = ({ leaderboards }: IProps) => {
                     Created
                     {owner ? (
                       <Box as="span" marginX="3px" display={{ base: "none", md: "block" }}>
-                        by <b>{owner.name}</b>
+                        by <b>{owner.username}</b>
                       </Box>
                     ) : null}
                     {` ${formatDistance(today, leaderboard.createdAt)} ago`}

@@ -246,6 +246,7 @@ const Header = ({ showingMobileSidebar, openSidebar }: IProps) => {
                       borderRadius="0px"
                       borderBottom="1px solid rgba(0,0,0,.05)"
                       onClick={() => setMobileMenuOpen(false)}
+                      key={item.href}
                     >
                       <Link passHref href={item.href}>
                         <Box

@@ -10,17 +10,22 @@ export default async function signup(
   ctx: { session?: SessionContext } = {}
 ) {
   // This throws an error if input is invalid
-  const { name, email, password } = SignupInput.parse(input)
+  const { username, email, password } = SignupInput.parse(input)
 
-  if (!ctx.session!.userId) throw new AuthorizationError()
+  if (ctx.session!.userId) throw new AuthorizationError()
   if (!MailChecker.isValid(email)) throw new AuthorizationError()
 
   const hashedPassword = await hashPassword(password)
-  const cleanedName = filter.clean(name.toLowerCase().trim())
+  const cleanedName = filter.clean(username.toLowerCase().trim())
 
   const user = await db.user.create({
-    data: { name: cleanedName, email: email.trim().toLowerCase(), hashedPassword, role: "user" },
-    select: { id: true, name: true, email: true, role: true },
+    data: {
+      username: cleanedName,
+      email: email.trim().toLowerCase(),
+      hashedPassword,
+      role: "user",
+    },
+    select: { id: true, username: true, email: true, role: true },
   })
 
   await ctx.session!.create({ userId: user.id, roles: [user.role] })

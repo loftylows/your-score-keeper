@@ -22,7 +22,6 @@ import { Form as FinalForm, Field } from "react-final-form"
 import { FORM_ERROR } from "final-form"
 import { SignupInputType, SignupInput } from "app/auth/validations"
 import { signupWithEmailAndPassword } from "../signup"
-import { ToggleAuthModal } from "../AuthModalProvider"
 
 type SignupFormProps = {
   onSuccess?: () => void
@@ -38,7 +37,7 @@ export const SignupForm = (props: SignupFormProps) => {
   const togglePasswordVisible = () => setPasswordVisible(!passwordVisible)
   return (
     <FinalForm<SignupInputType>
-      initialValues={{ name: "", email: "", password: "", passwordConfirmation: "" }}
+      initialValues={{ username: "", email: "", password: "", passwordConfirmation: "" }}
       validate={(values) => {
         try {
           SignupInput.parse(values)
@@ -47,10 +46,11 @@ export const SignupForm = (props: SignupFormProps) => {
         }
       }}
       onSubmit={async (values) => {
+        const errors = { email: "", username: "" }
         props.onSubmitStart && props.onSubmitStart()
         try {
           await signupWithEmailAndPassword({
-            name: values.name,
+            username: values.username,
             email: values.email,
             password: values.password,
             passwordConfirmation: values.passwordConfirmation,
@@ -60,26 +60,31 @@ export const SignupForm = (props: SignupFormProps) => {
         } catch (error) {
           if (error.code === "P2002" && error.meta?.target?.includes("email")) {
             // This error comes from Prisma
-            return { email: "This email is already being used" }
+            errors.email = "This email is already being used"
+          } else if (error.code === "P2002" && error.meta?.target?.includes("username")) {
+            // This error comes from Prisma
+            errors.username = "This username is already being used"
           } else {
-            return { [FORM_ERROR]: error.toString() }
+            errors[FORM_ERROR] = error.toString()
           }
+        } finally {
+          props.onSubmitEnd && props.onSubmitEnd()
+          return errors
         }
-        props.onSubmitEnd && props.onSubmitEnd()
       }}
     >
       {(props) => (
         <form onSubmit={props.handleSubmit}>
           <Stack spacing={4}>
-            <Field name="name">
-              {(props) => (
+            <Field name="username">
+              {(innerProps) => (
                 <FormControl
-                  id="name"
+                  id="username"
                   isRequired
-                  isInvalid={props.meta.error && props.meta.touched}
+                  isInvalid={innerProps.meta.touched && innerProps.meta.invalid}
                 >
-                  <FormLabel>
-                    Name <RequiredIndicator />
+                  <FormLabel htmlFor="username">
+                    Username <RequiredIndicator />
                   </FormLabel>
                   <InputGroup>
                     <InputLeftElement
@@ -87,26 +92,28 @@ export const SignupForm = (props: SignupFormProps) => {
                       children={<Icon as={FaUser} color="gray.300" />}
                     />
                     <Input
-                      {...props.input}
+                      {...innerProps.input}
                       errorBorderColor="crimson"
-                      isInvalid={props.meta.touched && props.meta.invalid}
+                      isInvalid={innerProps.meta.touched && innerProps.meta.invalid}
                       type="text"
-                      placeholder="Name..."
+                      placeholder="Username..."
                     />
                   </InputGroup>
-                  <FormErrorMessage>{props.meta.error}</FormErrorMessage>
+                  <FormErrorMessage>
+                    {innerProps.meta.error || props.submitErrors?.username}
+                  </FormErrorMessage>
                 </FormControl>
               )}
             </Field>
 
             <Field name="email">
-              {(props) => (
+              {(innerProps) => (
                 <FormControl
                   id="email"
                   isRequired
-                  isInvalid={props.meta.error && props.meta.touched}
+                  isInvalid={innerProps.meta.error && innerProps.meta.touched}
                 >
-                  <FormLabel>
+                  <FormLabel htmlFor="email">
                     Email address <RequiredIndicator />
                   </FormLabel>
                   <InputGroup>
@@ -115,14 +122,16 @@ export const SignupForm = (props: SignupFormProps) => {
                       children={<EmailIcon color="gray.300" />}
                     />
                     <Input
-                      {...props.input}
+                      {...innerProps.input}
                       errorBorderColor="crimson"
-                      isInvalid={props.meta.touched && props.meta.invalid}
+                      isInvalid={innerProps.meta.touched && innerProps.meta.invalid}
                       type="email"
                       placeholder="Email..."
                     />
                   </InputGroup>
-                  <FormErrorMessage>{props.meta.error}</FormErrorMessage>
+                  <FormErrorMessage>
+                    {innerProps.meta.error || props.submitErrors?.email}
+                  </FormErrorMessage>
                 </FormControl>
               )}
             </Field>

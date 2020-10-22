@@ -6,3 +6,4 @@
 20201012131956-add-indexws-to-data-models
 20201013115821-add-leaderboard-view-count-to-leaderboard-type
 20201013134414-remove-views-field-from-leaderboard
+20201022052834-switch-name-field-on-user-to-username-and-give-it-a-unique-index

@@ -41,7 +41,7 @@ const EditUserForm = (props: EditUserFormProps) => {
 
   return (
     <FinalForm<EditUserInputType>
-      initialValues={{ name: user.name }}
+      initialValues={{ username: user.username }}
       validate={(values) => {
         try {
           EditUserInput.parse(values)
@@ -52,7 +52,7 @@ const EditUserForm = (props: EditUserFormProps) => {
       onSubmit={async (values) => {
         props.onSubmitStart && props.onSubmitStart()
         try {
-          await updateUser({ where: { id: user.id }, data: { name: values.name } })
+          await updateUser({ where: { id: user.id }, data: { username: values.username } })
           props.onSuccess && props.onSuccess()
         } catch (error) {
           return {
@@ -73,15 +73,15 @@ const EditUserForm = (props: EditUserFormProps) => {
       {(props) => (
         <form onSubmit={props.handleSubmit}>
           <Stack spacing={4}>
-            <Field name="name">
+            <Field name="username">
               {(props) => (
                 <FormControl
-                  id="name"
+                  id="username"
                   isRequired
                   isInvalid={props.meta.error && props.meta.touched}
                 >
                   <FormLabel>
-                    Title <RequiredIndicator />
+                    Username <RequiredIndicator />
                   </FormLabel>
                   <InputGroup>
                     <InputLeftElement
@@ -93,7 +93,7 @@ const EditUserForm = (props: EditUserFormProps) => {
                       errorBorderColor="crimson"
                       isInvalid={props.meta.touched && props.meta.invalid}
                       type="text"
-                      placeholder="Name..."
+                      placeholder="Username..."
                       onFocus={(e) => e.target.select()}
                     />
                   </InputGroup>

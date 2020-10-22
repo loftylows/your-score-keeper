@@ -23,7 +23,7 @@ export default async function getLeaderboards(
     include: {
       owner: {
         select: {
-          name: true,
+          username: true,
         },
       },
     },
