@@ -1,6 +1,9 @@
 {
   "name": "yourscorekeeper.com",
   "version": "1.0.0",
+  "gitRepository": {
+    "type": "github"
+  },
   "scripts": {
     "start": "blitz start",
     "studio": "blitz db studio",
