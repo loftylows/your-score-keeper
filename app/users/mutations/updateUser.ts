@@ -1,7 +1,7 @@
-import { cleanProfaneStringDataInObj } from "app/utils/profanityFilter"
 import { AuthorizationError, SessionContext } from "blitz"
 import { UUID } from "common-types"
 import db, { UserUpdateArgs } from "db"
+import { trimAndLowercaseStringValsInObject } from "utils/string"
 
 type UpdateUserInput = {
   where: UserUpdateArgs["where"]
@@ -17,7 +17,10 @@ export default async function updateUser(
 
   if (where.id !== userId) throw new AuthorizationError()
 
-  const user = await db.user.update({ where, data: cleanProfaneStringDataInObj(data, ["name"]) })
+  const user = await db.user.update({
+    where,
+    data: trimAndLowercaseStringValsInObject(data, ["username"]),
+  })
 
   return user
 }

@@ -8,3 +8,15 @@ export const capitalize = (str: string) => {
   // Directly return the joined string
   return splitStr.join(" ")
 }
+
+export const trimAndLowercaseStringValsInObject = <T>(data: T, filterFields: string[] = []): T => {
+  if (!(data instanceof Object)) return data
+
+  return Object.entries(data).reduce(
+    (accu, [k, v]) =>
+      typeof v === "string" && filterFields.length && filterFields.includes(k)
+        ? { ...accu, [k]: v.trim().toLocaleLowerCase() }
+        : { ...accu, [k]: v },
+    {} as T
+  )
+}

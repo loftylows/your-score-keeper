@@ -3,7 +3,7 @@ import { SessionContext, AuthorizationError } from "blitz"
 import MailChecker from "mailchecker"
 import { hashPassword } from "app/auth/auth-utils"
 import { SignupInput, SignupInputType } from "app/auth/validations"
-import filter from "app/utils/profanityFilter"
+// import filter from "app/utils/profanityFilter"
 
 export default async function signup(
   input: SignupInputType,
@@ -16,11 +16,12 @@ export default async function signup(
   if (!MailChecker.isValid(email)) throw new AuthorizationError()
 
   const hashedPassword = await hashPassword(password)
-  const cleanedName = filter.clean(username.toLowerCase().trim())
+  const trimmedUsername = username.toLowerCase().trim()
+  // const cleanedName = filter.clean(username.toLowerCase().trim())
 
   const user = await db.user.create({
     data: {
-      username: cleanedName,
+      username: trimmedUsername,
       email: email.trim().toLowerCase(),
       hashedPassword,
       role: "user",
