@@ -127,7 +127,7 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
     try {
       leaderboard = await createLeaderboard({ data: input, ownerId: userId })
       this.setState({
-        leaderboards: [...this.state.leaderboards, leaderboard],
+        leaderboards: [...this.state.leaderboards, leaderboard as Leaderboard],
       })
     } catch (e) {
       // TODO: Notify user of error
