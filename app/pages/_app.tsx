@@ -1,4 +1,5 @@
 import { AppProps, ErrorComponent, useRouter } from "blitz"
+import { NextWebVitalsMetric } from "next/app"
 import { ErrorBoundary, FallbackProps } from "react-error-boundary"
 import { queryCache } from "react-query"
 import { Router } from "blitz"
@@ -75,4 +76,8 @@ function RootErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
       />
     )
   }
+}
+
+export function reportWebVitals(metric: NextWebVitalsMetric) {
+  console.log(metric)
 }
