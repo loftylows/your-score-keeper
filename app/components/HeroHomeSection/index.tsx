@@ -107,7 +107,7 @@ const HeroSection = () => {
           >
             <source
               type="image/webp"
-              srcSet="/images/app-screenshot.jpg 864w, /images/app-screenshot.jpg 1440w"
+              srcSet="/images/app-screenshot.webp 864w, /images/app-screenshot.webp 1440w"
               sizes="(max-width: 540px) 864px, 1440px"
             />
             <Image
