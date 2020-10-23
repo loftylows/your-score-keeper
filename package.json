@@ -6,7 +6,7 @@
   },
   "scripts": {
     "start": "blitz start",
-    "start:prod": "blitz start --production",
+    "start:prod": "blitz start --production --8080",
     "studio": "blitz db studio",
     "build": "NODE_ENV=production blitz db migrate && blitz build",
     "lint": "eslint --ignore-path .gitignore --ext .js,.ts,.tsx .",
