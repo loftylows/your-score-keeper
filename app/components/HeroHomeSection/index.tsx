@@ -31,12 +31,12 @@ const HeroSection = () => {
         <source
           type="image/webp"
           srcSet="/images/hero-image-mobile.webp 540w, /images/hero-image.webp 2578w"
-          sizes="(max-width: 540px) 540px, 2578px"
+          sizes="100vw"
         />
         <Image
-          srcSet="/images/hero-image-mobile.jpg 540w, /images/hero-image.jpg 2578w"
-          sizes="(max-width: 540px) 540px, 2578px"
           src="/images/hero-image.jpg"
+          srcSet="/images/hero-image-mobile.jpg 540w, /images/hero-image.jpg 2578w"
+          sizes="100vw"
           objectFit="cover"
         />
       </Box>
@@ -109,12 +109,12 @@ const HeroSection = () => {
             <source
               type="image/webp"
               srcSet="/images/app-screenshot.webp 864w, /images/app-screenshot.webp 1440w"
-              sizes="(max-width: 540px) 864px, 1440px"
+              sizes="(max-width: 740px) calc(100vw - 60px), 680px"
             />
             <Image
-              srcSet="/images/app-screenshot.jpg 864w, /images/app-screenshot.jpg 1440w"
-              sizes="(max-width: 540px) 864px, 1440px"
               src="/images/app-screenshot.jpg"
+              srcSet="/images/app-screenshot.jpg 864w, /images/app-screenshot.jpg 1440w"
+              sizes="(max-width: 740px) calc(100vw - 60px), 680px"
               borderRadius="10px"
             />
           </Box>
