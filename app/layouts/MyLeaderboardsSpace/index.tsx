@@ -55,11 +55,6 @@ const MyLeaderboardsSpaceLayout = ({ children, title, isMobile }: IProps) => {
         <title key="title">{title || "yourscorekeeper.com"}</title>
         <meta key="viewport" name="viewport" content="width=device-width, initial-scale=1.0" />
         <link key="favicon" rel="icon" href="/favicon.ico" />
-        <link
-          key="google-fonts-roboto"
-          href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap"
-          rel="stylesheet"
-        />
       </Head>
       <Header
         showingMobileSidebar={showMobileSidebar}

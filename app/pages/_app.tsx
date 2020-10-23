@@ -12,6 +12,7 @@ import LeaderboardsDialogProvider from "../leaderboards/LeaderboardsUiProvider"
 import "nprogress/nprogress.css"
 import UsersUiDialogsProvider from "app/users/UsersUiProvider"
 import ToastProvider from "app/components/ToastProvider"
+import GoogleFonts from "app/components/GoogleFontsHelper"
 
 //Binding events.
 Router.events.on("routeChangeStart", () => NProgress.start())
@@ -41,7 +42,10 @@ export default function App({ Component, pageProps }: AppProps) {
               <UsersUiDialogsProvider>
                 <InMemoryLeaderboardsProvider>
                   <LeaderboardsDialogProvider>
-                    {getLayout(<Component {...pageProps} />)}
+                    <>
+                      <GoogleFonts href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" />
+                      {getLayout(<Component {...pageProps} />)}
+                    </>
                   </LeaderboardsDialogProvider>
                 </InMemoryLeaderboardsProvider>
               </UsersUiDialogsProvider>
