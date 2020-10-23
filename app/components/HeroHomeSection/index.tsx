@@ -116,6 +116,9 @@ const HeroSection = () => {
               srcSet="https://res.cloudinary.com/yourscorekeeper-com/image/upload/v1603430038/app-screenshot_j2fxtl.jpg"
               sizes="(max-width: 740px) calc(100vw - 60px), 680px"
               borderRadius="10px"
+              height="100%"
+              width="100%"
+              objectFit="contain"
             />
           </Box>
         </Box>
