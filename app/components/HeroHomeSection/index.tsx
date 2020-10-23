@@ -30,12 +30,12 @@ const HeroSection = () => {
       >
         <source
           type="image/webp"
-          srcSet="/images/hero-image-mobile.webp 540w, /images/hero-image.webp 2578w"
+          srcSet="https://res.cloudinary.com/yourscorekeeper-com/image/upload/v1603429289/hero-image-mobile_fztqny.webp 540w, https://res.cloudinary.com/yourscorekeeper-com/image/upload/v1603429289/hero-image_dosmh1.webp 2578w"
           sizes="100vw"
         />
         <Image
-          src="/images/hero-image.jpg"
-          srcSet="/images/hero-image-mobile.jpg 540w, /images/hero-image.jpg 2578w"
+          src="https://res.cloudinary.com/yourscorekeeper-com/image/upload/v1603429908/hero-image_r80hkx.jpg"
+          srcSet="https://res.cloudinary.com/yourscorekeeper-com/image/upload/v1603429974/hero-image-mobile_qm6y59.jpg 540w, https://res.cloudinary.com/yourscorekeeper-com/image/upload/v1603429908/hero-image_r80hkx.jpg 2578w"
           sizes="100vw"
           objectFit="cover"
         />
@@ -108,12 +108,12 @@ const HeroSection = () => {
           >
             <source
               type="image/webp"
-              srcSet="/images/app-screenshot.webp 864w, /images/app-screenshot.webp 1440w"
+              srcSet="https://res.cloudinary.com/yourscorekeeper-com/image/upload/v1603429288/app-screenshot_mm74kf.webp 1440w"
               sizes="(max-width: 740px) calc(100vw - 60px), 680px"
             />
             <Image
-              src="/images/app-screenshot.jpg"
-              srcSet="/images/app-screenshot.jpg 864w, /images/app-screenshot.jpg 1440w"
+              src="https://res.cloudinary.com/yourscorekeeper-com/image/upload/v1603430038/app-screenshot_j2fxtl.jpg"
+              srcSet="https://res.cloudinary.com/yourscorekeeper-com/image/upload/v1603430038/app-screenshot_j2fxtl.jpg"
               sizes="(max-width: 740px) calc(100vw - 60px), 680px"
               borderRadius="10px"
             />
