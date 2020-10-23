@@ -22,10 +22,10 @@ const HeroSection = () => {
       <Box
         as="picture"
         position="absolute"
+        display="flex"
         width="100%"
         height="100%"
         maxHeight="100%"
-        objectFit="cover"
         zIndex={-1}
       >
         <source
@@ -37,7 +37,7 @@ const HeroSection = () => {
           srcSet="/images/hero-image-mobile.jpg 540w, /images/hero-image.jpg 2578w"
           sizes="(max-width: 540px) 540px, 2578px"
           src="/images/hero-image.jpg"
-          position="absolute"
+          objectFit="cover"
         />
       </Box>
 
@@ -99,6 +99,7 @@ const HeroSection = () => {
         <Box marginTop="30px" marginX="auto" padding="15px" width="710px" maxWidth="100%">
           <Box
             as="picture"
+            display="flex"
             width="100%"
             height="100%"
             maxHeight="100%"
