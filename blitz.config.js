@@ -1,3 +1,5 @@
+const { connectMiddleware } = require("blitz")
+const cors = require("cors")
 const { sessionMiddleware, unstable_simpleRolesIsAuthorized } = require("@blitzjs/server")
 
 module.exports = {
@@ -5,6 +7,7 @@ module.exports = {
     sessionMiddleware({
       unstable_isAuthorized: unstable_simpleRolesIsAuthorized,
     }),
+    connectMiddleware(cors),
   ],
   poweredByHeader: false,
   /* Uncomment this to customize the webpack config

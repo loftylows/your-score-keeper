@@ -49,6 +49,7 @@
     "@prisma/client": "2.8.0",
     "bad-words": "3.0.3",
     "blitz": "0.23.4",
+    "cors": "2.8.5",
     "date-fns": "2.16.1",
     "final-form": "4.20.1",
     "is-mobile": "2.2.2",
