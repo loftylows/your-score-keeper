@@ -4,10 +4,8 @@ module.exports = {
   middleware: [
     sessionMiddleware({
       unstable_isAuthorized: unstable_simpleRolesIsAuthorized,
-      sameSite: "lax",
     }),
   ],
-  target: "serverless",
   poweredByHeader: false,
   /* Uncomment this to customize the webpack config
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
