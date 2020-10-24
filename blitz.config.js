@@ -4,10 +4,10 @@ const { sessionMiddleware, unstable_simpleRolesIsAuthorized } = require("@blitzj
 
 module.exports = {
   middleware: [
+    connectMiddleware(cors),
     sessionMiddleware({
       unstable_isAuthorized: unstable_simpleRolesIsAuthorized,
     }),
-    connectMiddleware(cors),
   ],
   poweredByHeader: false,
   /* Uncomment this to customize the webpack config
