@@ -1,12 +1,10 @@
-const { connectMiddleware } = require("blitz")
-const cors = require("cors")
 const { sessionMiddleware, unstable_simpleRolesIsAuthorized } = require("@blitzjs/server")
 
 module.exports = {
   middleware: [
-    connectMiddleware(cors),
     sessionMiddleware({
       unstable_isAuthorized: unstable_simpleRolesIsAuthorized,
+      sameSite: "lax",
     }),
   ],
   target: "serverless",
