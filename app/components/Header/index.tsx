@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useSession, Link } from "blitz"
+import { useSession, Link, useRouter } from "blitz"
 import { FaUserCircle, FaAlignJustify } from "react-icons/fa"
 import {
   Box,
@@ -47,6 +47,10 @@ const Header = ({ showingMobileSidebar, openSidebar }: IProps) => {
   const { openAuthModal } = React.useContext(authModalContext)
   const { openEditCurrentUserDialog } = React.useContext(usersUiContext)
   const buttonSize = useBreakpointValue({ base: "sm", md: "md" })
+  const Router = useRouter()
+  const currentPath = Router.pathname
+  console.log("currentPath: ", currentPath)
+  const leaderboardsLink = buildSearchQuery({ sortBy: "latest", page: 1 })
 
   const UnauthenticatedUserContent = () => (
     <ButtonGroup color="white">
@@ -134,7 +138,12 @@ const Header = ({ showingMobileSidebar, openSidebar }: IProps) => {
       boxShadow="sm"
       zIndex={1}
     >
-      <Box display="flex" alignItems="center" marginLeft={{ base: "10px", md: "25px" }}>
+      <Box
+        display="flex"
+        alignItems="center"
+        marginLeft={{ base: "10px", md: "25px" }}
+        height="100%"
+      >
         {showingMobileSidebar && openSidebar && (
           <IconButton
             icon={<Icon as={FaAlignJustify} />}
@@ -145,22 +154,67 @@ const Header = ({ showingMobileSidebar, openSidebar }: IProps) => {
           />
         )}
 
-        <Box display={{ base: "none", md: "flex" }}>
+        <Box display={{ base: "none", md: "flex" }} height="100%">
           <Link passHref href="/">
             <Box
               color="rgba(255, 255, 255, .9)"
               as="a"
               fontSize={{ base: "lg", md: "xl" }}
-              marginRight="10px"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              paddingX="15px"
+              height="100%"
+              backgroundColor={currentPath === "/" ? "rgba(0,0,0,.3) !important" : "transparent"}
+              transition="background-color .2s ease-out"
+              _hover={{
+                backgroundColor: currentPath === "/" ? undefined : "blackAlpha.300",
+              }}
             >
               YourScoreKeeper
             </Box>
           </Link>
 
-          <HStack marginLeft="10px" spacing={4} display="flex" alignItems="flex-end">
-            <Link passHref href={buildSearchQuery({ sortBy: "latest", page: 1 })}>
-              <Box color="rgba(255, 255, 255, .9)" as="a" fontSize={{ base: "sm", md: "md" }}>
+          <HStack display="flex" alignItems="flex-end" spacing={0}>
+            <Link passHref href={leaderboardsLink}>
+              <Box
+                color="rgba(255, 255, 255, .9)"
+                as="a"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                paddingX="15px"
+                height="100%"
+                backgroundColor={currentPath === "/leaderboards" ? "blackAlpha.400" : "transparent"}
+                fontSize={{ base: "sm", md: "md" }}
+                transition="background-color .2s ease-out"
+                _hover={{
+                  backgroundColor: currentPath === "/leaderboards" ? undefined : "blackAlpha.300",
+                }}
+              >
                 Leaderboards
+              </Box>
+            </Link>
+            <Link passHref href="/my-leaderboards">
+              <Box
+                color="rgba(255, 255, 255, .9)"
+                as="a"
+                fontSize={{ base: "sm", md: "md" }}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                paddingX="15px"
+                height="100%"
+                backgroundColor={
+                  currentPath === "/my-leaderboards" ? "blackAlpha.400" : "transparent"
+                }
+                transition="background-color .2s ease-out"
+                _hover={{
+                  backgroundColor:
+                    currentPath === "/my-leaderboards" ? undefined : "blackAlpha.300",
+                }}
+              >
+                My Leaderboards
               </Box>
             </Link>
           </HStack>
