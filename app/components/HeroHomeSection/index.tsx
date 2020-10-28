@@ -30,7 +30,7 @@ const HeroSection = () => {
       >
         <source
           type="image/webp"
-          srcSet="https://res.cloudinary.com/yourscorekeeper-com/image/upload/v1603429289/hero-image-mobile_fztqny.webp 540w, https://res.cloudinary.com/yourscorekeeper-com/image/upload/v1603429289/hero-image_dosmh1.webp 2578w"
+          srcSet="https://res.cloudinary.com/yourscorekeeper-com/image/upload/v1603905215/hero-image-mobile_xu5ush.webp 540w, https://res.cloudinary.com/yourscorekeeper-com/image/upload/v1603429289/hero-image_dosmh1.webp 2578w"
           sizes="100vw"
         />
         <Image
