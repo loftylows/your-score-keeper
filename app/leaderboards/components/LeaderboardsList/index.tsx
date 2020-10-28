@@ -35,9 +35,9 @@ const LeaderboardsList = ({ leaderboards }: IProps) => {
                 height={`${itemHeight}px`}
                 width="100%"
               >
-                <Heading size="lg" fontWeight="bold">
+                <Text fontSize="xl" as="h2" fontWeight="bold" isTruncated title={leaderboard.title}>
                   {leaderboard.title}
-                </Heading>
+                </Text>
                 <Box as="small" marginTop="auto" display="flex" flexDirection="column">
                   <Text display="flex" isTruncated marginBottom="3px">
                     Created
