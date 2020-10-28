@@ -2,13 +2,13 @@ import React from "react"
 import { Head } from "blitz"
 import {
   Box,
-  useBreakpointValue,
   Drawer,
   DrawerContent,
   DrawerOverlay,
   DrawerCloseButton,
   DrawerHeader,
 } from "@chakra-ui/core"
+import { useBreakpointValue } from "@chakra-ui/media-query"
 import Header from "app/components/Header"
 import MyLeaderboardsSidebar from "app/components/MyLeaderboardsSidebar"
 import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboardsProvider"

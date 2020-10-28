@@ -1,6 +1,7 @@
 import * as React from "react"
 import { Link } from "blitz"
-import { Box, Button, Image, Heading, useBreakpointValue } from "@chakra-ui/core"
+import { Box, Button, Image, Heading } from "@chakra-ui/core"
+import { useBreakpointValue } from "@chakra-ui/media-query"
 import buildSearchQuery from "app/leaderboards/searchUrlBuilder"
 
 const HeroSection = () => {

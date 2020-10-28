@@ -20,7 +20,6 @@ import { Form as FinalForm, Field } from "react-final-form"
 import { FORM_ERROR } from "final-form"
 import { LoginInputType, LoginInput } from "app/auth/validations"
 import { loginWithEmailAndPassword } from "../login"
-import { ToggleAuthModal } from "../AuthModalProvider"
 
 type LoginFormProps = {
   onSuccess?: () => void

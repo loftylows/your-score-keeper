@@ -15,7 +15,6 @@ import {
   Icon,
   IconButton,
   HStack,
-  useBreakpointValue,
   Drawer,
   DrawerOverlay,
   DrawerContent,
@@ -24,6 +23,7 @@ import {
   DrawerBody,
   VStack,
 } from "@chakra-ui/core"
+import { useBreakpointValue } from "@chakra-ui/media-query"
 import { darken } from "polished"
 import { authModalContext } from "app/auth/AuthModalProvider"
 import logout from "app/auth/logout"
