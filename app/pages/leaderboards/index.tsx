@@ -89,8 +89,8 @@ const LeaderboardsPage: BlitzPage<IProps> = ({ leaderboardsQueryRes, sortBy, pag
           Leaderboards
         </Heading>
         <Box as="small" textAlign="center">
-          Showing <b>{leaderboardsPerPage}</b> of <b>{leaderboardsQueryRes.count}</b> public
-          leaderboards
+          Showing <b>{leaderboardsQueryRes.leaderboards.length}</b> of{" "}
+          <b>{leaderboardsQueryRes.count}</b> public leaderboards
         </Box>
       </Box>
 
