@@ -9,6 +9,7 @@
     "start": "blitz start --production -H 0.0.0.0 -p ${PORT:-8080}",
     "studio": "blitz db studio",
     "build": "NODE_ENV=production blitz db migrate && blitz build",
+    "postbuild": "node postBuild.js",
     "lint": "eslint --ignore-path .gitignore --ext .js,.ts,.tsx .",
     "test": "jest",
     "test:watch": "jest --watch"
@@ -54,6 +55,7 @@
     "final-form": "4.20.1",
     "is-mobile": "2.2.2",
     "mailchecker": "3.3.14",
+    "node-fetch": "2.6.1",
     "nprogress": "0.2.0",
     "polished": "3.6.7",
     "querystringify": "2.2.0",
@@ -66,6 +68,7 @@
     "react-table": "7.5.2",
     "secure-password": "4.0.0",
     "uuid": "8.3.0",
+    "wrangler": "0.0.2",
     "zod": "1.11.9"
   },
   "devDependencies": {
