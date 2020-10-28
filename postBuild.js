@@ -1,17 +1,13 @@
 const fs = require("fs")
 const path = require("path")
-const request = require("sync-request")
+const fetch = require("node-fetch")
 
-const postBuild = () => {
+const Headers = fetch.Headers
+
+const postBuild = async () => {
   console.log("sending static pages to cloudflare cache...")
 
   const fileItems = {}
-
-  /*
-  const url = process.env.CLOUDFLARE_BUILD_WORKER_URL
-  const CUSTOM_AUTH_KEY = process.env.CUSTOM_CLOUDFLARE_WORKER_AUTH_KEY
-  const CUSTOM_AUTH_KEY_HEADER = process.env.CUSTOM_AUTH_KEY_HEADER
-  */
 
   const url = process.env.CLOUDFLARE_BUILD_WORKER_URL
   const CUSTOM_AUTH_KEY = process.env.CUSTOM_CLOUDFLARE_WORKER_AUTH_KEY
@@ -31,15 +27,24 @@ const postBuild = () => {
     const fileContent = fs.readFileSync(path.join(pagesFolderPath, item.name))
     if (!fileContent) return
     fileItems[item.name] = fileContent.toString()
+    console.log("fileItem name: ", item.name)
   })
 
-  request("Post", url, {
-    headers: {
-      "content-type": "application/json",
-      [CUSTOM_AUTH_KEY_HEADER]: CUSTOM_AUTH_KEY,
-    },
-    body: JSON.stringify(fileItems),
-  })
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify(fileItems),
+      headers: new Headers([
+        ["content-type", "application/json"],
+        [CUSTOM_AUTH_KEY_HEADER, CUSTOM_AUTH_KEY],
+      ]),
+    })
+
+    console.log("res: ", res)
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
 
   console.log("finished sending static pages to cloudflare cache...")
 }
