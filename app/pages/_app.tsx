@@ -1,4 +1,5 @@
-import { AppProps, ErrorComponent, useRouter } from "blitz"
+import * as React from "react"
+import { AppProps, ErrorComponent, useRouter, Head } from "blitz"
 import { NextWebVitalsMetric } from "next/app"
 import { ErrorBoundary, FallbackProps } from "react-error-boundary"
 import { queryCache } from "react-query"
@@ -27,6 +28,35 @@ const customTheme = extendTheme(myCustomThemeObj)
 export default function App({ Component, pageProps }: AppProps) {
   const getLayout = Component.getLayout || ((page) => page)
   const router = useRouter()
+
+  // Use google analytics
+  React.useEffect(() => {
+    const myWindow = window as any
+    myWindow.dataLayer = myWindow.dataLayer || []
+    function gtag(...args) {
+      myWindow.dataLayer.push(args)
+    }
+    gtag("js", new Date())
+
+    gtag("config", "G-MNJYPE5L1X")
+  }, [])
+
+  // Use Hotjar
+  React.useEffect(() => {
+    ;(function (h: any, o: any, t: any, j: any, a?: any, r?: any) {
+      h.hj =
+        h.hj ||
+        function () {
+          ;(h.hj.q = h.hj.q || []).push(arguments)
+        }
+      h._hjSettings = { hjid: 2068822, hjsv: 6 }
+      a = o.getElementsByTagName("head")[0]
+      r = o.createElement("script")
+      r.async = 1
+      r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv
+      a.appendChild(r)
+    })(window, document, "https://static.hotjar.com/c/hotjar-", ".js?sv=")
+  }, [])
 
   return (
     <ErrorBoundary
@@ -62,6 +92,13 @@ export default function App({ Component, pageProps }: AppProps) {
                       }}
                     />
                     {getLayout(<Component {...pageProps} />)}
+                    <Head>
+                      <script
+                        key="google-analytics"
+                        async
+                        src="https://www.googletagmanager.com/gtag/js?id=G-MNJYPE5L1X"
+                      ></script>
+                    </Head>
                   </>
                 </LeaderboardsDialogProvider>
               </InMemoryLeaderboardsProvider>
