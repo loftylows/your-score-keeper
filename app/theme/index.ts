@@ -38,6 +38,10 @@ const getGlobalStyles = (_) => ({
   "*": {
     fontFamily: fontFamily,
   },
+  ".Toastify__toast": {
+    borderRadius: "10px",
+    overflow: "hidden",
+  },
 })
 
 const size = {

@@ -1,5 +1,4 @@
 import * as React from "react"
-import { Router } from "blitz"
 import {
   Modal,
   ModalContent,
@@ -17,6 +16,7 @@ import {
   Box,
   Spinner,
 } from "@chakra-ui/core"
+import { toast } from "react-toastify"
 import {
   OpenEditCurrentUserDialog,
   CloseEditCurrentUserDialog,
@@ -30,11 +30,10 @@ import {
   LOGIN_COMPLETED_EVENT_NAME,
   LOGOUT_EVENT_NAME,
 } from "app/browserEvents"
-import { ToastContext, ToastType } from "app/components/ToastProvider"
+import { CheckCircleIcon } from "@chakra-ui/icons"
 
 interface IProps {
   children: React.ReactChild
-  toast: ToastType
 }
 interface IState {
   accountDeletionInProgress: boolean
@@ -96,37 +95,31 @@ class UsersUiDialogsProvider extends React.Component<IProps, IState> {
   closeDeleteCurrentUserDialog = () => this.setState({ deleteCurrentUserIsOpen: false })
 
   openLoginToast = () => {
-    const { toast } = this.props
-    toast({
-      title: "Welcome Back.",
-      status: "success",
-      duration: 2000,
-      isClosable: true,
-      position: "top",
-    })
+    toast.success(
+      <Box paddingX="8px">
+        <CheckCircleIcon color="white" marginRight="3px" /> Welcome back!
+      </Box>,
+      { progress: undefined }
+    )
   }
 
   openLogoutToast = () => {
-    const { toast } = this.props
-    toast({
-      title: "Logged Out.",
-      status: "success",
-      duration: 2000,
-      isClosable: true,
-      position: "top",
-    })
+    toast.success(
+      <Box paddingX="8px">
+        <CheckCircleIcon color="white" marginRight="3px" /> Logged out.
+      </Box>,
+      { progress: undefined }
+    )
   }
 
   openAccountDeletedToast = () => {
-    const { toast } = this.props
-    toast({
-      title: "Account Deleted.",
-      description: "Thanks for using our software. Hope to see you again soon.",
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-      position: "top",
-    })
+    toast.success(
+      <Box paddingX="8px">
+        <CheckCircleIcon color="white" marginRight="3px" /> Account deleted. Hope to see you agin
+        soon.
+      </Box>,
+      { progress: undefined }
+    )
   }
 
   render() {
@@ -214,16 +207,5 @@ class UsersUiDialogsProvider extends React.Component<IProps, IState> {
   }
 }
 
-interface IPropsExt {
-  children: React.ReactChild
-}
-const Provider = ({ children }: IPropsExt) => {
-  return (
-    <ToastContext.Consumer>
-      {(toast) => <UsersUiDialogsProvider toast={toast}>{children}</UsersUiDialogsProvider>}
-    </ToastContext.Consumer>
-  )
-}
-
 export { usersUiContext }
-export default Provider
+export default UsersUiDialogsProvider

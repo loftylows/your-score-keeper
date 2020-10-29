@@ -5,15 +5,17 @@ import { queryCache } from "react-query"
 import { Router } from "blitz"
 import NProgress from "nprogress"
 import { ChakraProvider, extendTheme } from "@chakra-ui/core"
+import { ToastContainer } from "react-toastify"
 import LoginForm from "app/auth/components/LoginForm"
 import myCustomThemeObj from "app/theme"
 import AuthModalProvider from "app/auth/AuthModalProvider"
 import InMemoryLeaderboardsProvider from "../leaderboards/InMemoryLeaderboardsProvider"
 import LeaderboardsDialogProvider from "../leaderboards/LeaderboardsUiProvider"
-import "nprogress/nprogress.css"
 import UsersUiDialogsProvider from "app/users/UsersUiProvider"
-import ToastProvider from "app/components/ToastProvider"
 import GoogleFonts from "app/components/GoogleFontsHelper"
+
+import "nprogress/nprogress.css"
+import "react-toastify/dist/ReactToastify.css"
 
 //Binding events.
 Router.events.on("routeChangeStart", () => NProgress.start())
@@ -38,20 +40,33 @@ export default function App({ Component, pageProps }: AppProps) {
     >
       {
         <ChakraProvider theme={customTheme}>
-          <ToastProvider>
-            <AuthModalProvider>
-              <UsersUiDialogsProvider>
-                <InMemoryLeaderboardsProvider>
-                  <LeaderboardsDialogProvider>
-                    <>
-                      <GoogleFonts href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" />
-                      {getLayout(<Component {...pageProps} />)}
-                    </>
-                  </LeaderboardsDialogProvider>
-                </InMemoryLeaderboardsProvider>
-              </UsersUiDialogsProvider>
-            </AuthModalProvider>
-          </ToastProvider>
+          <AuthModalProvider>
+            <UsersUiDialogsProvider>
+              <InMemoryLeaderboardsProvider>
+                <LeaderboardsDialogProvider>
+                  <>
+                    <GoogleFonts href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" />
+                    <ToastContainer
+                      position="top-right"
+                      autoClose={3000}
+                      hideProgressBar={false}
+                      newestOnTop
+                      closeOnClick
+                      rtl={false}
+                      pauseOnFocusLoss
+                      draggable
+                      pauseOnHover
+                      style={{
+                        borderRadius: "10px",
+                        overflow: "hidden",
+                      }}
+                    />
+                    {getLayout(<Component {...pageProps} />)}
+                  </>
+                </LeaderboardsDialogProvider>
+              </InMemoryLeaderboardsProvider>
+            </UsersUiDialogsProvider>
+          </AuthModalProvider>
         </ChakraProvider>
       }
     </ErrorBoundary>

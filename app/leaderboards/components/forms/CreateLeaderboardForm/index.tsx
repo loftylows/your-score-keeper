@@ -11,10 +11,10 @@ import {
   FormErrorMessage,
   ButtonGroup,
   Text,
-  useToast,
   Select,
+  Box,
 } from "@chakra-ui/core"
-import { InfoIcon } from "@chakra-ui/icons"
+import { CheckCircleIcon, InfoIcon } from "@chakra-ui/icons"
 import { Form as FinalForm, Field } from "react-final-form"
 import { FORM_ERROR } from "final-form"
 import { CreateLeaderboardInput, CreateLeaderboardInputType } from "../../../validations"
@@ -22,6 +22,7 @@ import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboards
 import { inMemoryLeaderboardsContext } from "app/leaderboards/InMemoryLeaderboardsProvider"
 import { Router } from "blitz"
 import { uiContext } from "app/leaderboards/LeaderboardsUiProvider"
+import { toast } from "react-toastify"
 
 type CreateLeaderboardFormProps = {
   onSuccess?: () => void
@@ -35,7 +36,6 @@ const CreateLeaderboardForm = (props: CreateLeaderboardFormProps) => {
   const { userId, dbCacheCreateLeaderboard } = React.useContext(dbCacheLeaderboardsContext)
   const { inMemoryCreateLeaderboard } = React.useContext(inMemoryLeaderboardsContext)
   const { setCurrentlySelectedLeaderboardId } = React.useContext(uiContext)
-  const toast = useToast()
 
   return (
     <FinalForm<CreateLeaderboardInputType>
@@ -74,14 +74,12 @@ const CreateLeaderboardForm = (props: CreateLeaderboardFormProps) => {
               "Sorry, we had an unexpected error. Please try again. - " + error.toString(),
           }
         }
-        toast({
-          title: "Leaderboard created.",
-          description: "Enjoy your latest leaderboard.",
-          status: "success",
-          duration: 2000,
-          isClosable: true,
-          position: "top",
-        })
+        toast.success(
+          <Box paddingX="8px">
+            <CheckCircleIcon color="white" marginRight="3px" /> Leaderboard created.
+          </Box>,
+          { progress: undefined }
+        )
         props.onSubmitEnd && props.onSubmitEnd()
       }}
     >

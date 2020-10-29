@@ -14,9 +14,9 @@ import {
   ButtonGroup,
   Text,
   IconButton,
-  useToast,
 } from "@chakra-ui/core"
-import { InfoIcon, DeleteIcon } from "@chakra-ui/icons"
+import { InfoIcon, DeleteIcon, CheckCircleIcon } from "@chakra-ui/icons"
+import { toast } from "react-toastify"
 import { Form as FinalForm, Field } from "react-final-form"
 import { FORM_ERROR } from "final-form"
 import { EditPlayerInput, EditPlayerInputType } from "app/players/validations"
@@ -37,7 +37,6 @@ type CreatePlayerFormProps = {
 
 const CreatePlayerForm = (props: CreatePlayerFormProps) => {
   const [isDeletingPlayer, setIsDeletingPlayer] = React.useState(false)
-  const toast = useToast()
   const componentProps = props
   const { userId, dbCacheEditPlayer, dbCacheDeletePlayer } = React.useContext(
     dbCacheLeaderboardsContext
@@ -80,13 +79,12 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
               "Sorry, we had an unexpected error. Please try again. - " + error.toString(),
           }
         }
-        toast({
-          title: "Player Updated.",
-          status: "success",
-          duration: 2000,
-          isClosable: true,
-          position: "top",
-        })
+        toast.success(
+          <Box paddingX="8px">
+            <CheckCircleIcon color="white" marginRight="3px" /> Player updated.
+          </Box>,
+          { progress: undefined }
+        )
         props.onSubmitEnd && props.onSubmitEnd()
       }}
     >
@@ -200,13 +198,12 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
                 } finally {
                   setIsDeletingPlayer(false)
                 }
-                toast({
-                  title: "Player Deleted.",
-                  status: "success",
-                  duration: 2000,
-                  isClosable: true,
-                  position: "top",
-                })
+                toast.success(
+                  <Box paddingX="8px">
+                    <CheckCircleIcon color="white" marginRight="3px" /> Player deleted.
+                  </Box>,
+                  { progress: undefined }
+                )
                 componentProps.onFormFinished && componentProps.onFormFinished()
               }}
             />

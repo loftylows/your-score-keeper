@@ -11,11 +11,11 @@ import {
   FormErrorMessage,
   ButtonGroup,
   Text,
-  useToast,
   IconButton,
   Box,
 } from "@chakra-ui/core"
-import { DeleteIcon, InfoIcon } from "@chakra-ui/icons"
+import { CheckCircleIcon, DeleteIcon, InfoIcon } from "@chakra-ui/icons"
+import { toast } from "react-toastify"
 import { Form as FinalForm, Field } from "react-final-form"
 import { FORM_ERROR } from "final-form"
 import { EditUserInput, EditUserInputType } from "../../../validations"
@@ -36,7 +36,6 @@ const EditUserForm = (props: EditUserFormProps) => {
     usersUiContext
   )
   const user = useCurrentUser()
-  const toast = useToast()
   if (!user) return null
 
   return (
@@ -60,13 +59,13 @@ const EditUserForm = (props: EditUserFormProps) => {
               "Sorry, we had an unexpected error. Please try again. - " + error.toString(),
           }
         }
-        toast({
-          title: "User Profile Info Updated.",
-          status: "success",
-          duration: 2000,
-          isClosable: true,
-          position: "top",
-        })
+
+        toast.success(
+          <Box paddingX="8px">
+            <CheckCircleIcon color="white" marginRight="3px" /> User profile info updated.
+          </Box>,
+          { progress: undefined }
+        )
         props.onSubmitEnd && props.onSubmitEnd()
       }}
     >

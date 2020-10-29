@@ -13,10 +13,10 @@ import {
   ButtonGroup,
   Text,
   IconButton,
-  useToast,
   Select,
 } from "@chakra-ui/core"
-import { DeleteIcon, InfoIcon } from "@chakra-ui/icons"
+import { toast } from "react-toastify"
+import { CheckCircleIcon, DeleteIcon, InfoIcon } from "@chakra-ui/icons"
 import { Form as FinalForm, Field } from "react-final-form"
 import { FORM_ERROR } from "final-form"
 import { EditLeaderboardInput, EditLeaderboardInputType } from "../../../validations"
@@ -33,20 +33,14 @@ type EditLeaderboardFormProps = {
 }
 
 const EditLeaderboardForm = (props: EditLeaderboardFormProps) => {
-  const [isDeletingLeaderboard, setIsDeletingLeaderboard] = React.useState(false)
-  const toast = useToast()
+  const [isDeletingLeaderboard] = React.useState(false)
   const componentProps = props
-  const {
-    userId,
-    dbCacheEditLeaderboard,
-    leaderboards: dbLeaderboards,
-    dbCacheDeleteLeaderboard,
-  } = React.useContext(dbCacheLeaderboardsContext)
-  const {
-    inMemoryEditLeaderboard,
-    leaderboards: inMemoryLeaderboards,
-    inMemoryDeleteLeaderboard,
-  } = React.useContext(inMemoryLeaderboardsContext)
+  const { userId, dbCacheEditLeaderboard, leaderboards: dbLeaderboards } = React.useContext(
+    dbCacheLeaderboardsContext
+  )
+  const { inMemoryEditLeaderboard, leaderboards: inMemoryLeaderboards } = React.useContext(
+    inMemoryLeaderboardsContext
+  )
   const { editLeaderboardDialogIsOpenWithId, setDeletingLeaderboardWithId } = React.useContext(
     uiContext
   )
@@ -92,13 +86,12 @@ const EditLeaderboardForm = (props: EditLeaderboardFormProps) => {
               "Sorry, we had an unexpected error. Please try again. - " + error.toString(),
           }
         }
-        toast({
-          title: "Leaderboard Updated.",
-          status: "success",
-          duration: 2000,
-          isClosable: true,
-          position: "top",
-        })
+        toast.success(
+          <Box paddingX="8px">
+            <CheckCircleIcon color="white" marginRight="3px" /> Leaderboard updated.
+          </Box>,
+          { progress: undefined }
+        )
         props.onSubmitEnd && props.onSubmitEnd()
       }}
     >

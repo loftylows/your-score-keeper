@@ -6,15 +6,16 @@ import {
   InputGroup,
   InputLeftElement,
   Button,
-  useToast,
+  Box,
 } from "@chakra-ui/core"
-import { InfoIcon } from "@chakra-ui/icons"
+import { CheckCircleIcon, InfoIcon } from "@chakra-ui/icons"
 import { Form as FinalForm, Field } from "react-final-form"
 import { FORM_ERROR } from "final-form"
 import { CreatePlayerInput, CreatePlayerInputType } from "app/players/validations"
 import { dbCacheLeaderboardsContext } from "app/leaderboards/DbCacheLeaderboardsProvider"
 import { inMemoryLeaderboardsContext } from "app/leaderboards/InMemoryLeaderboardsProvider"
 import { UUID } from "common-types"
+import { toast } from "react-toastify"
 
 type CreatePlayerFormProps = {
   leaderboardId: UUID
@@ -31,7 +32,6 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
   const { leaderboardId, playersCount } = props
   const { userId, dbCacheCreatePlayer } = React.useContext(dbCacheLeaderboardsContext)
   const { inMemoryCreatePlayer } = React.useContext(inMemoryLeaderboardsContext)
-  const toast = useToast()
   const hasReachedMaxPlayers = playersCount >= 150
 
   return (
@@ -67,13 +67,12 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
               "Sorry, we had an unexpected error. Please try again. - " + error.toString(),
           }
         }
-        toast({
-          title: "Player created.",
-          status: "success",
-          duration: 2000,
-          isClosable: true,
-          position: "top",
-        })
+        toast.success(
+          <Box paddingX="8px">
+            <CheckCircleIcon color="white" marginRight="3px" /> Player created.
+          </Box>,
+          { progress: undefined }
+        )
         props.onSubmitEnd && props.onSubmitEnd()
       }}
     >

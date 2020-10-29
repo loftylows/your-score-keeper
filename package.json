@@ -67,6 +67,7 @@
     "react-icons": "3.11.0",
     "react-paginate": "6.5.0",
     "react-table": "7.5.2",
+    "react-toastify": "6.0.9",
     "secure-password": "4.0.0",
     "sync-request": "6.1.0",
     "uuid": "8.3.0",

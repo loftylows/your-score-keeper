@@ -14,8 +14,9 @@ import {
   AlertDialogBody,
   AlertDialogFooter,
   Button,
-  useToast,
+  Box,
 } from "@chakra-ui/core"
+import { toast } from "react-toastify"
 import { dbCacheLeaderboardsContext } from "../DbCacheLeaderboardsProvider"
 import {
   OpenCreateLeaderboardDialog,
@@ -35,21 +36,18 @@ import {
 import CreateLeaderboardForm from "../components/forms/CreateLeaderboardForm"
 import EditLeaderboardForm from "../components/forms/EditLeaderboardForm"
 import EditPlayerForm from "../components/forms/EditPlayerForm"
-import updateLeaderboard from "../mutations/updateLeaderboard"
-import { ToastContext } from "app/components/ToastProvider"
 import {
   DbCacheDeleteLeaderboard,
   DbCachePublishLeaderboard,
   DbCacheUnpublishLeaderboard,
 } from "../DbCacheLeaderboardsProvider/types"
-import { WarningTwoIcon } from "@chakra-ui/icons"
+import { CheckCircleIcon, WarningTwoIcon } from "@chakra-ui/icons"
 import { inMemoryLeaderboardsContext } from "../InMemoryLeaderboardsProvider"
 import { InMemoryDeleteLeaderboard } from "../InMemoryLeaderboardsProvider/types"
 
 interface IProps {
   children: React.ReactChild
   userId: Maybe<UUID>
-  toast: ReturnType<typeof useToast>
   dbCachePublishLeaderboard: DbCachePublishLeaderboard
   dbCacheUnpublishLeaderboard: DbCacheUnpublishLeaderboard
   dbCacheDeleteLeaderboard: DbCacheDeleteLeaderboard
@@ -176,7 +174,6 @@ class DialogsProvider extends React.Component<IProps, IState> {
   render() {
     const {
       children,
-      toast,
       dbCachePublishLeaderboard,
       dbCacheUnpublishLeaderboard,
       dbCacheDeleteLeaderboard,
@@ -280,13 +277,12 @@ class DialogsProvider extends React.Component<IProps, IState> {
                     try {
                       await dbCachePublishLeaderboard(state.publishingLeaderboardWithId)
                       this.setPublishingLeaderboardWithId(null)
-                      toast({
-                        title: "Leaderboard Published.",
-                        status: "success",
-                        duration: 3000,
-                        isClosable: true,
-                        position: "top",
-                      })
+                      toast.success(
+                        <Box paddingX="8px">
+                          <CheckCircleIcon color="white" marginRight="3px" /> Leaderboard published.
+                        </Box>,
+                        { progress: undefined }
+                      )
                     } catch (e) {
                       console.log(e)
                     } finally {
@@ -340,13 +336,12 @@ class DialogsProvider extends React.Component<IProps, IState> {
                       }
 
                       this.setDeletingLeaderboardWithId(null)
-                      toast({
-                        title: "Leaderboard Deleted.",
-                        status: "warning",
-                        duration: 3000,
-                        isClosable: true,
-                        position: "top",
-                      })
+                      toast.warning(
+                        <Box paddingX="8px" color="black">
+                          <CheckCircleIcon marginRight="3px" /> Leaderboard deleted.
+                        </Box>,
+                        { progress: undefined }
+                      )
                     } catch (e) {
                       console.log(e)
                     } finally {
@@ -395,13 +390,13 @@ class DialogsProvider extends React.Component<IProps, IState> {
                     try {
                       await dbCacheUnpublishLeaderboard(state.unpublishingLeaderboardWithId)
                       this.setUnpublishingLeaderboardWithId(null)
-                      toast({
-                        title: "Leaderboard Unpublished.",
-                        status: "warning",
-                        duration: 3000,
-                        isClosable: true,
-                        position: "top",
-                      })
+
+                      toast.warning(
+                        <Box paddingX="8px" color="black">
+                          <CheckCircleIcon marginRight="3px" /> Leaderboard unpublished..
+                        </Box>,
+                        { progress: undefined }
+                      )
                     } catch (e) {
                       console.log(e)
                     } finally {
@@ -424,33 +419,28 @@ interface IProviderProps {
 }
 const Provider = ({ children }: IProviderProps) => {
   return (
-    <ToastContext.Consumer>
-      {(toast) => (
-        <dbCacheLeaderboardsContext.Consumer>
-          {({
-            userId,
-            dbCachePublishLeaderboard,
-            dbCacheUnpublishLeaderboard,
-            dbCacheDeleteLeaderboard,
-          }) => (
-            <inMemoryLeaderboardsContext.Consumer>
-              {({ inMemoryDeleteLeaderboard }) => (
-                <DialogsProvider
-                  userId={userId}
-                  toast={toast}
-                  dbCachePublishLeaderboard={dbCachePublishLeaderboard}
-                  dbCacheUnpublishLeaderboard={dbCacheUnpublishLeaderboard}
-                  dbCacheDeleteLeaderboard={dbCacheDeleteLeaderboard}
-                  inMemoryDeleteLeaderboard={inMemoryDeleteLeaderboard}
-                >
-                  {children}
-                </DialogsProvider>
-              )}
-            </inMemoryLeaderboardsContext.Consumer>
+    <dbCacheLeaderboardsContext.Consumer>
+      {({
+        userId,
+        dbCachePublishLeaderboard,
+        dbCacheUnpublishLeaderboard,
+        dbCacheDeleteLeaderboard,
+      }) => (
+        <inMemoryLeaderboardsContext.Consumer>
+          {({ inMemoryDeleteLeaderboard }) => (
+            <DialogsProvider
+              userId={userId}
+              dbCachePublishLeaderboard={dbCachePublishLeaderboard}
+              dbCacheUnpublishLeaderboard={dbCacheUnpublishLeaderboard}
+              dbCacheDeleteLeaderboard={dbCacheDeleteLeaderboard}
+              inMemoryDeleteLeaderboard={inMemoryDeleteLeaderboard}
+            >
+              {children}
+            </DialogsProvider>
           )}
-        </dbCacheLeaderboardsContext.Consumer>
+        </inMemoryLeaderboardsContext.Consumer>
       )}
-    </ToastContext.Consumer>
+    </dbCacheLeaderboardsContext.Consumer>
   )
 }
 
