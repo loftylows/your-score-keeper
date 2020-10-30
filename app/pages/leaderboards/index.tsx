@@ -87,7 +87,7 @@ const LeaderboardsPage: BlitzPage<IProps> = ({ leaderboardsQueryRes, sortBy, pag
         justifyContent="center"
         alignContent="center"
       >
-        <Heading size="xl" textAlign="center">
+        <Heading size="xl" textAlign="center" as="h1">
           Leaderboards
         </Heading>
         <Box as="small" textAlign="center">
