@@ -19,11 +19,10 @@ import { InMemoryLeaderboard } from "app/leaderboards/InMemoryLeaderboardsProvid
 import useCurrentlySelectedLeaderboard from "app/leaderboards/hooks/useCurrentlySelectedLeaderboard"
 
 interface IProps {
-  title?: string
   isMobile?: boolean
   children: React.ReactNode
 }
-const MyLeaderboardsSpaceLayout = ({ children, title, isMobile }: IProps) => {
+const MyLeaderboardsSpaceLayout = ({ children, isMobile }: IProps) => {
   const [mobileSidebarOpen, setMobileSidebarOpen] = React.useState(false)
   const { leaderboards: dbLeaderboards, userId } = React.useContext(dbCacheLeaderboardsContext)
   const { leaderboards: inMemoryLeaderboards } = React.useContext(inMemoryLeaderboardsContext)
@@ -52,7 +51,6 @@ const MyLeaderboardsSpaceLayout = ({ children, title, isMobile }: IProps) => {
   return (
     <Box display="flex" flexDirection="column">
       <Head>
-        <title key="title">{title || "yourscorekeeper.com"}</title>
         <meta key="viewport" name="viewport" content="width=device-width, initial-scale=1.0" />
         <link key="favicon" rel="icon" href="/favicon.ico" />
       </Head>

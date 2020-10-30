@@ -8,6 +8,7 @@ import { Maybe, ThenArgRecursive, UUID } from "common-types"
 import LeaderboardTable from "app/leaderboards/components/LeaderboardTable"
 import { InMemoryPlayer } from "app/leaderboards/InMemoryLeaderboardsProvider/types"
 import { isSavedLeaderboard } from "app/leaderboards/typeAssertions"
+import PageMeta from "app/components/PageMeta"
 
 export type LeaderboardQueryRes = ThenArgRecursive<ReturnType<typeof getLeaderboard>>
 interface IProps {
@@ -80,6 +81,13 @@ const LeaderboardPage: BlitzPage<IProps> = ({ leaderboard, userId: userIdFromSer
   )
 }
 
-LeaderboardPage.getLayout = (page) => <Layout title="YourScoreKeeper">{page}</Layout>
+LeaderboardPage.getLayout = (page) => (
+  <Layout>
+    <>
+      <PageMeta title="Leaderboard" description="" />
+      {page}
+    </>
+  </Layout>
+)
 
 export default LeaderboardPage

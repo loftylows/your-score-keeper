@@ -1,11 +1,22 @@
 import { BlitzPage } from "blitz"
 import Layout from "app/layouts/Site"
 import HeroSection from "app/components/HeroHomeSection"
+import PageMeta from "app/components/PageMeta"
 
 const Home: BlitzPage = () => {
   return <HeroSection />
 }
 
-Home.getLayout = (page) => <Layout title="YourScoreKeeper">{page}</Layout>
+Home.getLayout = (page) => (
+  <Layout>
+    <>
+      <PageMeta
+        title="YourScoreKeeper"
+        description="Get started right now and create your first custom online scoreboard for free"
+      />
+      {page}
+    </>
+  </Layout>
+)
 
 export default Home

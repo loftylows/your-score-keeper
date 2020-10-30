@@ -11,6 +11,8 @@ import buildSearchQuery, { QueryOptions } from "app/leaderboards/searchUrlBuilde
 import url from "url"
 import LeaderboardsList from "app/leaderboards/components/LeaderboardsList"
 import Pagination from "app/components/Pagination"
+import PageMeta from "app/components/PageMeta"
+import { hostname } from "app/utils/constants"
 const leaderboardsPerPage = 10
 
 export type SortType = "latest" | "oldest"
@@ -128,6 +130,17 @@ const LeaderboardsPage: BlitzPage<IProps> = ({ leaderboardsQueryRes, sortBy, pag
   )
 }
 
-LeaderboardsPage.getLayout = (page) => <Layout title="YourScoreKeeper">{page}</Layout>
+LeaderboardsPage.getLayout = (page) => (
+  <Layout>
+    <>
+      <PageMeta
+        title="Leaderboards"
+        description=""
+        canonicalUrl={`https://${hostname}/leaderboards`}
+      />
+      {page}
+    </>
+  </Layout>
+)
 
 export default LeaderboardsPage

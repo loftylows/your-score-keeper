@@ -10,6 +10,7 @@ import getLeaderboards from "app/leaderboards/queries/getLeaderboards"
 import getPlayers from "app/players/queries/getPlayers"
 import LeaderboardsDialogProvider from "app/leaderboards/LeaderboardsUiProvider"
 import LeaderboardsSpace from "app/leaderboards/components/LeaderboardSpace"
+import PageMeta from "app/components/PageMeta"
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res: response }) => {
   const { userId } = await getSessionContext(req, response)
@@ -67,17 +68,20 @@ const MyLeaderboardsHome: BlitzPage<IPageProps> = ({
   isMobile,
 }) => {
   return (
-    <DbCacheLeaderboardsProvider
-      userId={userId}
-      leaderboardsFromServer={leaderboardsFromServer}
-      playersFromServer={playersFromServer}
-    >
-      <LeaderboardsDialogProvider>
-        <Layout title="My Leaderboards" isMobile={isMobile}>
-          <LeaderboardsSpace />
-        </Layout>
-      </LeaderboardsDialogProvider>
-    </DbCacheLeaderboardsProvider>
+    <>
+      <PageMeta title="My Leaderboards" description="" />
+      <DbCacheLeaderboardsProvider
+        userId={userId}
+        leaderboardsFromServer={leaderboardsFromServer}
+        playersFromServer={playersFromServer}
+      >
+        <LeaderboardsDialogProvider>
+          <Layout isMobile={isMobile}>
+            <LeaderboardsSpace />
+          </Layout>
+        </LeaderboardsDialogProvider>
+      </DbCacheLeaderboardsProvider>
+    </>
   )
 }
 

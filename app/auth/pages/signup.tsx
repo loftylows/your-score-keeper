@@ -18,6 +18,6 @@ const SignupPage: BlitzPage = () => {
   )
 }
 
-SignupPage.getLayout = (page) => <Layout title="Sign Up">{page}</Layout>
+SignupPage.getLayout = (page) => <Layout>{page}</Layout>
 
 export default SignupPage
