@@ -135,7 +135,7 @@ LeaderboardsPage.getLayout = (page) => (
     <>
       <PageMeta
         title="Leaderboards"
-        description=""
+        description="See all of the latest leaderboards on YourScoreKeeper right here."
         canonicalUrl={`https://${hostname}/leaderboards`}
       />
       {page}

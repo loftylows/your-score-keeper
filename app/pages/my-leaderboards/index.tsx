@@ -69,7 +69,10 @@ const MyLeaderboardsHome: BlitzPage<IPageProps> = ({
 }) => {
   return (
     <>
-      <PageMeta title="My Leaderboards" description="" />
+      <PageMeta
+        title="My Leaderboards"
+        description="Create, manage, and see all of your leaderboards right here in our easy to use custom leaderboard creator."
+      />
       <DbCacheLeaderboardsProvider
         userId={userId}
         leaderboardsFromServer={leaderboardsFromServer}

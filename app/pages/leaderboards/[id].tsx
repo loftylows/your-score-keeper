@@ -84,7 +84,10 @@ const LeaderboardPage: BlitzPage<IProps> = ({ leaderboard, userId: userIdFromSer
 LeaderboardPage.getLayout = (page) => (
   <Layout>
     <>
-      <PageMeta title="Leaderboard" description="" />
+      <PageMeta
+        title="Leaderboard"
+        description="Take a look at the most up-to date published version of this leaderboard."
+      />
       {page}
     </>
   </Layout>
