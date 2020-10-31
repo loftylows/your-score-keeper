@@ -109,12 +109,12 @@ const HeroSection = () => {
           >
             <source
               type="image/webp"
-              srcSet="https://res.cloudinary.com/yourscorekeeper-com/image/upload/c_scale,q_auto:eco,w_740/v1603429288/app-screenshot_mm74kf.webp 740w"
+              srcSet="https://res.cloudinary.com/yourscorekeeper-com/image/upload/v1604139459/app-screenshot_n0wmql.webp 740w"
               sizes="(max-width: 740px) calc(100vw - 60px), 680px"
             />
             <Image
-              src="https://res.cloudinary.com/yourscorekeeper-com/image/upload/c_scale,q_auto:eco,w_740/v1603430038/app-screenshot_j2fxtl.jpg"
-              srcSet="https://res.cloudinary.com/yourscorekeeper-com/image/upload/c_scale,q_auto:eco,w_740/v1603430038/app-screenshot_j2fxtl.jpg"
+              src="https://res.cloudinary.com/yourscorekeeper-com/image/upload/v1604139352/app-screenshot_wvam94.jpg"
+              srcSet="https://res.cloudinary.com/yourscorekeeper-com/image/upload/v1604139352/app-screenshot_wvam94.jpg"
               sizes="(max-width: 740px) calc(100vw - 60px), 680px"
               borderRadius="10px"
               height="100%"
