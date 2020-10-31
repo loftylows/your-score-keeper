@@ -109,7 +109,7 @@ const HeroSection = () => {
           >
             <source
               type="image/webp"
-              srcSet="https://res.cloudinary.com/yourscorekeeper-com/image/upload/v1603429288/app-screenshot_mm74kf.webp 1440w"
+              srcSet="https://res.cloudinary.com/yourscorekeeper-com/image/upload/c_scale,q_auto:eco,w_740/v1603429288/app-screenshot_mm74kf.webp 740w"
               sizes="(max-width: 740px) calc(100vw - 60px), 680px"
             />
             <Image
