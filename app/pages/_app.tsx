@@ -57,9 +57,9 @@ export default function App({ Component, pageProps }: AppProps) {
             ;(h.hj.q = h.hj.q || []).push(arguments)
           }
         h._hjSettings = { hjid: 2068822, hjsv: 6 }
-        a = o.getElementsByTagName("head")[0]
+        a = o.getElementsByTagName("body")[0]
         r = o.createElement("script")
-        r.async = 1
+        r.defer = 1
         r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv
         a.appendChild(r)
       })(window, document, "https://static.hotjar.com/c/hotjar-", ".js?sv=")
@@ -103,7 +103,7 @@ export default function App({ Component, pageProps }: AppProps) {
                     <Head>
                       <script
                         key="google-analytics"
-                        async
+                        defer
                         src="https://www.googletagmanager.com/gtag/js?id=G-MNJYPE5L1X"
                       ></script>
                     </Head>
