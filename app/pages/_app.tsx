@@ -31,31 +31,39 @@ export default function App({ Component, pageProps }: AppProps) {
 
   // Use google analytics
   React.useEffect(() => {
-    const myWindow = window as any
-    myWindow.dataLayer = myWindow.dataLayer || []
-    function gtag(...args) {
-      myWindow.dataLayer.push(args)
-    }
-    gtag("js", new Date())
+    if (typeof window === "undefined") return
 
-    gtag("config", "G-MNJYPE5L1X")
+    window.requestAnimationFrame(() => {
+      const myWindow = window as any
+      myWindow.dataLayer = myWindow.dataLayer || []
+      function gtag(...args) {
+        myWindow.dataLayer.push(args)
+      }
+      gtag("js", new Date())
+
+      gtag("config", "G-MNJYPE5L1X")
+    })
   }, [])
 
   // Use Hotjar
   React.useEffect(() => {
-    ;(function (h: any, o: any, t: any, j: any, a?: any, r?: any) {
-      h.hj =
-        h.hj ||
-        function () {
-          ;(h.hj.q = h.hj.q || []).push(arguments)
-        }
-      h._hjSettings = { hjid: 2068822, hjsv: 6 }
-      a = o.getElementsByTagName("head")[0]
-      r = o.createElement("script")
-      r.async = 1
-      r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv
-      a.appendChild(r)
-    })(window, document, "https://static.hotjar.com/c/hotjar-", ".js?sv=")
+    if (typeof window === "undefined") return
+
+    window.requestAnimationFrame(() => {
+      ;(function (h: any, o: any, t: any, j: any, a?: any, r?: any) {
+        h.hj =
+          h.hj ||
+          function () {
+            ;(h.hj.q = h.hj.q || []).push(arguments)
+          }
+        h._hjSettings = { hjid: 2068822, hjsv: 6 }
+        a = o.getElementsByTagName("head")[0]
+        r = o.createElement("script")
+        r.async = 1
+        r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv
+        a.appendChild(r)
+      })(window, document, "https://static.hotjar.com/c/hotjar-", ".js?sv=")
+    })
   }, [])
 
   return (
