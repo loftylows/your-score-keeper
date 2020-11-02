@@ -129,6 +129,7 @@ const Header = ({ showingMobileSidebar, openSidebar }: IProps) => {
   return (
     <Box
       top={0}
+      as="nav"
       position="sticky"
       display="flex"
       alignItems="center"
