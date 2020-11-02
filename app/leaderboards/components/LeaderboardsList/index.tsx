@@ -43,7 +43,7 @@ const LeaderboardsList = ({ leaderboards }: IProps) => {
                     Created
                     {owner ? (
                       <Box as="span" marginX="3px" display={{ base: "none", md: "block" }}>
-                        by <b>{owner.username}</b>
+                        by: <b>{owner.username}</b>
                       </Box>
                     ) : null}
                     {` ${formatDistance(today, leaderboard.createdAt)} ago`}
