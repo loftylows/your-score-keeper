@@ -289,7 +289,7 @@ const Header = ({ showingMobileSidebar, openSidebar }: IProps) => {
           <DrawerCloseButton />
           <DrawerHeader>Menu</DrawerHeader>
 
-          <DrawerBody backgroundColor="gray.300" padding="0px">
+          <DrawerBody backgroundColor="gray.300" padding="0px" as="nav">
             <Box as="ul">
               <VStack spacing={0} display="flex">
                 {mobileNavLinksConfig.map((item) => {
