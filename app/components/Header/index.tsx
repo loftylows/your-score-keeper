@@ -193,7 +193,7 @@ const Header = ({ showingMobileSidebar, openSidebar }: IProps) => {
                   backgroundColor: currentPath === "/leaderboards" ? undefined : "blackAlpha.300",
                 }}
               >
-                Leaderboards
+                Online Leaderboards
               </Box>
             </Link>
             <Link passHref href="/my-leaderboards">

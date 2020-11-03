@@ -11,7 +11,7 @@ Home.getLayout = (page) => (
   <Layout>
     <>
       <PageMeta
-        title="YourScoreKeeper"
+        title="YourScoreKeeper: Helping You Create Custom Online Score Boards With Ease!"
         description="Get started right now and create your first custom online scoreboard for free. YourScoreKeeper is an online software tool built to help you easily create, publish, and share your leaderboards online with just your friends or anyone else in the world."
       />
       {page}

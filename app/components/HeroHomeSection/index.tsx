@@ -39,6 +39,7 @@ const HeroSection = () => {
           srcSet="https://res.cloudinary.com/yourscorekeeper-com/image/upload/v1603429974/hero-image-mobile_qm6y59.jpg 540w, https://res.cloudinary.com/yourscorekeeper-com/image/upload/v1603429908/hero-image_r80hkx.jpg 2578w"
           sizes="100vw"
           objectFit="cover"
+          alt="Soccer field"
         />
       </Box>
 
@@ -58,8 +59,8 @@ const HeroSection = () => {
         maxWidth="100%"
         padding={{ base: "40px 15px", md: "20px 15px" }}
       >
-        <Heading as="h1" textAlign="center" fontWeight="bold" size="xl">
-          The Leader of Leaderboards
+        <Heading as="h1" textAlign="center" fontWeight="bold" size="xl" marginBottom="10px">
+          Create Your First Free Leaderboard With Ease
         </Heading>
         <Heading
           as="h3"
@@ -71,7 +72,7 @@ const HeroSection = () => {
           textAlign="center"
           letterSpacing=".2px"
         >
-          Track your scores and create multiple leaderboards of up to 300 players in just a couple
+          Track your scores and create multiple leaderboards of up to 150 players in just a couple
           clicks.
         </Heading>
 
@@ -126,6 +127,7 @@ const HeroSection = () => {
               height="100%"
               width="100%"
               objectFit="contain"
+              alt="YourScoreKeeper app screenshot"
             />
           </Box>
         </Box>
