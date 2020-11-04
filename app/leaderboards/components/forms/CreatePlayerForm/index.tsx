@@ -33,6 +33,7 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
   const { userId, dbCacheCreatePlayer } = React.useContext(dbCacheLeaderboardsContext)
   const { inMemoryCreatePlayer } = React.useContext(inMemoryLeaderboardsContext)
   const hasReachedMaxPlayers = playersCount >= 150
+  const playerNameRef = React.useRef<HTMLInputElement>(null)
 
   return (
     <FinalForm<CreatePlayerInputType>
@@ -61,6 +62,7 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
             })
           }
           props.onSuccess && props.onSuccess()
+          playerNameRef && playerNameRef.current && playerNameRef.current.focus()
         } catch (error) {
           return {
             [FORM_ERROR]:
@@ -100,6 +102,8 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
                       errorBorderColor="crimson"
                       type="text"
                       placeholder="Name..."
+                      autoComplete="off"
+                      ref={playerNameRef}
                     />
                   </InputGroup>
                 </FormControl>
@@ -120,6 +124,7 @@ const CreatePlayerForm = (props: CreatePlayerFormProps) => {
                       type="number"
                       placeholder="Score..."
                       onFocus={(e) => e.target.select()}
+                      autoComplete="off"
                     />
                   </InputGroup>
                 </FormControl>

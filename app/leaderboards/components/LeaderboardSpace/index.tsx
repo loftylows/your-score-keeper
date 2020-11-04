@@ -183,13 +183,13 @@ const LeaderboardsSpace = () => {
       <Heading marginBottom="15px">{leaderboard.title}</Heading>
       <CreatePlayerForm leaderboardId={leaderboard.id} playersCount={players.length} />
 
-      <VStack spacing={4}>
+      <Box paddingBottom="64px">
         <LeaderboardTable
           players={players as InMemoryPlayer[]}
           leaderboard={leaderboard}
           userId={userId}
         />
-      </VStack>
+      </Box>
     </Box>
   )
 }

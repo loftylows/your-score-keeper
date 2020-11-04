@@ -118,12 +118,14 @@ const LeaderboardPage: BlitzPage<IProps> = ({
           </Link>
         ) : null}
       </Heading>
-      <LeaderboardTable
-        isReadOnly
-        userId={userId}
-        leaderboard={leaderboard}
-        players={leaderboard.players as InMemoryPlayer[]}
-      />
+      <Box paddingBottom="64px">
+        <LeaderboardTable
+          isReadOnly
+          userId={userId}
+          leaderboard={leaderboard}
+          players={leaderboard.players as InMemoryPlayer[]}
+        />
+      </Box>
     </Box>
   )
 }
