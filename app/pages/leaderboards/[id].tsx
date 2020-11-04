@@ -9,12 +9,14 @@ import LeaderboardTable from "app/leaderboards/components/LeaderboardTable"
 import { InMemoryPlayer } from "app/leaderboards/InMemoryLeaderboardsProvider/types"
 import { isSavedLeaderboard } from "app/leaderboards/typeAssertions"
 import PageMeta from "app/components/PageMeta"
+import Share from "app/components/Share"
 
 export type LeaderboardQueryRes = ThenArgRecursive<ReturnType<typeof getLeaderboard>>
 interface IProps {
   leaderboard: Maybe<ThenArgRecursive<ReturnType<typeof getLeaderboard>>>
   userId: Maybe<UUID>
   error?: ErrorFromServerSideProps
+  shareUrl: string
 }
 export const getServerSideProps: GetServerSideProps<IProps> = async ({
   req,
@@ -24,6 +26,7 @@ export const getServerSideProps: GetServerSideProps<IProps> = async ({
   const { userId } = await getSessionContext(req, response)
   const id: Maybe<string> = typeof params?.id === "string" ? params?.id : null
   let leaderboard: ThenArgRecursive<ReturnType<typeof getLeaderboard>>
+  const shareUrl = req.url || ""
 
   try {
     const queryRes = await ssrQuery(
@@ -45,6 +48,7 @@ export const getServerSideProps: GetServerSideProps<IProps> = async ({
           leaderboard: null,
           userId: null,
           error: { name: e.name, statusCode: e.statusCode, message: "Leaderboard Not Found" },
+          shareUrl,
         },
       }
     } else if (e.name === "AuthorizationError") {
@@ -54,6 +58,7 @@ export const getServerSideProps: GetServerSideProps<IProps> = async ({
           leaderboard: null,
           userId: null,
           error: { name: e.name, statusCode: e.statusCode },
+          shareUrl,
         },
       }
     } else {
@@ -63,6 +68,7 @@ export const getServerSideProps: GetServerSideProps<IProps> = async ({
           leaderboard: null,
           userId: null,
           error: { name: e.name, statusCode: e.statusCode },
+          shareUrl,
         },
       }
     }
@@ -72,11 +78,16 @@ export const getServerSideProps: GetServerSideProps<IProps> = async ({
     props: {
       leaderboard,
       userId: userId || null,
+      shareUrl,
     },
   }
 }
 
-const LeaderboardPage: BlitzPage<IProps> = ({ leaderboard, userId: userIdFromServer }: IProps) => {
+const LeaderboardPage: BlitzPage<IProps> = ({
+  leaderboard,
+  userId: userIdFromServer,
+  shareUrl,
+}: IProps) => {
   const { userId: sessionUserId, isLoading: isLoadingSessionUserId } = useSession()
   const userId = isLoadingSessionUserId ? userIdFromServer : sessionUserId
 
@@ -92,6 +103,11 @@ const LeaderboardPage: BlitzPage<IProps> = ({ leaderboard, userId: userIdFromSer
       alignItems="center"
       padding={{ base: "30px 10px", md: "40px 20px" }}
     >
+      <Share
+        shareUrl={shareUrl}
+        shareTitle={`${leaderboard.title} Leaderboard`}
+        flexDirection="column"
+      />
       <Heading size="xl" marginBottom="30px" display="flex" alignItems="center" as="h1">
         {leaderboard.title}
         {isLeaderboardOwner ? (
