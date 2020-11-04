@@ -145,7 +145,7 @@ function RootErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   } else {
     errorComp = (
       <ErrorComponent
-        statusCode={(error as any)?.statusCode || 400}
+        statusCode={(error as any)?.statusCode || 500}
         title={error?.message || error?.name}
       />
     )

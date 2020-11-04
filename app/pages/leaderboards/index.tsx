@@ -6,13 +6,13 @@ import Layout from "app/layouts/Site"
 import { Box, Heading, Select } from "@chakra-ui/core"
 import qs from "querystringify"
 import getLeaderboards from "app/leaderboards/queries/getLeaderboards"
-import { Maybe, ThenArgRecursive, UUID } from "common-types"
+import { ErrorFromServerSideProps, Maybe, ThenArgRecursive, UUID } from "common-types"
 import buildSearchQuery, { QueryOptions } from "app/leaderboards/searchUrlBuilder"
 import url from "url"
 import LeaderboardsList from "app/leaderboards/components/LeaderboardsList"
 import Pagination from "app/components/Pagination"
 import PageMeta from "app/components/PageMeta"
-import { hostname } from "app/utils/constants"
+import { fallbackErrorCodeStatus, hostname } from "app/utils/constants"
 const leaderboardsPerPage = 10
 
 export type SortType = "latest" | "oldest"
@@ -25,10 +25,11 @@ const getSortBy = (sortBy: any): "desc" | "asc" => {
   return sortBy === "latest" ? "desc" : "asc"
 }
 interface IProps {
-  leaderboardsQueryRes: ThenArgRecursive<ReturnType<typeof getLeaderboards>>
+  leaderboardsQueryRes: Maybe<ThenArgRecursive<ReturnType<typeof getLeaderboards>>>
   userId: Maybe<UUID>
   sortBy: SortOrder
   page: number
+  error?: ErrorFromServerSideProps
 }
 export const getServerSideProps: GetServerSideProps<IProps> = async ({ req, res: response }) => {
   const { userId } = await getSessionContext(req, response)
@@ -58,8 +59,29 @@ export const getServerSideProps: GetServerSideProps<IProps> = async ({ req, res:
     )
     leaderboardsQueryRes = queryRes
   } catch (e) {
-    console.log(e)
-    throw e
+    if (e.name === "AuthorizationError") {
+      response.statusCode = e.statusCode
+      return {
+        props: {
+          leaderboardsQueryRes: null,
+          userId: userId || null,
+          sortBy: createdAtSort,
+          page: Number.isInteger(pageNumber) && pageNumber > 0 ? pageNumber : 1,
+          error: { name: e.name, statusCode: e.statusCode || fallbackErrorCodeStatus },
+        },
+      }
+    } else {
+      response.statusCode = e.statusCode || fallbackErrorCodeStatus
+      return {
+        props: {
+          leaderboardsQueryRes: null,
+          userId: userId || null,
+          sortBy: createdAtSort,
+          page: Number.isInteger(pageNumber) && pageNumber > 0 ? pageNumber : 1,
+          error: { name: e.name, statusCode: e.statusCode || fallbackErrorCodeStatus },
+        },
+      }
+    }
   }
 
   return {
@@ -72,7 +94,17 @@ export const getServerSideProps: GetServerSideProps<IProps> = async ({ req, res:
   }
 }
 
-const LeaderboardsPage: BlitzPage<IProps> = ({ leaderboardsQueryRes, sortBy, page }: IProps) => {
+const LeaderboardsPage: BlitzPage<IProps> = ({
+  leaderboardsQueryRes,
+  sortBy,
+  page,
+  error,
+}: IProps) => {
+  // TODO: fix this error UI
+  if (!leaderboardsQueryRes) {
+    throw new Error(error?.name || "An unknown error ocurred.")
+  }
+
   return (
     <Box
       display="flex"

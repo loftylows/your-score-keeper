@@ -5,12 +5,20 @@ import { getSessionContext } from "@blitzjs/server"
 import Layout from "app/layouts/MyLeaderboardsSpace"
 import { Leaderboard, Player } from "@prisma/client"
 import DbCacheLeaderboardsProvider from "app/leaderboards/DbCacheLeaderboardsProvider"
-import { Maybe, UUID } from "common-types"
+import { ErrorFromServerSideProps, Maybe, UUID } from "common-types"
 import getLeaderboards from "app/leaderboards/queries/getLeaderboards"
 import getPlayers from "app/players/queries/getPlayers"
 import LeaderboardsDialogProvider from "app/leaderboards/LeaderboardsUiProvider"
 import LeaderboardsSpace from "app/leaderboards/components/LeaderboardSpace"
 import PageMeta from "app/components/PageMeta"
+
+interface IPageProps {
+  leaderboardsFromServer: Leaderboard[]
+  playersFromServer: Player[]
+  userId: Maybe<UUID>
+  isMobile: boolean
+  error?: ErrorFromServerSideProps
+}
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res: response }) => {
   const { userId } = await getSessionContext(req, response)
@@ -38,9 +46,29 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res: respons
         players = res.players
       }
     } catch (e) {
-      console.log(e)
-
-      throw e
+      if (e.name === "AuthorizationError") {
+        response.statusCode = e.statusCode
+        return {
+          props: {
+            leaderboardsFromServer: leaderboards,
+            playersFromServer: players,
+            userId,
+            isMobile,
+            error: { name: e.name, statusCode: e.statusCode },
+          },
+        }
+      } else {
+        response.statusCode = e.statusCode || 500
+        return {
+          props: {
+            leaderboardsFromServer: leaderboards,
+            playersFromServer: players,
+            userId,
+            isMobile,
+            error: { name: e.name, statusCode: e.statusCode },
+          },
+        }
+      }
     }
   }
 
@@ -52,13 +80,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res: respons
       isMobile,
     },
   }
-}
-
-type IPageProps = {
-  leaderboardsFromServer: Leaderboard[]
-  playersFromServer: Player[]
-  userId: Maybe<UUID>
-  isMobile: boolean
 }
 
 const MyLeaderboardsHome: BlitzPage<IPageProps> = ({

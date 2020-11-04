@@ -4,7 +4,7 @@ import { getSessionContext } from "@blitzjs/server"
 import Layout from "app/layouts/Site"
 import { Box, Button, Heading } from "@chakra-ui/core"
 import getLeaderboard from "app/leaderboards/queries/getLeaderboardWithPlayers"
-import { Maybe, ThenArgRecursive, UUID } from "common-types"
+import { ErrorFromServerSideProps, Maybe, ThenArgRecursive, UUID } from "common-types"
 import LeaderboardTable from "app/leaderboards/components/LeaderboardTable"
 import { InMemoryPlayer } from "app/leaderboards/InMemoryLeaderboardsProvider/types"
 import { isSavedLeaderboard } from "app/leaderboards/typeAssertions"
@@ -14,10 +14,7 @@ export type LeaderboardQueryRes = ThenArgRecursive<ReturnType<typeof getLeaderbo
 interface IProps {
   leaderboard: Maybe<ThenArgRecursive<ReturnType<typeof getLeaderboard>>>
   userId: Maybe<UUID>
-  error?: {
-    name: string
-    statusCode: string
-  }
+  error?: ErrorFromServerSideProps
 }
 export const getServerSideProps: GetServerSideProps<IProps> = async ({
   req,
