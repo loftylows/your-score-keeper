@@ -30,9 +30,7 @@ interface IProps {
   isReadOnly?: boolean
 }
 const LeaderboardTable = ({ players, leaderboard, userId, isReadOnly }: IProps) => {
-  const isLeaderboardOwner = isSavedLeaderboard(leaderboard)
-    ? leaderboard.ownerId === userId
-    : false
+  const isLeaderboardOwner = isSavedLeaderboard(leaderboard) ? leaderboard.ownerId === userId : true
   const { openEditPlayerDialog } = React.useContext(uiContext)
   const rankedPlayers = players
     .sort(
