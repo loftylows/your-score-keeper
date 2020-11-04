@@ -1,3 +1,4 @@
+import { extendTheme } from "@chakra-ui/core"
 import theme from "@chakra-ui/theme"
 
 export const brandColors = {
@@ -113,5 +114,7 @@ const defaultThemeExtension = {
     global: getGlobalStyles,
   },
 }
+
+export const customTheme = extendTheme(defaultThemeExtension)
 
 export default defaultThemeExtension

@@ -12,8 +12,12 @@ import PageMeta from "app/components/PageMeta"
 
 export type LeaderboardQueryRes = ThenArgRecursive<ReturnType<typeof getLeaderboard>>
 interface IProps {
-  leaderboard: ThenArgRecursive<ReturnType<typeof getLeaderboard>>
+  leaderboard: Maybe<ThenArgRecursive<ReturnType<typeof getLeaderboard>>>
   userId: Maybe<UUID>
+  error?: {
+    name: string
+    statusCode: string
+  }
 }
 export const getServerSideProps: GetServerSideProps<IProps> = async ({
   req,
@@ -36,8 +40,35 @@ export const getServerSideProps: GetServerSideProps<IProps> = async ({
     )
     leaderboard = queryRes
   } catch (e) {
-    console.log(e)
-    throw e
+    if (e.name === "NotFoundError") {
+      // Handle this error appropriately, like show a login screen
+      response.statusCode = e.statusCode
+      return {
+        props: {
+          leaderboard: null,
+          userId: null,
+          error: { name: e.name, statusCode: e.statusCode, message: "Leaderboard Not Found" },
+        },
+      }
+    } else if (e.name === "AuthorizationError") {
+      response.statusCode = e.statusCode
+      return {
+        props: {
+          leaderboard: null,
+          userId: null,
+          error: { name: e.name, statusCode: e.statusCode },
+        },
+      }
+    } else {
+      response.statusCode = e.statusCode || 500
+      return {
+        props: {
+          leaderboard: null,
+          userId: null,
+          error: { name: e.name, statusCode: e.statusCode },
+        },
+      }
+    }
   }
 
   return {
@@ -51,6 +82,9 @@ export const getServerSideProps: GetServerSideProps<IProps> = async ({
 const LeaderboardPage: BlitzPage<IProps> = ({ leaderboard, userId: userIdFromServer }: IProps) => {
   const { userId: sessionUserId, isLoading: isLoadingSessionUserId } = useSession()
   const userId = isLoadingSessionUserId ? userIdFromServer : sessionUserId
+
+  if (!leaderboard) return null
+
   const isLeaderboardOwner = isSavedLeaderboard(leaderboard)
     ? leaderboard.ownerId === userId
     : false
