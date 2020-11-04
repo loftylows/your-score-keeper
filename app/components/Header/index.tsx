@@ -49,7 +49,6 @@ const Header = ({ showingMobileSidebar, openSidebar }: IProps) => {
   const buttonSize = useBreakpointValue({ base: "sm", md: "md" })
   const Router = useRouter()
   const currentPath = Router.pathname
-  console.log("currentPath: ", currentPath)
   const leaderboardsLink = buildSearchQuery({ sortBy: "latest", page: 1 })
 
   const UnauthenticatedUserContent = () => (

@@ -284,7 +284,7 @@ class DialogsProvider extends React.Component<IProps, IState> {
                         { progress: undefined }
                       )
                     } catch (e) {
-                      console.log(e)
+                      toast.error(<Box paddingX="8px">{e.message}</Box>, { progress: undefined })
                     } finally {
                       this.toggleLeaderboardPublishingInProgress()
                     }
@@ -343,7 +343,7 @@ class DialogsProvider extends React.Component<IProps, IState> {
                         { progress: undefined }
                       )
                     } catch (e) {
-                      console.log(e)
+                      toast.error(<Box paddingX="8px">{e.message}</Box>, { progress: undefined })
                     } finally {
                       this.toggleLeaderboardDeletingInProgress()
                     }
@@ -398,7 +398,7 @@ class DialogsProvider extends React.Component<IProps, IState> {
                         { progress: undefined }
                       )
                     } catch (e) {
-                      console.log(e)
+                      toast.error(<Box paddingX="8px">{e.message}</Box>, { progress: undefined })
                     } finally {
                       this.toggleLeaderboardUnpublishingInProgress()
                     }

@@ -250,7 +250,6 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
       await deleteLeaderboard(id)
     } catch (e) {
       // TODO: Notify user of error
-      console.log(e)
       this.setState({
         leaderboards: oldLeaderboardsState,
         players: oldPlayersState,
@@ -271,7 +270,6 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
       })
     } catch (e) {
       // TODO: Notify user of error
-      console.log(e)
       this.setState({
         players: oldPlayersState,
       })
@@ -387,9 +385,6 @@ class DbCacheLeaderboardsProvider extends React.Component<IProps, IState> {
     leaderboards,
     players
   ) => {
-    console.log("userId: ", userId)
-    console.log("leaderboards: ", leaderboards)
-    console.log("players: ", players)
     const promises = leaderboards.map(async (leaderboard) => {
       const oldLeaderboardId = leaderboard.id
       const newLeaderboard = await createLeaderboard({

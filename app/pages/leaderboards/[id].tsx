@@ -10,6 +10,7 @@ import { InMemoryPlayer } from "app/leaderboards/InMemoryLeaderboardsProvider/ty
 import { isSavedLeaderboard } from "app/leaderboards/typeAssertions"
 import PageMeta from "app/components/PageMeta"
 import Share from "app/components/Share"
+import getLeaderboardShareUrl from "app/leaderboards/getLeaderboardShareUrl"
 
 export type LeaderboardQueryRes = ThenArgRecursive<ReturnType<typeof getLeaderboard>>
 interface IProps {
@@ -26,7 +27,6 @@ export const getServerSideProps: GetServerSideProps<IProps> = async ({
   const { userId } = await getSessionContext(req, response)
   const id: Maybe<string> = typeof params?.id === "string" ? params?.id : null
   let leaderboard: ThenArgRecursive<ReturnType<typeof getLeaderboard>>
-  const shareUrl = req.url || ""
 
   try {
     const queryRes = await ssrQuery(
@@ -48,7 +48,7 @@ export const getServerSideProps: GetServerSideProps<IProps> = async ({
           leaderboard: null,
           userId: null,
           error: { name: e.name, statusCode: e.statusCode, message: "Leaderboard Not Found" },
-          shareUrl,
+          shareUrl: "",
         },
       }
     } else if (e.name === "AuthorizationError") {
@@ -58,7 +58,7 @@ export const getServerSideProps: GetServerSideProps<IProps> = async ({
           leaderboard: null,
           userId: null,
           error: { name: e.name, statusCode: e.statusCode },
-          shareUrl,
+          shareUrl: "",
         },
       }
     } else {
@@ -68,7 +68,7 @@ export const getServerSideProps: GetServerSideProps<IProps> = async ({
           leaderboard: null,
           userId: null,
           error: { name: e.name, statusCode: e.statusCode },
-          shareUrl,
+          shareUrl: "",
         },
       }
     }
@@ -78,7 +78,7 @@ export const getServerSideProps: GetServerSideProps<IProps> = async ({
     props: {
       leaderboard,
       userId: userId || null,
-      shareUrl,
+      shareUrl: getLeaderboardShareUrl(leaderboard?.id || ""),
     },
   }
 }

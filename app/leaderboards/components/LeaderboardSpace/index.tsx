@@ -12,8 +12,8 @@ import { Leaderboard } from "@prisma/client"
 import { uiContext } from "app/leaderboards/LeaderboardsUiProvider"
 import { Link } from "blitz"
 import { lighten } from "polished"
-import { hostname } from "app/utils/constants"
 import Share from "app/components/Share"
+import getLeaderboardShareUrl from "app/leaderboards/getLeaderboardShareUrl"
 
 const minWidth = "320px"
 
@@ -28,7 +28,7 @@ const LeaderboardsSpace = () => {
   const { openAuthModal } = React.useContext(authModalContext)
   const { userId, leaderboards: dbLeaderboards } = React.useContext(dbCacheLeaderboardsContext)
   const { leaderboards: inMemoryLeaderboards } = React.useContext(inMemoryLeaderboardsContext)
-  const shareUrl = leaderboard ? `https://${hostname}/leaderboards/${leaderboard.id}` : null
+  const shareUrl = leaderboard ? getLeaderboardShareUrl(leaderboard.id) : null
 
   if (!leaderboard && ![...inMemoryLeaderboards, ...dbLeaderboards].length) {
     return (

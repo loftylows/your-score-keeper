@@ -190,7 +190,7 @@ class UsersUiDialogsProvider extends React.Component<IProps, IState> {
                       await deleteAccount()
                       this.closeDeleteCurrentUserDialog()
                     } catch (e) {
-                      console.log(e)
+                      toast.error(<Box paddingX="8px">{e.message}</Box>, { progress: undefined })
                     } finally {
                       this.toggleAccountDeletionInProgress()
                     }

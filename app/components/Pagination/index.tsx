@@ -183,7 +183,6 @@ const Pagination = ({
         variant="outline"
       >
         {pages.map((page, index) => {
-          console.log("page: ", page)
           const isCurrentPage = currentPage === page
           if (page === LEFT_PAGE)
             return (
