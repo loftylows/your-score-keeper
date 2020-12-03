@@ -17,7 +17,7 @@ export const fireSignupCompletedEvent = (userId: UUID) => {
   window.dispatchEvent(event)
 }
 
-export const LOGOUT_EVENT_NAME = "signupCompleted"
+export const LOGOUT_EVENT_NAME = "logoutCompleted"
 export const fireLogoutEvent = () => {
   const event = new Event(LOGOUT_EVENT_NAME)
   if (typeof window === "undefined") return

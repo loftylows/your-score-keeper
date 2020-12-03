@@ -69,6 +69,7 @@
     "react-share": "4.3.1",
     "react-table": "7.5.2",
     "react-toastify": "6.0.9",
+    "reactour": "1.18.0",
     "secure-password": "4.0.0",
     "sync-request": "6.1.0",
     "uuid": "8.3.0",
