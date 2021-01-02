@@ -149,24 +149,3 @@ These files are:
 - `tsconfig.json` is our recommended setup for TypeScript.
 
 You can read more about it in the [File Structure](https://blitzjs.com/docs/file-structure) section of the documentation.
-
-## Learn more
-
-Read the [Blitz.js Documentation](https://blitzjs.com/docs/getting-started) to learn more.
-
-### The Blitz.js Manifesto
-
-Read the [Blitz Manifesto](https://blitzjs.com/docs/manifesto) to learn the Blitz foundational principles.
-
-Blitz is built on Next.js. For more info on this see [Why use Blitz instead of Next.js](https://blitzjs.com/docs/why-blitz)
-
-## Get in touch
-
-The Blitz community is warm, safe, diverse, inclusive, and fun! Feel free to reach out to us in any of our communication channels.
-
-- [Website](https://blitzjs.com/)
-- [Slack](https://slack.blitzjs.com/)
-- [Report an issue](https://github.com/blitz-js/blitz/issues/new/choose)
-- [Forum discussions](https://github.com/blitz-js/blitz/discussions)
-- [Sponsors and donations](https://github.com/blitz-js/blitz#sponsors-and-donations)
-- [Contributing Guide](https://blitzjs.com/docs/contributing)
