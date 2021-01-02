@@ -69,32 +69,16 @@ chakra-test
 ├── app
 │   |── auth
 │   │   ├── components
-│   │   │   └── LoginForm.tsx
 │   │   ├── mutations
-│   │   │   ├── login.ts
-│   │   │   ├── logout.ts
-│   │   │   └── signup.ts
 │   │   └── pages
-│   │       ├── login.tsx
-│   │       └── signup.tsx
 │   ├── auth-utils.ts
 │   ├── validations.ts
 │   ├── components
-│   │   ├── Form.tsx
-│   │   └── LabeledTextField.tsx
 │   ├── hooks
-│   │   └── useCurrentUser.ts
 │   ├── layouts
-│   │   └── Layout.tsx
 │   │── pages
-│   │   ├── _app.tsx
-│   │   ├── _document.tsx
-│   │   ├── 404.tsx
-│   │   ├── index.tsx
-│   │   └── index.test.tsx
 │   └── users
 │   │   └── queries
-│   │       └── getCurrentUser.ts
 ├── db
 │   ├── migrations
 │   ├── index.ts
@@ -102,8 +86,6 @@ chakra-test
 ├── integrations
 ├── node_modules
 ├── public
-│   ├── favicon.ico
-│   └── logo.png
 ├── test
 │   ├── __mocks__
 │   │       └── fileMock.js
@@ -147,5 +129,3 @@ These files are:
 - `package.json` contains information about your dependencies and devDependencies. If you’re using a tool like `npm` or `yarn`, you won’t have to worry about this much.
 
 - `tsconfig.json` is our recommended setup for TypeScript.
-
-You can read more about it in the [File Structure](https://blitzjs.com/docs/file-structure) section of the documentation.
