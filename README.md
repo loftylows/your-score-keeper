@@ -1,10 +1,12 @@
 This is a leaderboard app for building custom online leaderboards/score keepers.
 
-![App Screenshot](https://github.com/loftylows/your-score-keeper/blob/master/public/images/app-screenshot.jpg)
-
 Built using [Blitz.js](https://github.com/blitz-js/blitz).
 
 # **name**
+
+YourScoreKeeper
+
+![App Screenshot](https://github.com/loftylows/your-score-keeper/blob/master/public/images/app-screenshot.jpg)
 
 ## Getting Started
 
