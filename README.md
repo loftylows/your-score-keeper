@@ -65,7 +65,7 @@ You can read more about it on the [CLI Overview](https://blitzjs.com/docs/cli-ov
 Here is the structure of your app.
 
 ```
-chakra-test
+your-score-keeper
 ├── app
 │   |── auth
 │   │   ├── components
